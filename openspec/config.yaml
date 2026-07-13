@@ -1,0 +1,43 @@
+schema: spec-driven
+
+# This context is intentionally concise: it should guide every artifact without
+# imposing process designed for a large multi-repository platform.
+context: |
+  Product: The Maestro's Secret, a compact Renaissance point-and-click web adventure
+  Audience: players plus hiring reviewers assessing product, frontend, and responsible-AI judgment
+  Stack: semantic HTML, CSS, vanilla ES modules, inline SVG scenes, Web Audio, browser localStorage
+  Hosting: static GitHub Pages; optional Cloudflare Worker for bounded AI guidance
+  Testing: Node's built-in test runner for pure logic; browser/manual checks for interaction and visual behavior
+
+  Constraints:
+  - Static-first: core game progression, save/resume, and guidance fallback work without the Worker
+  - No provider keys, player-entered text, accounts, or personal data in the browser payload
+  - Keep the experience compact; do not add scenes, generic chat, analytics, or unrelated framework migrations
+  - Preserve keyboard access, reduced-motion support, and meaningful feedback for every interactive change
+
+  Development discipline:
+  - Specs first: Given/When/Then scenarios define behavior
+  - Tests second: derive tests from scenarios and capture failing evidence before implementation
+  - Code third: satisfy both specs and tests, then record passing evidence
+  - Evidence lives in openspec/changes/<change-id>/TDD_EVIDENCE.md and validation.md
+
+rules:
+  proposal:
+    - Include Why, What Changes, Capabilities, Impact, constraints, and rollback for risky behavior.
+    - List every capability that needs a corresponding specs/<capability>/spec.md file.
+    - Identify README, deployment, privacy, and accessibility impacts when relevant.
+
+  specs:
+    - Use Given/When/Then scenarios; each material scenario maps to one or more tests or documented manual checks.
+    - Define accepted input, output, failure, fallback, and compatibility behavior for public interfaces.
+    - Preserve static-first and accessibility behavior when a feature has a network or visual dependency.
+
+  design:
+    - Document state/data flow, trust boundaries, secrets handling, fallbacks, and rollback when external services are involved.
+    - Prefer the smallest architecture that makes the behavior testable and maintainable.
+
+  tasks:
+    - Order work as spec → tests → failing evidence → implementation → passing evidence → quality gates → docs.
+    - Keep tasks independently reviewable and small enough to complete in roughly two hours.
+    - Include README/deployment documentation and validation-evidence tasks for public behavior changes.
+    - Do not mark implementation complete while required evidence remains pending.

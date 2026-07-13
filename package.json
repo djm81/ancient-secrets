@@ -1,0 +1,15 @@
+{
+  "name": "the-maestros-secret",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "test:browser": "playwright test",
+    "test:a11y": "playwright test --grep @a11y",
+    "check": "node --check js/game-core.js && node --check js/guidance-client.js && node --check js/browser-storage.js && node --check js/runtime-config.js && node --check workers/maestro-guide.js"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.11.0",
+    "@playwright/test": "^1.58.0"
+  }
+}

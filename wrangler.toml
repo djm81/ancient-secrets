@@ -1,0 +1,17 @@
+name = "maestros-guidance"
+main = "workers/maestro-guide.js"
+compatibility_date = "2026-07-13"
+
+[[ratelimits]]
+name = "MAESTRO_RATE_LIMIT"
+namespace_id = "20260713"
+
+  [ratelimits.simple]
+  limit = 5
+  period = 60
+
+# Deploy separately from GitHub Pages:
+#   wrangler secret put OPENAI_API_KEY
+#   wrangler deploy
+# Set ALLOWED_ORIGIN to the published GitHub Pages origin before production use.
+# The Worker fails closed if an AI key is configured without this binding or origin.

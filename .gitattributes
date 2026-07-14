@@ -1,0 +1,2 @@
+# SpecFact bundle is machine-generated; exempt from whitespace checks
+.specfact/** -whitespace linguist-generated=true

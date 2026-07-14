@@ -1,0 +1,864 @@
+schema_version: '1'
+requirements:
+- schema_version: '1'
+  requirement_id: openspec:temporal-finops-expedition:era-expeditions:ee-001-eras-are-authored-data-driven-and-complete-offline
+  title: EE-001 Eras are authored, data-driven, and complete offline
+  summary: 'The game SHALL ship seven authored eras (Babylon, Egypt, Athens, Rome,
+    Champagne Fairs, Florence 1494, The Age to Come) defined entirely in static content
+    modules: scene graph, mentor dialogue, three clue artifacts, trial parameters,
+    hints, and failure explanations. Every era SHALL be fully explorable and completable
+    with no network access and no Worker deployed.'
+  sources:
+  - source_type: openspec_change
+    locator: openspec/changes/temporal-finops-expedition/specs/era-expeditions/spec.md
+    title: era-expeditions
+    revision: sha256:ab7a834bb9ba87e06a79f6faaf3be4e84a3ff77146a5fea42590cf841bcfce0f
+  business_rules:
+  - rule_id: openspec:temporal-finops-expedition:era-expeditions:ee-001-eras-are-authored-data-driven-and-complete-offline:offline-era-completion
+    name: Offline era completion
+    given: the site is served statically with no guidance endpoint configured
+    when: the player explores an era, collects its clues, and passes its trial
+    then: the full loop including debrief and invention reveal completes using authored
+      content only
+    priority: null
+  constraints: []
+  evidence_links: []
+  completeness_findings: []
+- schema_version: '1'
+  requirement_id: openspec:temporal-finops-expedition:era-expeditions:ee-002-each-trial-is-deterministic-era-authentic-and-solvable-from-in-era-knowledge
+  title: EE-002 Each trial is deterministic, era-authentic, and solvable from in-era
+    knowledge
+  summary: Each era SHALL contain exactly one trial whose mechanics use that era's
+    documented financial instruments (per the design mapping table), whose parameters
+    derive from authored tables plus a per-attempt seed, and whose evaluation is a
+    pure function reproducible in the Node test runner. Everything needed to solve
+    a trial SHALL be learnable from its era's clues and mentor dialogue; no modern
+    FinOps vocabulary SHALL be required to pass. Solving SHALL be possible on every
+    generated parameter set.
+  sources:
+  - source_type: openspec_change
+    locator: openspec/changes/temporal-finops-expedition/specs/era-expeditions/spec.md
+    title: era-expeditions
+    revision: sha256:ab7a834bb9ba87e06a79f6faaf3be4e84a3ff77146a5fea42590cf841bcfce0f
+  business_rules:
+  - rule_id: openspec:temporal-finops-expedition:era-expeditions:ee-002-each-trial-is-deterministic-era-authentic-and-solvable-from-in-era-knowledge:deterministic-trial-evaluation
+    name: Deterministic trial evaluation
+    given: a fixed seed for the Babylon ledger trial
+    when: the trial is generated twice and the same answers are evaluated
+    then: both runs produce identical parameters, identical verdicts, and identical
+      mastery deltas
+    priority: null
+  - rule_id: openspec:temporal-finops-expedition:era-expeditions:ee-002-each-trial-is-deterministic-era-authentic-and-solvable-from-in-era-knowledge:every-generated-trial-is-solvable
+    name: Every generated trial is solvable
+    given: any seed across the tested seed range for each of the seven trials
+    when: the trial is generated
+    then: at least one answer set exists that the evaluator accepts as a pass
+    priority: null
+  - rule_id: openspec:temporal-finops-expedition:era-expeditions:ee-002-each-trial-is-deterministic-era-authentic-and-solvable-from-in-era-knowledge:era-knowledge-suffices
+    name: Era knowledge suffices
+    given: the Rome trial's clues describe farmed contracts, direct collection, and
+      audit marks in era language
+    when: a player applies only those clues
+    then: the trial is passable without any reference to modern terminology
+    priority: null
+  constraints: []
+  evidence_links: []
+  completeness_findings: []
+- schema_version: '1'
+  requirement_id: openspec:temporal-finops-expedition:era-expeditions:ee-003-withdrawing-is-always-available-and-never-destroys-progress
+  title: EE-003 Withdrawing is always available and never destroys progress
+  summary: Every trial SHALL offer a clearly labeled withdraw action at any point.
+    Withdrawing SHALL preserve collected clues and era exploration state, route the
+    player to Leonardo's debrief with an authored explanation matched to the specific
+    failure category of the attempt, mark the era as withdrawn, and allow unlimited
+    retries with a fresh seed. Withdrawal SHALL reduce, not zero, the mastery credit
+    available from that era until a later pass.
+  sources:
+  - source_type: openspec_change
+    locator: openspec/changes/temporal-finops-expedition/specs/era-expeditions/spec.md
+    title: era-expeditions
+    revision: sha256:ab7a834bb9ba87e06a79f6faaf3be4e84a3ff77146a5fea42590cf841bcfce0f
+  business_rules:
+  - rule_id: openspec:temporal-finops-expedition:era-expeditions:ee-003-withdrawing-is-always-available-and-never-destroys-progress:withdraw-and-retry
+    name: Withdraw and retry
+    given: a player mid-way through the Champagne routing trial
+    when: they withdraw after choosing an overpriced route segment
+    then: the debrief explains fee-versus-risk routing specifically, the era is marked
+      withdrawn, clues remain collected, and a retry generates a fresh seed
+    priority: null
+  - rule_id: openspec:temporal-finops-expedition:era-expeditions:ee-003-withdrawing-is-always-available-and-never-destroys-progress:failure-categories-select-explanations
+    name: Failure categories select explanations
+    given: two withdrawn Babylon attempts, one with an unbalanced ledger and one with
+      an illegal interest rate
+    when: each debrief runs
+    then: each shows the explanation authored for its failure category, not a generic
+      message
+    priority: null
+  constraints: []
+  evidence_links: []
+  completeness_findings: []
+- schema_version: '1'
+  requirement_id: openspec:temporal-finops-expedition:era-expeditions:ee-004-era-hints-follow-the-bounded-guidance-contract
+  title: EE-004 Era hints follow the bounded-guidance contract
+  summary: Each era SHALL provide authored nudge, hint, and reveal tiers scoped to
+    its trial, served through the existing fixed-tier guidance interface. When the
+    optional Worker is configured, guidance requests MAY include the era as a validated
+    enum; unknown or missing era values SHALL fall back to authored era hints without
+    error. No player-entered text SHALL be introduced.
+  sources:
+  - source_type: openspec_change
+    locator: openspec/changes/temporal-finops-expedition/specs/era-expeditions/spec.md
+    title: era-expeditions
+    revision: sha256:ab7a834bb9ba87e06a79f6faaf3be4e84a3ff77146a5fea42590cf841bcfce0f
+  business_rules:
+  - rule_id: openspec:temporal-finops-expedition:era-expeditions:ee-004-era-hints-follow-the-bounded-guidance-contract:authored-era-hints-without-a-worker
+    name: Authored era hints without a Worker
+    given: no guidance endpoint is configured
+    when: the player requests a hint during the Egypt trial
+    then: the authored Egypt hint for the current trial stage is shown at the requested
+      tier
+    priority: null
+  - rule_id: openspec:temporal-finops-expedition:era-expeditions:ee-004-era-hints-follow-the-bounded-guidance-contract:invalid-era-value-at-the-worker
+    name: Invalid era value at the Worker
+    given: a guidance request whose era field is not in the known era list
+    when: the Worker validates the request
+    then: the request is handled as era-less and the client's authored fallback remains
+      available
+    priority: null
+  constraints: []
+  evidence_links: []
+  completeness_findings: []
+- schema_version: '1'
+  requirement_id: openspec:temporal-finops-expedition:era-expeditions:ee-005-era-scenes-meet-the-established-experience-quality-standard
+  title: EE-005 Era scenes meet the established experience-quality standard
+  summary: Every era scene, clue interaction, trial control, and withdraw action SHALL
+    be keyboard-operable with visible focus, honor reduced motion and high contrast,
+    and announce trial feedback (accepted step, rejected step, pass, withdraw) through
+    the existing feedback channel.
+  sources:
+  - source_type: openspec_change
+    locator: openspec/changes/temporal-finops-expedition/specs/era-expeditions/spec.md
+    title: era-expeditions
+    revision: sha256:ab7a834bb9ba87e06a79f6faaf3be4e84a3ff77146a5fea42590cf841bcfce0f
+  business_rules:
+  - rule_id: openspec:temporal-finops-expedition:era-expeditions:ee-005-era-scenes-meet-the-established-experience-quality-standard:announced-trial-feedback
+    name: Announced trial feedback
+    given: a screen-reader user in the Florence trial
+    when: they post a balancing entry that the evaluator rejects
+    then: the rejection and its era-language reason are announced without moving focus
+      unexpectedly
+    priority: null
+  constraints: []
+  evidence_links: []
+  completeness_findings: []
+- schema_version: '1'
+  requirement_id: openspec:temporal-finops-expedition:expedition-continuity:ec-001-save-schema-version-2-extends-the-chronicle-with-expedition-state
+  title: EC-001 Save schema version 2 extends the chronicle with expedition state
+  summary: The save schema SHALL move to version 2, embedding an expedition block
+    (per-era status and best credit, mastery scores, revealed inventions, codex completion)
+    alongside the existing state and run. All existing game-continuity guarantees
+    (GC-001, GC-002) SHALL continue to hold for version 2 saves.
+  sources:
+  - source_type: openspec_change
+    locator: openspec/changes/temporal-finops-expedition/specs/expedition-continuity/spec.md
+    title: expedition-continuity
+    revision: sha256:0c715dc1eeaf1532cfa380801c3a729d70279e31e01a53326e811134faf66385
+  business_rules:
+  - rule_id: openspec:temporal-finops-expedition:expedition-continuity:ec-001-save-schema-version-2-extends-the-chronicle-with-expedition-state:mid-expedition-refresh
+    name: Mid-expedition refresh
+    given: a player who completed Babylon, is mid-exploration in Athens, and has one
+      invention revealed
+    when: the page is refreshed and Continue is chosen
+    then: Babylon's completion, the revealed invention, current mastery, and the Athens
+      in-progress exploration state are restored
+    priority: null
+  - rule_id: openspec:temporal-finops-expedition:expedition-continuity:ec-001-save-schema-version-2-extends-the-chronicle-with-expedition-state:mid-trial-refresh-resumes-safely
+    name: Mid-trial refresh resumes safely
+    given: a refresh occurs mid-way through a trial attempt
+    when: the save is resumed
+    then: "the era resumes at the trial entry with clues intact and a deterministic\
+      \ attempt state \u2014 either the identical seeded attempt or a cleanly restarted\
+      \ attempt, per the authored per-trial rule \u2014 and never a half-evaluated\
+      \ state"
+    priority: null
+  constraints: []
+  evidence_links: []
+  completeness_findings: []
+- schema_version: '1'
+  requirement_id: openspec:temporal-finops-expedition:expedition-continuity:ec-002-version-1-saves-migrate-losslessly
+  title: EC-002 Version 1 saves migrate losslessly
+  summary: A valid version 1 save SHALL load under version 2 with all base-game state
+    preserved exactly and a fresh initial expedition attached. Migration SHALL be
+    pure, total for all valid v1 saves, and covered by unit tests.
+  sources:
+  - source_type: openspec_change
+    locator: openspec/changes/temporal-finops-expedition/specs/expedition-continuity/spec.md
+    title: expedition-continuity
+    revision: sha256:0c715dc1eeaf1532cfa380801c3a729d70279e31e01a53326e811134faf66385
+  business_rules:
+  - rule_id: openspec:temporal-finops-expedition:expedition-continuity:ec-002-version-1-saves-migrate-losslessly:v1-mid-game-save
+    name: v1 mid-game save
+    given: a valid v1 save from before victory
+    when: it is loaded under the new schema
+    then: play resumes exactly as v1 behavior dictated, with the expedition initialized
+      but unreachable until victory
+    priority: null
+  constraints: []
+  evidence_links: []
+  completeness_findings: []
+- schema_version: '1'
+  requirement_id: openspec:temporal-finops-expedition:expedition-continuity:ec-003-corrupted-expedition-data-degrades-without-losing-the-base-game
+  title: EC-003 Corrupted expedition data degrades without losing the base game
+  summary: If the expedition block of an otherwise valid save is malformed, the game
+    SHALL restore the base-game state and attach a fresh expedition rather than discarding
+    the whole save. A wholly invalid save SHALL keep the existing GC-002 discard behavior.
+  sources:
+  - source_type: openspec_change
+    locator: openspec/changes/temporal-finops-expedition/specs/expedition-continuity/spec.md
+    title: expedition-continuity
+    revision: sha256:0c715dc1eeaf1532cfa380801c3a729d70279e31e01a53326e811134faf66385
+  business_rules:
+  - rule_id: openspec:temporal-finops-expedition:expedition-continuity:ec-003-corrupted-expedition-data-degrades-without-losing-the-base-game:malformed-expedition-block-only
+    name: Malformed expedition block only
+    given: a v2 save with valid state and run but a truncated expedition block
+    when: the save is parsed
+    then: the base game resumes normally and the expedition restarts empty, with no
+      exception thrown
+    priority: null
+  constraints: []
+  evidence_links: []
+  completeness_findings: []
+- schema_version: '1'
+  requirement_id: openspec:temporal-finops-expedition:finops-mastery-rank:fm-001-mastery-is-tracked-per-finops-domain
+  title: FM-001 Mastery is tracked per FinOps domain
+  summary: 'The game SHALL track mastery scores across the four FinOps Framework domains:
+    Understand Usage & Cost, Quantify Business Value, Optimize Usage & Cost, and Manage
+    the FinOps Practice. Every trial outcome and debrief answer SHALL be tagged to
+    one or more domains, and each era SHALL contribute to at least one domain per
+    the design mapping table.'
+  sources:
+  - source_type: openspec_change
+    locator: openspec/changes/temporal-finops-expedition/specs/finops-mastery-rank/spec.md
+    title: finops-mastery-rank
+    revision: sha256:a1029650b7b33ae17598c7ac0a61a1109ceed46c4c88b50b4e3fd0671e286201
+  business_rules:
+  - rule_id: openspec:temporal-finops-expedition:finops-mastery-rank:fm-001-mastery-is-tracked-per-finops-domain:domain-attribution
+    name: Domain attribution
+    given: the player passes the Egypt trial and answers its debrief
+    when: mastery is updated
+    then: the Quantify Business Value domain gains the authored credit and untagged
+      domains are unchanged
+    priority: null
+  constraints: []
+  evidence_links: []
+  completeness_findings: []
+- schema_version: '1'
+  requirement_id: openspec:temporal-finops-expedition:finops-mastery-rank:fm-002-rank-derives-from-domain-mastery-using-the-maturity-model
+  title: FM-002 Rank derives from domain mastery using the maturity model
+  summary: "The game SHALL derive one overall rank from the domain scores \u2014 Garzone,\
+    \ Discepolo, Maestro dei Conti \u2014 explicitly presented as mirroring the FinOps\
+    \ maturity stages Crawl, Walk, Run. Rank thresholds SHALL be authored constants;\
+    \ rank SHALL be a pure function of the mastery state; rank SHALL never decrease\
+    \ from retrying an era, because a later pass replaces (never stacks with) that\
+    \ era's reduced withdrawal credit at whichever value is higher."
+  sources:
+  - source_type: openspec_change
+    locator: openspec/changes/temporal-finops-expedition/specs/finops-mastery-rank/spec.md
+    title: finops-mastery-rank
+    revision: sha256:a1029650b7b33ae17598c7ac0a61a1109ceed46c4c88b50b4e3fd0671e286201
+  business_rules:
+  - rule_id: openspec:temporal-finops-expedition:finops-mastery-rank:fm-002-rank-derives-from-domain-mastery-using-the-maturity-model:rank-promotion
+    name: Rank promotion
+    given: domain scores just below the Discepolo thresholds
+    when: an era pass and strong debrief push the tagged domains past them
+    then: the rank becomes Discepolo and the promotion is announced
+    priority: null
+  - rule_id: openspec:temporal-finops-expedition:finops-mastery-rank:fm-002-rank-derives-from-domain-mastery-using-the-maturity-model:retry-never-demotes
+    name: Retry never demotes
+    given: a completed era retried with worse debrief answers
+    when: mastery is recomputed
+    then: the stored era credit and the overall rank are no lower than before
+    priority: null
+  constraints: []
+  evidence_links: []
+  completeness_findings: []
+- schema_version: '1'
+  requirement_id: openspec:temporal-finops-expedition:finops-mastery-rank:fm-003-the-ledger-of-mastery-presents-scores-honestly-and-locally
+  title: FM-003 The Ledger of Mastery presents scores honestly and locally
+  summary: The workshop hub SHALL contain a Ledger of Mastery showing per-domain progress,
+    the overall rank with its Crawl/Walk/Run correspondence, per-era status, and which
+    domains each completed era exercised. All scores SHALL live only in the local
+    save; no score SHALL leave the browser. The surface SHALL state it reflects understanding
+    of concepts, not certification.
+  sources:
+  - source_type: openspec_change
+    locator: openspec/changes/temporal-finops-expedition/specs/finops-mastery-rank/spec.md
+    title: finops-mastery-rank
+    revision: sha256:a1029650b7b33ae17598c7ac0a61a1109ceed46c4c88b50b4e3fd0671e286201
+  business_rules:
+  - rule_id: openspec:temporal-finops-expedition:finops-mastery-rank:fm-003-the-ledger-of-mastery-presents-scores-honestly-and-locally:ledger-reflects-a-mixed-record
+    name: Ledger reflects a mixed record
+    given: three eras passed, one withdrawn, three unattempted
+    when: the Ledger of Mastery is opened
+    then: per-domain bars, the current rank, and each era's status are shown, and
+      refresh-plus-resume shows the identical ledger
+    priority: null
+  - rule_id: openspec:temporal-finops-expedition:finops-mastery-rank:fm-003-the-ledger-of-mastery-presents-scores-honestly-and-locally:scores-stay-local
+    name: Scores stay local
+    given: any expedition state
+    when: network traffic is inspected during play including guidance requests
+    then: no mastery, rank, or per-era score data is transmitted
+    priority: null
+  constraints: []
+  evidence_links: []
+  completeness_findings: []
+- schema_version: '1'
+  requirement_id: openspec:temporal-finops-expedition:maestro-debrief:md-001-every-trial-outcome-leads-to-a-debrief-with-leonardo
+  title: MD-001 Every trial outcome leads to a debrief with Leonardo
+  summary: After every trial pass and every withdrawal the game SHALL route the player
+    into an authored debrief dialogue with Leonardo before returning to the hub. The
+    debrief SHALL open by naming, in plain language, what the attempt demonstrated
+    the player understood and what it showed they missed, derived from the trial's
+    recorded outcome and failure category.
+  sources:
+  - source_type: openspec_change
+    locator: openspec/changes/temporal-finops-expedition/specs/maestro-debrief/spec.md
+    title: maestro-debrief
+    revision: sha256:0c3b97c7a20ffee81fbb5c5c7fbbb2854fe5cc14d40833063158851a66d28671
+  business_rules:
+  - rule_id: openspec:temporal-finops-expedition:maestro-debrief:md-001-every-trial-outcome-leads-to-a-debrief-with-leonardo:debrief-after-a-pass
+    name: Debrief after a pass
+    given: the player passes the Athens trial with an efficient allocation but a wrong
+      cost-per-trireme figure
+    when: the debrief opens
+    then: Leonardo credits the allocation reasoning and names unit cost as the missed
+      idea before questioning begins
+    priority: null
+  - rule_id: openspec:temporal-finops-expedition:maestro-debrief:md-001-every-trial-outcome-leads-to-a-debrief-with-leonardo:debrief-after-a-withdrawal
+    name: Debrief after a withdrawal
+    given: the player withdraws from any trial
+    when: the debrief opens
+    then: the missed concept is explained in era terms and the player is told the
+      era can be retried without penalty to base progress
+    priority: null
+  constraints: []
+  evidence_links: []
+  completeness_findings: []
+- schema_version: '1'
+  requirement_id: openspec:temporal-finops-expedition:maestro-debrief:md-002-debrief-questions-are-fixed-multiple-choice-with-authored-feedback-for-every-option
+  title: MD-002 Debrief questions are fixed multiple-choice with authored feedback
+    for every option
+  summary: "Each era's debrief SHALL ask exactly three authored multiple-choice questions\
+    \ that map the era's practice to its timeless discipline (era-language framing,\
+    \ modern-language options among the answers). Every option \u2014 correct and\
+    \ incorrect \u2014 SHALL carry authored feedback explaining why it is right or\
+    \ wrong. Questions SHALL be answerable from the era just played. No free-text\
+    \ input SHALL exist."
+  sources:
+  - source_type: openspec_change
+    locator: openspec/changes/temporal-finops-expedition/specs/maestro-debrief/spec.md
+    title: maestro-debrief
+    revision: sha256:0c3b97c7a20ffee81fbb5c5c7fbbb2854fe5cc14d40833063158851a66d28671
+  business_rules:
+  - rule_id: openspec:temporal-finops-expedition:maestro-debrief:md-002-debrief-questions-are-fixed-multiple-choice-with-authored-feedback-for-every-option:incorrect-answer-teaches
+    name: Incorrect answer teaches
+    given: the Rome debrief asks what the five-year farmed contract traded away
+    when: the player picks the incorrect option
+    then: authored feedback explains the commitment-versus-flexibility trade in both
+      era and modern terms, and the question's mastery credit reflects the miss
+    priority: null
+  - rule_id: openspec:temporal-finops-expedition:maestro-debrief:md-002-debrief-questions-are-fixed-multiple-choice-with-authored-feedback-for-every-option:question-bank-is-stable
+    name: Question bank is stable
+    given: the same era is debriefed twice
+    when: the questions are presented
+    then: they come from that era's fixed authored bank of three, with only option
+      order varying by seed
+    priority: null
+  constraints: []
+  evidence_links: []
+  completeness_findings: []
+- schema_version: '1'
+  requirement_id: openspec:temporal-finops-expedition:maestro-debrief:md-003-the-closing-codex-dialogue-bridges-all-eras-to-the-modern-framework
+  title: MD-003 The closing Codex dialogue bridges all eras to the modern framework
+  summary: When all seven eras are complete, an authored closing dialogue SHALL walk
+    the reconstructed Codex forward from Babylon to the present, explicitly naming
+    the modern discipline's phases (Inform, Optimize, Operate) and four domains, crediting
+    the FinOps Foundation framework, and stating that the game teaches concepts rather
+    than granting certification.
+  sources:
+  - source_type: openspec_change
+    locator: openspec/changes/temporal-finops-expedition/specs/maestro-debrief/spec.md
+    title: maestro-debrief
+    revision: sha256:0c3b97c7a20ffee81fbb5c5c7fbbb2854fe5cc14d40833063158851a66d28671
+  business_rules:
+  - rule_id: openspec:temporal-finops-expedition:maestro-debrief:md-003-the-closing-codex-dialogue-bridges-all-eras-to-the-modern-framework:closing-dialogue-content
+    name: Closing dialogue content
+    given: all seven folios are recovered
+    when: the player starts the closing dialogue
+    then: each era is linked to at least one named modern domain or capability and
+      the framework attribution is shown
+    priority: null
+  constraints: []
+  evidence_links: []
+  completeness_findings: []
+- schema_version: '1'
+  requirement_id: openspec:temporal-finops-expedition:maestro-debrief:md-004-debrief-answers-feed-mastery-deterministically
+  title: MD-004 Debrief answers feed mastery deterministically
+  summary: Each debrief answer SHALL contribute a defined, authored mastery delta
+    to the FinOps domains tagged on that question. Scoring SHALL be a pure function
+    of (trial outcome, answer choices) with no randomness, so identical sessions yield
+    identical Ledger of Mastery states.
+  sources:
+  - source_type: openspec_change
+    locator: openspec/changes/temporal-finops-expedition/specs/maestro-debrief/spec.md
+    title: maestro-debrief
+    revision: sha256:0c3b97c7a20ffee81fbb5c5c7fbbb2854fe5cc14d40833063158851a66d28671
+  business_rules:
+  - rule_id: openspec:temporal-finops-expedition:maestro-debrief:md-004-debrief-answers-feed-mastery-deterministically:reproducible-scoring
+    name: Reproducible scoring
+    given: two sessions with identical trial outcomes and identical debrief answers
+      across three eras
+    when: mastery is computed
+    then: both sessions produce identical per-domain scores and identical rank
+    priority: null
+  constraints: []
+  evidence_links: []
+  completeness_findings: []
+- schema_version: '1'
+  requirement_id: openspec:temporal-finops-expedition:temporal-hub:th-001-the-workshop-hub-opens-only-after-the-base-game-is-solved
+  title: TH-001 The workshop hub opens only after the base game is solved
+  summary: The workshop hub SHALL become reachable when the base game's victory state
+    is reached, from both a live playthrough and a resumed completed save. Before
+    victory the hub, the Codex Rationum, and the Occhio del Tempo SHALL NOT be reachable
+    or discoverable through any interaction, and the base game's ending SHALL be unchanged
+    for players who stop there.
+  sources:
+  - source_type: openspec_change
+    locator: openspec/changes/temporal-finops-expedition/specs/temporal-hub/spec.md
+    title: temporal-hub
+    revision: sha256:19cc63fd1a3f30215084523e09ac770b3b54ba41c03c0b4663b94fb48a9fe62c
+  business_rules:
+  - rule_id: openspec:temporal-finops-expedition:temporal-hub:th-001-the-workshop-hub-opens-only-after-the-base-game-is-solved:victory-unlocks-the-hub
+    name: Victory unlocks the hub
+    given: a player completes the base game's final puzzle
+    when: the victory dialogue with the Maestro concludes
+    then: the workshop hub scene is offered, and the pre-existing ending remains intact
+      if the player declines
+    priority: null
+  - rule_id: openspec:temporal-finops-expedition:temporal-hub:th-001-the-workshop-hub-opens-only-after-the-base-game-is-solved:a-completed-v1-save-enters-the-hub
+    name: A completed v1 save enters the hub
+    given: a version 1 save whose state is post-victory
+    when: the save is resumed under the new schema
+    then: the player can enter the workshop hub with a fresh, empty expedition
+    priority: null
+  constraints: []
+  evidence_links: []
+  completeness_findings: []
+- schema_version: '1'
+  requirement_id: openspec:temporal-finops-expedition:temporal-hub:th-002-eras-are-chosen-through-fixed-choice-dialogue-with-leonardo
+  title: TH-002 Eras are chosen through fixed-choice dialogue with Leonardo
+  summary: The hub SHALL present era selection exclusively through authored fixed-choice
+    dialogue at the Occhio del Tempo. All seven eras SHALL be selectable in any order
+    from the start. Each era option SHALL show its status (never attempted, withdrawn,
+    complete) and Leonardo SHALL recommend, but never enforce, chronological order.
+    No free-text input SHALL exist.
+  sources:
+  - source_type: openspec_change
+    locator: openspec/changes/temporal-finops-expedition/specs/temporal-hub/spec.md
+    title: temporal-hub
+    revision: sha256:19cc63fd1a3f30215084523e09ac770b3b54ba41c03c0b4663b94fb48a9fe62c
+  business_rules:
+  - rule_id: openspec:temporal-finops-expedition:temporal-hub:th-002-eras-are-chosen-through-fixed-choice-dialogue-with-leonardo:player-selects-an-era
+    name: Player selects an era
+    given: the player activates the Occhio del Tempo
+    when: they choose Babylon from the era dialogue
+    then: the Babylon era scene loads and the hub state records Babylon as in progress
+    priority: null
+  - rule_id: openspec:temporal-finops-expedition:temporal-hub:th-002-eras-are-chosen-through-fixed-choice-dialogue-with-leonardo:era-statuses-are-visible
+    name: Era statuses are visible
+    given: the player has completed Babylon and withdrawn from Rome
+    when: the era dialogue is opened
+    then: Babylon is marked complete, Rome is marked withdrawn with a retry option,
+      and the remaining eras are marked unattempted
+    priority: null
+  constraints: []
+  evidence_links: []
+  completeness_findings: []
+- schema_version: '1'
+  requirement_id: openspec:temporal-finops-expedition:temporal-hub:th-003-completed-eras-permanently-reveal-inventions-in-the-workshop
+  title: TH-003 Completed eras permanently reveal inventions in the workshop
+  summary: Each era completion SHALL permanently uncover exactly one authored Da Vinci
+    invention in a fixed workshop alcove. Revealed inventions SHALL be inspectable
+    through fixed-choice dialogue containing an authored description, SHALL persist
+    across sessions, and SHALL never revert. With all seven revealed, the workshop
+    SHALL present a completed gallery state and unlock the closing Codex dialogue.
+  sources:
+  - source_type: openspec_change
+    locator: openspec/changes/temporal-finops-expedition/specs/temporal-hub/spec.md
+    title: temporal-hub
+    revision: sha256:19cc63fd1a3f30215084523e09ac770b3b54ba41c03c0b4663b94fb48a9fe62c
+  business_rules:
+  - rule_id: openspec:temporal-finops-expedition:temporal-hub:th-003-completed-eras-permanently-reveal-inventions-in-the-workshop:first-folio-reveals-an-invention
+    name: First folio reveals an invention
+    given: the player completes the Babylon trial and debrief
+    when: they return to the workshop hub
+    then: the anemometer alcove is uncovered with an announced, reduced-motion-safe
+      reveal, and it remains uncovered after refresh and resume
+    priority: null
+  - rule_id: openspec:temporal-finops-expedition:temporal-hub:th-003-completed-eras-permanently-reveal-inventions-in-the-workshop:codex-completion
+    name: Codex completion
+    given: all seven eras are complete
+    when: the player returns to the hub
+    then: the full gallery is present and the closing dialogue reading the Codex forward
+      becomes available
+    priority: null
+  constraints: []
+  evidence_links: []
+  completeness_findings: []
+- schema_version: '1'
+  requirement_id: openspec:temporal-finops-expedition:temporal-hub:th-004-the-hub-meets-the-established-experience-quality-standard
+  title: TH-004 The hub meets the established experience-quality standard
+  summary: Every hub interaction (era selection, alcove inspection, Ledger of Mastery,
+    closing dialogue) SHALL be fully keyboard-operable with visible focus, SHALL honor
+    reduced-motion and high-contrast settings, and SHALL announce state changes through
+    the existing feedback channel.
+  sources:
+  - source_type: openspec_change
+    locator: openspec/changes/temporal-finops-expedition/specs/temporal-hub/spec.md
+    title: temporal-hub
+    revision: sha256:19cc63fd1a3f30215084523e09ac770b3b54ba41c03c0b4663b94fb48a9fe62c
+  business_rules:
+  - rule_id: openspec:temporal-finops-expedition:temporal-hub:th-004-the-hub-meets-the-established-experience-quality-standard:keyboard-only-hub-traversal
+    name: Keyboard-only hub traversal
+    given: a keyboard-only player in the hub
+    when: they traverse era selection, open an invention alcove, and open the Ledger
+      of Mastery
+    then: every control is reachable and operable in a logical order with visible
+      focus, and each opened panel is announced
+    priority: null
+  constraints: []
+  evidence_links: []
+  completeness_findings: []
+- schema_version: '1'
+  requirement_id: openspec:proof-of-excellence-pass:bounded-guidance:bg-001-guidance-is-fixed-action-and-cannot-mutate-game-state
+  title: BG-001 Guidance is fixed-action and cannot mutate game state
+  summary: "The game SHALL expose exactly three guidance tiers\u2014Nudge, Stronger\
+    \ hint, and Reveal next step. It SHALL not accept player-entered text. Requesting\
+    \ or receiving guidance SHALL NOT alter inventory, flags, route selection, score,\
+    \ or scene."
+  sources:
+  - source_type: openspec_change
+    locator: openspec/changes/proof-of-excellence-pass/specs/bounded-guidance/spec.md
+    title: bounded-guidance
+    revision: sha256:d4732aa8bed134c2a3b20ae204dc7322109c56881928fb35d1709b961197fc7a
+  business_rules:
+  - rule_id: openspec:proof-of-excellence-pass:bounded-guidance:bg-001-guidance-is-fixed-action-and-cannot-mutate-game-state:player-requests-a-guidance-tier
+    name: Player requests a guidance tier
+    given: a valid in-progress chronicle
+    when: the player selects one of the three guidance tiers
+    then: the game displays a hint for the current next action and the gameplay state
+      remains unchanged
+    priority: null
+  constraints: []
+  evidence_links: []
+  completeness_findings: []
+- schema_version: '1'
+  requirement_id: openspec:proof-of-excellence-pass:bounded-guidance:bg-002-the-endpoint-accepts-only-a-whitelisted-state-summary
+  title: BG-002 The endpoint accepts only a whitelisted state summary
+  summary: '`POST /api/maestro-guide` SHALL accept a tier and a whitelisted state
+    summary only. It SHALL reject malformed JSON, bodies over 4 KiB, unknown tiers,
+    unrecognized item/scene values, and a client-supplied `nextActionId` that does
+    not match the Worker-calculated action.'
+  sources:
+  - source_type: openspec_change
+    locator: openspec/changes/proof-of-excellence-pass/specs/bounded-guidance/spec.md
+    title: bounded-guidance
+    revision: sha256:d4732aa8bed134c2a3b20ae204dc7322109c56881928fb35d1709b961197fc7a
+  business_rules:
+  - rule_id: openspec:proof-of-excellence-pass:bounded-guidance:bg-002-the-endpoint-accepts-only-a-whitelisted-state-summary:a-client-attempts-to-select-a-spoiler-action
+    name: A client attempts to select a spoiler action
+    given: a starting-state summary
+    when: the request names `open-trapdoor` as its next action
+    then: the endpoint returns HTTP 400 and does not invoke the model provider
+    priority: null
+  - rule_id: openspec:proof-of-excellence-pass:bounded-guidance:bg-002-the-endpoint-accepts-only-a-whitelisted-state-summary:a-client-sends-an-oversized-request
+    name: A client sends an oversized request
+    given: a request body larger than 4 KiB
+    when: it is posted to the endpoint
+    then: the endpoint returns HTTP 413 and does not invoke the model provider
+    priority: null
+  constraints: []
+  evidence_links: []
+  completeness_findings: []
+- schema_version: '1'
+  requirement_id: openspec:proof-of-excellence-pass:bounded-guidance:bg-003-ai-output-is-bounded-and-safely-replaceable
+  title: BG-003 AI output is bounded and safely replaceable
+  summary: The endpoint SHALL return only `{ tier, message, nextActionId }`. It SHALL
+    enforce the requested tier, the calculated action ID, and a 45-word message limit.
+    The client SHALL use an authored response of the same shape if the endpoint is
+    unavailable, returns an error, or returns an invalid response.
+  sources:
+  - source_type: openspec_change
+    locator: openspec/changes/proof-of-excellence-pass/specs/bounded-guidance/spec.md
+    title: bounded-guidance
+    revision: sha256:d4732aa8bed134c2a3b20ae204dc7322109c56881928fb35d1709b961197fc7a
+  business_rules:
+  - rule_id: openspec:proof-of-excellence-pass:bounded-guidance:bg-003-ai-output-is-bounded-and-safely-replaceable:the-guide-endpoint-is-unavailable
+    name: The guide endpoint is unavailable
+    given: a player asks for a hint
+    when: the request times out, fails, or returns invalid JSON
+    then: the player receives an authored hint and can complete the game normally
+    priority: null
+  constraints: []
+  evidence_links: []
+  completeness_findings: []
+- schema_version: '1'
+  requirement_id: openspec:proof-of-excellence-pass:bounded-guidance:bg-004-secrets-and-player-data-stay-outside-the-client
+  title: BG-004 Secrets and player data stay outside the client
+  summary: The model provider key SHALL exist only in Worker secret configuration.
+    The browser SHALL send no player-entered text, account data, identifier, or save
+    history to the endpoint.
+  sources:
+  - source_type: openspec_change
+    locator: openspec/changes/proof-of-excellence-pass/specs/bounded-guidance/spec.md
+    title: bounded-guidance
+    revision: sha256:d4732aa8bed134c2a3b20ae204dc7322109c56881928fb35d1709b961197fc7a
+  business_rules:
+  - rule_id: openspec:proof-of-excellence-pass:bounded-guidance:bg-004-secrets-and-player-data-stay-outside-the-client:public-source-is-inspected
+    name: Public source is inspected
+    given: a reviewer searches browser JavaScript and HTML
+    when: they inspect guide integration
+    then: no provider secret is present and the request payload contains only the
+      documented state summary
+    priority: null
+  constraints: []
+  evidence_links: []
+  completeness_findings: []
+- schema_version: '1'
+  requirement_id: openspec:proof-of-excellence-pass:bounded-guidance:bg-005-public-guidance-requests-are-rate-limited
+  title: BG-005 Public guidance requests are rate limited
+  summary: The production Worker deployment SHALL apply a platform-backed server-side
+    rate limit to `POST /api/maestro-guide` before calling the model provider. An
+    AI-enabled deployment missing its allowed-origin or rate-limit configuration SHALL
+    fail closed. A limited request SHALL return HTTP 429 and the client SHALL display
+    authored guidance without altering game state.
+  sources:
+  - source_type: openspec_change
+    locator: openspec/changes/proof-of-excellence-pass/specs/bounded-guidance/spec.md
+    title: bounded-guidance
+    revision: sha256:d4732aa8bed134c2a3b20ae204dc7322109c56881928fb35d1709b961197fc7a
+  business_rules:
+  - rule_id: openspec:proof-of-excellence-pass:bounded-guidance:bg-005-public-guidance-requests-are-rate-limited:the-endpoint-rate-limit-is-reached
+    name: The endpoint rate limit is reached
+    given: the deployment's rate-limit threshold has been reached
+    when: the player requests a guidance tier
+    then: the endpoint returns HTTP 429 and the client presents its authored fallback
+    priority: null
+  - rule_id: openspec:proof-of-excellence-pass:bounded-guidance:bg-005-public-guidance-requests-are-rate-limited:an-ai-enabled-worker-is-missing-its-safety-binding
+    name: An AI-enabled Worker is missing its safety binding
+    given: a Worker has a provider key but lacks its configured allowed origin or
+      rate-limit binding
+    when: a valid guidance request is posted
+    then: the endpoint returns a non-success response without invoking the model provider
+    priority: null
+  constraints: []
+  evidence_links: []
+  completeness_findings: []
+- schema_version: '1'
+  requirement_id: openspec:proof-of-excellence-pass:experience-quality:eq-001-core-play-is-keyboard-accessible
+  title: EQ-001 Core play is keyboard accessible
+  summary: Every hotspot, navigation arrow, inventory slot, modal action, music control,
+    guidance control, and contrast control SHALL expose a meaningful accessible name,
+    visible focus indication, and Enter/Space activation where it is not a native
+    button.
+  sources:
+  - source_type: openspec_change
+    locator: openspec/changes/proof-of-excellence-pass/specs/experience-quality/spec.md
+    title: experience-quality
+    revision: sha256:dcf398549e56d91b1e33e20b01f892be1c63853129c40c073c37f3ec54814a5e
+  business_rules:
+  - rule_id: openspec:proof-of-excellence-pass:experience-quality:eq-001-core-play-is-keyboard-accessible:keyboard-only-opening-sequence
+    name: Keyboard-only opening sequence
+    given: a player uses only Tab, Shift+Tab, Enter, and Space
+    when: they begin a chronicle
+    then: they can take the mirror, select it, read the note, and close the note modal
+      without a pointer
+    priority: null
+  constraints: []
+  evidence_links: []
+  completeness_findings: []
+- schema_version: '1'
+  requirement_id: openspec:proof-of-excellence-pass:experience-quality:eq-002-feedback-respects-user-preferences
+  title: EQ-002 Feedback respects user preferences
+  summary: The game SHALL honour `prefers-reduced-motion`, offer a persistent high-contrast
+    preference for the current browser, and announce dialogue/puzzle feedback through
+    a polite live region.
+  sources:
+  - source_type: openspec_change
+    locator: openspec/changes/proof-of-excellence-pass/specs/experience-quality/spec.md
+    title: experience-quality
+    revision: sha256:dcf398549e56d91b1e33e20b01f892be1c63853129c40c073c37f3ec54814a5e
+  business_rules:
+  - rule_id: openspec:proof-of-excellence-pass:experience-quality:eq-002-feedback-respects-user-preferences:reduced-motion-player-receives-a-puzzle-update
+    name: Reduced-motion player receives a puzzle update
+    given: reduced motion is enabled by the operating system
+    when: a puzzle state changes
+    then: the result is understandable through text and no essential animated transition
+      is required
+    priority: null
+  - rule_id: openspec:proof-of-excellence-pass:experience-quality:eq-002-feedback-respects-user-preferences:player-enables-high-contrast
+    name: Player enables high contrast
+    given: the player enables high contrast
+    when: the page is refreshed
+    then: the high-contrast preference is restored and controls remain distinguishable
+      without colour alone
+    priority: null
+  constraints: []
+  evidence_links: []
+  completeness_findings: []
+- schema_version: '1'
+  requirement_id: openspec:proof-of-excellence-pass:game-continuity:gc-001-a-valid-chronicle-resumes-after-refresh
+  title: GC-001 A valid chronicle resumes after refresh
+  summary: The game SHALL save a versioned chronicle after state-changing player actions.
+    A valid save SHALL restore route, code, bell pattern, inventory, flags, curiosities,
+    selected scene, and visual world state. The title screen SHALL show Continue only
+    when a valid save exists.
+  sources:
+  - source_type: openspec_change
+    locator: openspec/changes/proof-of-excellence-pass/specs/game-continuity/spec.md
+    title: game-continuity
+    revision: sha256:5c6c673ff32e51b6c60570250fb93fa49ddb4fc743779e3713f01977f365810d
+  business_rules:
+  - rule_id: openspec:proof-of-excellence-pass:game-continuity:gc-001-a-valid-chronicle-resumes-after-refresh:player-refreshes-mid-chronicle
+    name: Player refreshes mid-chronicle
+    given: the player has acquired the mirror and brass key
+    when: the page is refreshed and Continue is chosen
+    then: both items, the matching flags, and the correct chronicle route are restored
+    priority: null
+  - rule_id: openspec:proof-of-excellence-pass:game-continuity:gc-001-a-valid-chronicle-resumes-after-refresh:player-refreshes-during-a-reward-transition
+    name: Player refreshes during a reward transition
+    given: a player has triggered a machine repair or a bread-for-gear puzzle
+    when: the page is refreshed before non-essential animation or dialogue completes
+    then: Continue restores a playable state with the trapdoor or gear reward already
+      available
+    priority: null
+  constraints: []
+  evidence_links: []
+  completeness_findings: []
+- schema_version: '1'
+  requirement_id: openspec:proof-of-excellence-pass:game-continuity:gc-002-corrupted-saves-fail-safely
+  title: GC-002 Corrupted saves fail safely
+  summary: The game SHALL discard malformed, incompatible, or invalid saved data without
+    throwing. It SHALL offer a new chronicle and SHALL NOT reuse partial state.
+  sources:
+  - source_type: openspec_change
+    locator: openspec/changes/proof-of-excellence-pass/specs/game-continuity/spec.md
+    title: game-continuity
+    revision: sha256:5c6c673ff32e51b6c60570250fb93fa49ddb4fc743779e3713f01977f365810d
+  business_rules:
+  - rule_id: openspec:proof-of-excellence-pass:game-continuity:gc-002-corrupted-saves-fail-safely:browser-storage-contains-malformed-data
+    name: Browser storage contains malformed data
+    given: the save value is not valid JSON or does not meet the current schema
+    when: the title screen loads
+    then: Continue is hidden and starting a new chronicle succeeds
+    priority: null
+  - rule_id: openspec:proof-of-excellence-pass:game-continuity:gc-002-corrupted-saves-fail-safely:browser-storage-is-unavailable
+    name: Browser storage is unavailable
+    given: the browser denies access to local storage
+    when: the game loads or a player changes game state
+    then: core play continues without throwing, while resume and persisted contrast
+      are unavailable for that session
+    priority: null
+  constraints: []
+  evidence_links: []
+  completeness_findings: []
+- schema_version: '1'
+  requirement_id: openspec:proof-of-excellence-pass:portfolio-experience:pe-001-a-reviewer-can-understand-the-project-before-playing
+  title: PE-001 A reviewer can understand the project before playing
+  summary: "The root page SHALL present a concise portfolio landing page instead of\
+    \ redirecting immediately. It SHALL include a direct game CTA labelled \u201C\
+    Play (6\u20138 min)\u201D, a feature summary, and engineering notes covering architecture,\
+    \ AI safety, accessibility, testing, and intentional limits."
+  sources:
+  - source_type: openspec_change
+    locator: openspec/changes/proof-of-excellence-pass/specs/portfolio-experience/spec.md
+    title: portfolio-experience
+    revision: sha256:450d4cfc0b6a73666ac9ad8f9347484c1aa1226bf647d8948ef14b98334e5078
+  business_rules:
+  - rule_id: openspec:proof-of-excellence-pass:portfolio-experience:pe-001-a-reviewer-can-understand-the-project-before-playing:reviewer-opens-the-published-root-url
+    name: Reviewer opens the published root URL
+    given: a visitor opens the GitHub Pages root URL
+    when: the page finishes loading
+    then: the visitor can find the labelled play CTA and engineering notes without
+      entering the game
+    priority: null
+  constraints: []
+  evidence_links: []
+  completeness_findings: []
+- schema_version: '1'
+  requirement_id: openspec:proof-of-excellence-pass:portfolio-experience:pe-002-the-game-communicates-the-current-objective
+  title: PE-002 The game communicates the current objective
+  summary: The game SHALL display the current chapter and one actionable objective
+    derived from state. It SHALL provide a visible entry to guidance without requiring
+    a puzzle failure or long wait.
+  sources:
+  - source_type: openspec_change
+    locator: openspec/changes/proof-of-excellence-pass/specs/portfolio-experience/spec.md
+    title: portfolio-experience
+    revision: sha256:450d4cfc0b6a73666ac9ad8f9347484c1aa1226bf647d8948ef14b98334e5078
+  business_rules:
+  - rule_id: openspec:proof-of-excellence-pass:portfolio-experience:pe-002-the-game-communicates-the-current-objective:a-new-chronicle-begins
+    name: A new chronicle begins
+    given: the player has started a new chronicle
+    when: the workshop is shown
+    then: the progress strip identifies the first chapter and an objective appropriate
+      to the starting state
+    priority: null
+  constraints: []
+  evidence_links: []
+  completeness_findings: []
+- schema_version: '1'
+  requirement_id: openspec:temporal-finops-expedition:era-expeditions:ee-006-each-era-presents-an-authored-realistic-visual-identity
+  title: EE-006 Each era presents an authored, realistic visual identity
+  summary: "Each era SHALL ship three authored realistic images unique to its civilization\
+    \ \u2014 scene backdrop, mentor portrait, and trial tableau \u2014 generated at\
+    \ authoring time from recorded art briefs, curated for historical accuracy, and\
+    \ committed as optimized static assets. All era interaction SHALL use the established\
+    \ dialogue-panel pattern with fixed multiple-choice options rendered over the\
+    \ imagery; text SHALL never be baked into images. Every image SHALL carry authored\
+    \ alt text. The compressed payload SHALL NOT exceed 200 KB per image and 3.0 MB\
+    \ across all era imagery, images SHALL lazy-load per era, and the base game's\
+    \ initial payload SHALL be unchanged. Dialogue panels SHALL keep required text\
+    \ contrast over any imagery, high-contrast mode SHALL use a solid panel background,\
+    \ and reduced motion SHALL disable any backdrop motion treatment."
+  sources:
+  - source_type: openspec_change
+    locator: openspec/changes/temporal-finops-expedition/specs/era-expeditions/spec.md
+    title: era-expeditions
+    revision: sha256:ab7a834bb9ba87e06a79f6faaf3be4e84a3ff77146a5fea42590cf841bcfce0f
+  business_rules:
+  - rule_id: openspec:temporal-finops-expedition:era-expeditions:ee-006-each-era-presents-an-authored-realistic-visual-identity:era-imagery-loads-offline-with-alt-text
+    name: Era imagery loads offline with alt text
+    given: the site is served statically with no network beyond the page itself
+    when: the player enters any era
+    then: the backdrop, mentor portrait, and trial tableau render from local assets
+      and each exposes its authored alt text
+    priority: null
+  - rule_id: openspec:temporal-finops-expedition:era-expeditions:ee-006-each-era-presents-an-authored-realistic-visual-identity:dialogue-stays-readable-over-imagery
+    name: Dialogue stays readable over imagery
+    given: a dialogue panel with multiple-choice options over the brightest region
+      of an era backdrop
+    when: rendered in default and high-contrast modes
+    then: the panel meets contrast requirements in both, using a solid background
+      in high contrast
+    priority: null
+  - rule_id: openspec:temporal-finops-expedition:era-expeditions:ee-006-each-era-presents-an-authored-realistic-visual-identity:payload-budget-holds
+    name: Payload budget holds
+    given: the complete set of committed era images
+    when: compressed sizes are measured in the automated check
+    then: no image exceeds 200 KB and the total does not exceed 3.0 MB, and the base
+      game's initial payload is unchanged
+    priority: null
+  constraints: []
+  evidence_links: []
+  completeness_findings: []

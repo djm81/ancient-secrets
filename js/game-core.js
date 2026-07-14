@@ -1,5 +1,55 @@
 export const SAVE_KEY = 'maestros-secret:chronicle';
-export const SAVE_VERSION = 1;
+export const SAVE_VERSION = 2;
+
+export const DIALOGUE_VALUES = Object.freeze({ insight: 'insight', compassion: 'compassion', ambition: 'ambition' });
+export const ENDINGS = Object.freeze({ keeper: 'keeper', light: 'light', flight: 'flight' });
+export const FIELD_NOTE_IDS = Object.freeze(['window', 'easel', 'candle', 'candelabra', 'duomoview']);
+
+export const SCENE_GRAPH = Object.freeze({
+  workshop: Object.freeze({ right: Object.freeze({ target: 'piazza' }) }),
+  piazza: Object.freeze({ left: Object.freeze({ target: 'workshop' }), right: Object.freeze({ target: 'library' }) }),
+  library: Object.freeze({ left: Object.freeze({ target: 'piazza' }) }),
+  duomoentry: Object.freeze({ left: Object.freeze({ target: 'piazza' }), right: Object.freeze({ target: 'duomogallery', requires: 'duomoSolved' }) }),
+  duomogallery: Object.freeze({ left: Object.freeze({ target: 'duomoentry' }) }),
+  cellar: Object.freeze({})
+});
+
+const interaction = (category, purpose) => Object.freeze({ category, purpose });
+export const INTERACTABLES = Object.freeze({
+  window: interaction('clue', 'Adds the Florence bearings Field Note.'),
+  machine: interaction('puzzle', 'Accepts the bronze gear and reveals the trapdoor.'),
+  easel: interaction('clue', 'Adds the reflected-writing Field Note.'),
+  pots: interaction('puzzle', 'Provides the brass key.'),
+  mirror: interaction('puzzle', 'Provides the tool needed to read the note.'),
+  note: interaction('clue', 'Explains the current randomized gear route.'),
+  candle: interaction('clue', 'Adds the night-work Field Note.'),
+  strongbox: interaction('puzzle', 'Accepts the discovered Roman-numeral code.'),
+  rug: interaction('clue', 'Identifies the hidden trapdoor location.'),
+  trapdoor: interaction('puzzle', 'Uses the ornate key to reach the Secret Study.'),
+  cat: interaction('curiosity', 'Awards the Golden Whisker curiosity.'),
+  duomo: interaction('transition', 'Enters the Duomo Vestibule.'),
+  libdoor: interaction('transition', 'Enters the Old Scriptorium.'),
+  lion: interaction('puzzle', 'Can yield the bronze gear on the lion route.'),
+  pigeon: interaction('curiosity', 'Awards the Quill of Wings curiosity.'),
+  bread: interaction('dialogue', 'Starts the baker dialogue and awards bread.'),
+  well: interaction('puzzle', 'Can yield the bronze gear on the well route.'),
+  spiral: interaction('curiosity', 'Awards the Spiral of Proportion curiosity.'),
+  fresco: interaction('puzzle', 'Can reveal the randomized Roman clue.'),
+  redbook: interaction('curiosity', 'Awards the Crimson Bookmark curiosity.'),
+  monk: interaction('dialogue', 'Starts Brother Matteo dialogue and can reveal the monk clue.'),
+  chest: interaction('puzzle', 'Uses the brass key and yields the crystal lens.'),
+  candelabra: interaction('clue', 'Adds the scriptorium light Field Note.'),
+  mosaic: interaction('clue', 'States the current bell order.'),
+  bell0: interaction('puzzle', 'Enters the first bell in the Duomo lock.'),
+  bell1: interaction('puzzle', 'Enters the second bell in the Duomo lock.'),
+  bell2: interaction('puzzle', 'Enters the third bell in the Duomo lock.'),
+  bell3: interaction('puzzle', 'Enters the fourth bell in the Duomo lock.'),
+  duomogate: interaction('transition', 'Enters the Whispering Gallery after the bell lock.'),
+  duomoexit: interaction('transition', 'Returns to the Piazza.'),
+  starchart: interaction('puzzle', 'Can reveal the randomized Roman clue.'),
+  duomoview: interaction('clue', 'Adds the Florence Below Field Note.'),
+  gallerydoor: interaction('transition', 'Returns to the Duomo Vestibule.')
+});
 
 export const ROUTES = Object.freeze({
   fresco: { label: 'the faded fresco in the Scriptorium', short: 'the fresco' },
@@ -30,12 +80,23 @@ const FLAG_DEFAULTS = Object.freeze({
   duomoSolved: false, galleryVisited: false, bellSteps: []
 });
 const SECRET_DEFAULTS = Object.freeze({ cat: false, pigeon: false, well: false, spiral: false, redbook: false });
-const SCENES = new Set(['workshop', 'piazza', 'library', 'duomoentry', 'duomogallery', 'cellar']);
+const SCENES = new Set(Object.keys(SCENE_GRAPH));
 const ITEMS = new Set(['mirror', 'brasskey', 'bread', 'gear', 'lens', 'ornatekey']);
 const TIERS = new Set(['nudge', 'hint', 'reveal']);
+const VALUES = new Set(Object.values(DIALOGUE_VALUES));
+const ENDING_VALUES = Object.freeze({ [ENDINGS.keeper]: DIALOGUE_VALUES.insight, [ENDINGS.light]: DIALOGUE_VALUES.compassion, [ENDINGS.flight]: DIALOGUE_VALUES.ambition });
+const ENCOUNTERS = new Set(['matteo', 'baker']);
+
+function initialDialogue() {
+  return { choices: { matteo: null, baker: null }, ending: null };
+}
+
+function initialNotes() {
+  return Object.fromEntries(FIELD_NOTE_IDS.map(id => [id, false]));
+}
 
 export function createInitialState() {
-  return { scene: 'workshop', inv: [], selected: null, flags: structuredClone(FLAG_DEFAULTS), secrets: structuredClone(SECRET_DEFAULTS) };
+  return { scene: 'workshop', inv: [], selected: null, flags: structuredClone(FLAG_DEFAULTS), secrets: structuredClone(SECRET_DEFAULTS), dialogue: initialDialogue(), notes: initialNotes() };
 }
 
 export function randomInt(max, random = Math.random) {
@@ -80,7 +141,53 @@ export function isValidState(state) {
       if (key === 'bellSteps') return state.flags[key].every(step => Number.isInteger(step) && step >= 0 && step <= 3);
       return typeof state.flags[key] === typeof value;
     });
-  return validFlags && Object.keys(SECRET_DEFAULTS).every(key => typeof state.secrets[key] === 'boolean');
+  const validDialogue = state.dialogue && state.dialogue.choices
+    && Object.keys(state.dialogue.choices).length === ENCOUNTERS.size
+    && [...ENCOUNTERS].every(key => state.dialogue.choices[key] === null || VALUES.has(state.dialogue.choices[key]))
+    && (state.dialogue.ending === null || (Object.hasOwn(ENDING_VALUES, state.dialogue.ending)
+      && Object.values(state.dialogue.choices).includes(ENDING_VALUES[state.dialogue.ending])));
+  const validNotes = state.notes && Object.keys(state.notes).length === FIELD_NOTE_IDS.length
+    && FIELD_NOTE_IDS.every(key => typeof state.notes[key] === 'boolean');
+  return validFlags && validDialogue && validNotes && Object.keys(SECRET_DEFAULTS).every(key => typeof state.secrets[key] === 'boolean');
+}
+
+export function getNavigation(state) {
+  const directions = SCENE_GRAPH[state?.scene] || {};
+  return Object.fromEntries(['left', 'right'].map(direction => {
+    const edge = directions[direction];
+    const available = edge && SCENE_GRAPH[edge.target] && (!edge.requires || state?.flags?.[edge.requires]);
+    return [direction, available ? edge : null];
+  }));
+}
+
+export function recordFieldNote(state, id) {
+  if (!isValidState(state) || !FIELD_NOTE_IDS.includes(id)) throw new Error('Cannot record an invalid Field Note.');
+  const next = structuredClone(state);
+  next.notes[id] = true;
+  return next;
+}
+
+export function chooseDialogue(state, encounter, value) {
+  if (!isValidState(state) || !ENCOUNTERS.has(encounter) || !VALUES.has(value) || state.dialogue.choices[encounter] !== null || state.dialogue.ending !== null) {
+    throw new Error('Cannot record an invalid dialogue choice.');
+  }
+  const next = structuredClone(state);
+  next.dialogue.choices[encounter] = value;
+  return next;
+}
+
+export function eligibleEndings(state) {
+  if (!isValidState(state)) throw new Error('Cannot derive endings from invalid state.');
+  const earned = new Set(Object.values(state.dialogue.choices).filter(Boolean));
+  const endings = Object.values(ENDINGS).filter(ending => earned.has(ENDING_VALUES[ending]));
+  return endings.length ? endings : [ENDINGS.keeper];
+}
+
+export function selectEnding(state, ending) {
+  if (!isValidState(state) || state.dialogue.ending !== null || !eligibleEndings(state).includes(ending)) throw new Error('Cannot select an unavailable ending.');
+  const next = structuredClone(state);
+  next.dialogue.ending = ending;
+  return next;
 }
 
 export function collectGearReward(state) {
@@ -114,9 +221,12 @@ export function createSave(state, run) {
 
 export function parseSave(raw) {
   try {
-    const value = typeof raw === 'string' ? JSON.parse(raw) : raw;
+    let value = typeof raw === 'string' ? JSON.parse(raw) : raw;
+    if (value?.version === 1) {
+      value = { ...value, version: SAVE_VERSION, state: { ...value.state, dialogue: initialDialogue(), notes: initialNotes() } };
+    }
     if (!value || value.version !== SAVE_VERSION || !isValidState(value.state) || !isValidRun(value.run)) return null;
-    return { version: value.version, savedAt: value.savedAt, state: structuredClone(value.state), run: structuredClone(value.run) };
+    return { version: SAVE_VERSION, savedAt: value.savedAt, state: structuredClone(value.state), run: structuredClone(value.run) };
   } catch {
     return null;
   }

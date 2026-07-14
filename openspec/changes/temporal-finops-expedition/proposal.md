@@ -19,7 +19,7 @@ After the current game is solved, the Maestro reveals the **Codex Rationum** —
 - Add an **era art direction**: every era ships a small set of realistic, painterly scene images unique to its civilization (backdrop, mentor portrait, trial tableau), generated during authoring with an image-generation skill and committed as optimized static assets. All era interaction reuses the established dialogue-panel pattern — fixed multiple-choice options rendered over the era imagery — so the expedition looks continuous with the base game.
 - Add the **Ledger of Mastery**: per-domain scores across the four FinOps domains and an overall maturity rank (Garzone / Discepolo / Maestro dei Conti, mirroring Crawl / Walk / Run).
 - Add **invention reveals**: each completed era permanently uncovers one Da Vinci invention in the workshop hub.
-- Extend the save schema to **version 2** with expedition progress, mastery scores, and revealed inventions; version 1 saves migrate losslessly.
+- Extend the save schema to **version 3** with expedition progress, mastery scores, and revealed inventions; valid version 1 and version 2 saves migrate losslessly (version 2 was introduced by the interactive-dialogue-branches change).
 - Optionally extend the existing bounded guidance Worker with era-aware hint context; authored fallback hints remain the required path.
 
 ## Capabilities
@@ -28,7 +28,7 @@ After the current game is solved, the Maestro reveals the **Codex Rationum** —
 - **era-expeditions** — the data-driven era engine, the seven authored eras, their trials, and the withdraw path.
 - **maestro-debrief** — post-trial dialogue, fixed multiple-choice questions, authored feedback for correct and incorrect answers.
 - **finops-mastery-rank** — per-domain scoring, maturity ranks, and the Ledger of Mastery surface.
-- **expedition-continuity** — save schema v2, v1 migration, and mid-expedition resume.
+- **expedition-continuity** — save schema v3, migration of older saves, and mid-expedition resume.
 
 ## Impact
 
@@ -51,7 +51,7 @@ After the current game is solved, the Maestro reveals the **Codex Rationum** —
 ## Rollback
 
 - The expedition is reachable only from the post-victory hub; removing the hub entry point restores the previous complete experience with no dangling references.
-- Save schema v2 is a superset of v1; the v1 parser path is retained, and a v2 save encountered by rolled-back code is discarded safely by the existing version check rather than partially restored.
+- Save schema v3 is a superset of v2; the existing migration paths are retained, and a v3 save encountered by rolled-back code is discarded safely by the existing version check rather than partially restored.
 - The optional era field in guidance requests is additive; the Worker and fallback both function if it is never sent.
 
 ## Out of scope

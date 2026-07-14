@@ -12,9 +12,9 @@ The workshop hub SHALL become reachable when the base game's victory state is re
 - **WHEN** the victory dialogue with the Maestro concludes
 - **THEN** the workshop hub scene is offered, and the pre-existing ending remains intact if the player declines
 
-#### Scenario: A completed v1 save enters the hub
+#### Scenario: A completed pre-expedition save enters the hub
 
-- **GIVEN** a version 1 save whose state is post-victory
+- **GIVEN** a valid version 1 or version 2 save whose state is post-victory
 - **WHEN** the save is resumed under the new schema
 - **THEN** the player can enter the workshop hub with a fresh, empty expedition
 

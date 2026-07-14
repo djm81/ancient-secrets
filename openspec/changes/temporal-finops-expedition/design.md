@@ -49,7 +49,7 @@ Withdrawing from a trial is always available, never punished with lost progress:
 
 - `js/expedition-core.js` — expedition state machine: era status (`locked`/`available`/`in-progress`/`withdrawn`/`complete`), trial evaluation, mastery scoring, rank derivation, invention reveal set. Pure functions, seed-injectable randomness (`random = Math.random` parameter pattern already used by `createRun`).
 - `js/era-content.js` — frozen authored data: era definitions, scene node graphs, clue texts, trial parameter tables, debrief question banks, failure-category explanations, invention descriptions. No logic.
-- `js/game-core.js` — `SAVE_VERSION` bumped to 2; `createSave` embeds an `expedition` block; `parseSave` accepts v2 and migrates v1 (`expedition: createInitialExpedition()`); v1 validation logic retained.
+- `js/game-core.js` — `SAVE_VERSION` bumped to 3; `createSave` embeds an `expedition` block; `parseSave` accepts v3 and migrates valid v1 and v2 saves (`expedition: createInitialExpedition()`), chaining the existing v1→v2 dialogue/notes migration.
 - `maestros-secret.html` — hub scene, era scenes, trial and debrief UI as additional inline-SVG scenes and dialogue panels in the existing house style.
 
 ### State & data flow
@@ -70,7 +70,7 @@ Trials are parameterized from `era-content.js` tables plus a per-attempt seed, s
 
 ### Persistence & rollback
 
-- Save v2 = v1 shape + `expedition: { eras: {...}, mastery: {...}, inventions: [...], codexComplete: bool }`. v1 → v2 migration is total and lossless. Rolled-back v1 code rejects v2 saves via the existing `version !== SAVE_VERSION` check (safe discard, already the documented recovery behavior).
+- Save v3 = v2 shape + `expedition: { eras: {...}, mastery: {...}, inventions: [...], codexComplete: bool }`. Migration from valid v1 and v2 saves is total and lossless, reusing the existing v1→v2 dialogue/notes migration. Rolled-back code rejects v3 saves via the existing `version !== SAVE_VERSION` check (safe discard, already the documented recovery behavior).
 - Corrupted expedition blocks degrade to a fresh expedition without touching base-game progress.
 
 ### Accessibility
@@ -100,7 +100,7 @@ No framework, no router, no build step is added. The expedition reuses the exist
 
 ## 6. Delivery staging (mirrors tasks.md)
 
-- **Wave A — vertical slice:** save v2 + hub + engine + Babylon end-to-end (explore, trial, withdraw, debrief, mastery, reveal). Proves every mechanic once.
+- **Wave A — vertical slice:** save v3 + hub + engine + Babylon end-to-end (explore, trial, withdraw, debrief, mastery, reveal). Proves every mechanic once.
 - **Wave B — antiquity:** Egypt, Athens, Rome.
 - **Wave C — toward the Codex:** Champagne, Florence, The Age to Come, closing dialogue.
 - **Wave D — polish & proof:** Ledger of Mastery surface polish, invention gallery states, README/attribution, full validation matrix.

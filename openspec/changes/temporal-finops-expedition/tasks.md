@@ -5,8 +5,8 @@ Ordering follows the repository discipline: spec → tests → failing evidence 
 ## Wave A — vertical slice (schema, hub, engine, Babylon)
 
 - [ ] A1. Confirm specs in this change are accepted; record any scope adjustments back into proposal/design before coding.
-- [ ] A2. Write failing unit tests for save v2: `createSave` embeds expedition, `parseSave` accepts v2, migrates valid v1 (EC-002), degrades malformed expedition blocks (EC-003). Record failing evidence.
-- [ ] A3. Implement `SAVE_VERSION = 2`, migration, and expedition-block validation in `game-core.js`; record passing evidence.
+- [ ] A2. Write failing unit tests for save v3: `createSave` embeds expedition, `parseSave` accepts v3, migrates valid v1 and v2 saves (EC-002), degrades malformed expedition blocks (EC-003). Record failing evidence.
+- [ ] A3. Implement `SAVE_VERSION = 3`, chained migration, and expedition-block validation in `game-core.js`; record passing evidence.
 - [ ] A4. Write failing unit tests for `expedition-core.js`: era status machine, withdraw semantics (EE-003), mastery deltas and rank derivation purity (MD-004, FM-001, FM-002), retry-never-demotes (FM-002).
 - [ ] A5. Implement `expedition-core.js`; record passing evidence.
 - [ ] A6. Author `era-content.js` structure and the complete Babylon era: scene graph, mentor, three clues, ledger trial tables, failure-category explanations, three debrief questions with per-option feedback, hint tiers.

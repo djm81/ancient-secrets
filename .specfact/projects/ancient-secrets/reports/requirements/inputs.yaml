@@ -152,19 +152,65 @@ requirements:
   evidence_links: []
   completeness_findings: []
 - schema_version: '1'
-  requirement_id: openspec:temporal-finops-expedition:expedition-continuity:ec-001-save-schema-version-2-extends-the-chronicle-with-expedition-state
-  title: EC-001 Save schema version 2 extends the chronicle with expedition state
-  summary: The save schema SHALL move to version 2, embedding an expedition block
+  requirement_id: openspec:temporal-finops-expedition:era-expeditions:ee-006-each-era-presents-an-authored-realistic-visual-identity
+  title: EE-006 Each era presents an authored, realistic visual identity
+  summary: "Each era SHALL ship three authored realistic images unique to its civilization\
+    \ \u2014 scene backdrop, mentor portrait, and trial tableau \u2014 generated at\
+    \ authoring time from recorded art briefs, curated for historical accuracy, and\
+    \ committed as optimized static assets. All era interaction SHALL use the established\
+    \ dialogue-panel pattern with fixed multiple-choice options rendered over the\
+    \ imagery; text SHALL never be baked into images. Every image SHALL carry authored\
+    \ alt text. The compressed payload SHALL NOT exceed 200 KB per image and 3.0 MB\
+    \ across all era imagery, images SHALL lazy-load per era, and the base game's\
+    \ initial payload SHALL be unchanged. Dialogue panels SHALL keep required text\
+    \ contrast over any imagery, high-contrast mode SHALL use a solid panel background,\
+    \ and reduced motion SHALL disable any backdrop motion treatment."
+  sources:
+  - source_type: openspec_change
+    locator: openspec/changes/temporal-finops-expedition/specs/era-expeditions/spec.md
+    title: era-expeditions
+    revision: sha256:ab7a834bb9ba87e06a79f6faaf3be4e84a3ff77146a5fea42590cf841bcfce0f
+  business_rules:
+  - rule_id: openspec:temporal-finops-expedition:era-expeditions:ee-006-each-era-presents-an-authored-realistic-visual-identity:era-imagery-loads-offline-with-alt-text
+    name: Era imagery loads offline with alt text
+    given: the site is served statically with no network beyond the page itself
+    when: the player enters any era
+    then: the backdrop, mentor portrait, and trial tableau render from local assets
+      and each exposes its authored alt text
+    priority: null
+  - rule_id: openspec:temporal-finops-expedition:era-expeditions:ee-006-each-era-presents-an-authored-realistic-visual-identity:dialogue-stays-readable-over-imagery
+    name: Dialogue stays readable over imagery
+    given: a dialogue panel with multiple-choice options over the brightest region
+      of an era backdrop
+    when: rendered in default and high-contrast modes
+    then: the panel meets contrast requirements in both, using a solid background
+      in high contrast
+    priority: null
+  - rule_id: openspec:temporal-finops-expedition:era-expeditions:ee-006-each-era-presents-an-authored-realistic-visual-identity:payload-budget-holds
+    name: Payload budget holds
+    given: the complete set of committed era images
+    when: compressed sizes are measured in the automated check
+    then: no image exceeds 200 KB and the total does not exceed 3.0 MB, and the base
+      game's initial payload is unchanged
+    priority: null
+  constraints: []
+  evidence_links: []
+  completeness_findings: []
+- schema_version: '1'
+  requirement_id: openspec:temporal-finops-expedition:expedition-continuity:ec-001-save-schema-version-3-extends-the-chronicle-with-expedition-state
+  title: EC-001 Save schema version 3 extends the chronicle with expedition state
+  summary: The save schema SHALL move to version 3, embedding an expedition block
     (per-era status and best credit, mastery scores, revealed inventions, codex completion)
     alongside the existing state and run. All existing game-continuity guarantees
-    (GC-001, GC-002) SHALL continue to hold for version 2 saves.
+    (GC-001, GC-002) and the dialogue/notes data introduced with version 2 SHALL continue
+    to hold for version 3 saves.
   sources:
   - source_type: openspec_change
     locator: openspec/changes/temporal-finops-expedition/specs/expedition-continuity/spec.md
     title: expedition-continuity
-    revision: sha256:0c715dc1eeaf1532cfa380801c3a729d70279e31e01a53326e811134faf66385
+    revision: sha256:c0f8d80712ce00e6b84c9d4a991d43a4693864da769cc08b476de908e6c4d512
   business_rules:
-  - rule_id: openspec:temporal-finops-expedition:expedition-continuity:ec-001-save-schema-version-2-extends-the-chronicle-with-expedition-state:mid-expedition-refresh
+  - rule_id: openspec:temporal-finops-expedition:expedition-continuity:ec-001-save-schema-version-3-extends-the-chronicle-with-expedition-state:mid-expedition-refresh
     name: Mid-expedition refresh
     given: a player who completed Babylon, is mid-exploration in Athens, and has one
       invention revealed
@@ -172,7 +218,7 @@ requirements:
     then: Babylon's completion, the revealed invention, current mastery, and the Athens
       in-progress exploration state are restored
     priority: null
-  - rule_id: openspec:temporal-finops-expedition:expedition-continuity:ec-001-save-schema-version-2-extends-the-chronicle-with-expedition-state:mid-trial-refresh-resumes-safely
+  - rule_id: openspec:temporal-finops-expedition:expedition-continuity:ec-001-save-schema-version-3-extends-the-chronicle-with-expedition-state:mid-trial-refresh-resumes-safely
     name: Mid-trial refresh resumes safely
     given: a refresh occurs mid-way through a trial attempt
     when: the save is resumed
@@ -185,23 +231,32 @@ requirements:
   evidence_links: []
   completeness_findings: []
 - schema_version: '1'
-  requirement_id: openspec:temporal-finops-expedition:expedition-continuity:ec-002-version-1-saves-migrate-losslessly
-  title: EC-002 Version 1 saves migrate losslessly
-  summary: A valid version 1 save SHALL load under version 2 with all base-game state
-    preserved exactly and a fresh initial expedition attached. Migration SHALL be
-    pure, total for all valid v1 saves, and covered by unit tests.
+  requirement_id: openspec:temporal-finops-expedition:expedition-continuity:ec-002-older-saves-migrate-losslessly
+  title: EC-002 Older saves migrate losslessly
+  summary: "A valid version 1 or version 2 save SHALL load under version 3 with all\
+    \ base-game state preserved exactly and a fresh initial expedition attached; version\
+    \ 1 saves additionally receive the existing v1\u2192v2 dialogue/notes migration.\
+    \ Migration SHALL be pure, total for all valid older saves, and covered by unit\
+    \ tests."
   sources:
   - source_type: openspec_change
     locator: openspec/changes/temporal-finops-expedition/specs/expedition-continuity/spec.md
     title: expedition-continuity
-    revision: sha256:0c715dc1eeaf1532cfa380801c3a729d70279e31e01a53326e811134faf66385
+    revision: sha256:c0f8d80712ce00e6b84c9d4a991d43a4693864da769cc08b476de908e6c4d512
   business_rules:
-  - rule_id: openspec:temporal-finops-expedition:expedition-continuity:ec-002-version-1-saves-migrate-losslessly:v1-mid-game-save
-    name: v1 mid-game save
-    given: a valid v1 save from before victory
+  - rule_id: openspec:temporal-finops-expedition:expedition-continuity:ec-002-older-saves-migrate-losslessly:v2-mid-game-save
+    name: v2 mid-game save
+    given: a valid v2 save from before victory
     when: it is loaded under the new schema
-    then: play resumes exactly as v1 behavior dictated, with the expedition initialized
+    then: play resumes exactly as v2 behavior dictated, with the expedition initialized
       but unreachable until victory
+    priority: null
+  - rule_id: openspec:temporal-finops-expedition:expedition-continuity:ec-002-older-saves-migrate-losslessly:v1-save-migrates-through-the-chain
+    name: v1 save migrates through the chain
+    given: a valid v1 save
+    when: it is loaded under the new schema
+    then: "dialogue and note data initialize per the existing v1\u2192v2 migration\
+      \ and a fresh expedition is attached"
     priority: null
   constraints: []
   evidence_links: []
@@ -216,11 +271,11 @@ requirements:
   - source_type: openspec_change
     locator: openspec/changes/temporal-finops-expedition/specs/expedition-continuity/spec.md
     title: expedition-continuity
-    revision: sha256:0c715dc1eeaf1532cfa380801c3a729d70279e31e01a53326e811134faf66385
+    revision: sha256:c0f8d80712ce00e6b84c9d4a991d43a4693864da769cc08b476de908e6c4d512
   business_rules:
   - rule_id: openspec:temporal-finops-expedition:expedition-continuity:ec-003-corrupted-expedition-data-degrades-without-losing-the-base-game:malformed-expedition-block-only
     name: Malformed expedition block only
-    given: a v2 save with valid state and run but a truncated expedition block
+    given: a v3 save with valid state and run but a truncated expedition block
     when: the save is parsed
     then: the base game resumes normally and the expedition restarts empty, with no
       exception thrown
@@ -436,7 +491,7 @@ requirements:
   - source_type: openspec_change
     locator: openspec/changes/temporal-finops-expedition/specs/temporal-hub/spec.md
     title: temporal-hub
-    revision: sha256:19cc63fd1a3f30215084523e09ac770b3b54ba41c03c0b4663b94fb48a9fe62c
+    revision: sha256:52692ea94e7b489c62cadeb5dea7b824878956b8166afbbaba406cd84e7ad2b7
   business_rules:
   - rule_id: openspec:temporal-finops-expedition:temporal-hub:th-001-the-workshop-hub-opens-only-after-the-base-game-is-solved:victory-unlocks-the-hub
     name: Victory unlocks the hub
@@ -445,9 +500,9 @@ requirements:
     then: the workshop hub scene is offered, and the pre-existing ending remains intact
       if the player declines
     priority: null
-  - rule_id: openspec:temporal-finops-expedition:temporal-hub:th-001-the-workshop-hub-opens-only-after-the-base-game-is-solved:a-completed-v1-save-enters-the-hub
-    name: A completed v1 save enters the hub
-    given: a version 1 save whose state is post-victory
+  - rule_id: openspec:temporal-finops-expedition:temporal-hub:th-001-the-workshop-hub-opens-only-after-the-base-game-is-solved:a-completed-pre-expedition-save-enters-the-hub
+    name: A completed pre-expedition save enters the hub
+    given: a valid version 1 or version 2 save whose state is post-victory
     when: the save is resumed under the new schema
     then: the player can enter the workshop hub with a fresh, empty expedition
     priority: null
@@ -466,7 +521,7 @@ requirements:
   - source_type: openspec_change
     locator: openspec/changes/temporal-finops-expedition/specs/temporal-hub/spec.md
     title: temporal-hub
-    revision: sha256:19cc63fd1a3f30215084523e09ac770b3b54ba41c03c0b4663b94fb48a9fe62c
+    revision: sha256:52692ea94e7b489c62cadeb5dea7b824878956b8166afbbaba406cd84e7ad2b7
   business_rules:
   - rule_id: openspec:temporal-finops-expedition:temporal-hub:th-002-eras-are-chosen-through-fixed-choice-dialogue-with-leonardo:player-selects-an-era
     name: Player selects an era
@@ -496,7 +551,7 @@ requirements:
   - source_type: openspec_change
     locator: openspec/changes/temporal-finops-expedition/specs/temporal-hub/spec.md
     title: temporal-hub
-    revision: sha256:19cc63fd1a3f30215084523e09ac770b3b54ba41c03c0b4663b94fb48a9fe62c
+    revision: sha256:52692ea94e7b489c62cadeb5dea7b824878956b8166afbbaba406cd84e7ad2b7
   business_rules:
   - rule_id: openspec:temporal-finops-expedition:temporal-hub:th-003-completed-eras-permanently-reveal-inventions-in-the-workshop:first-folio-reveals-an-invention
     name: First folio reveals an invention
@@ -526,7 +581,7 @@ requirements:
   - source_type: openspec_change
     locator: openspec/changes/temporal-finops-expedition/specs/temporal-hub/spec.md
     title: temporal-hub
-    revision: sha256:19cc63fd1a3f30215084523e09ac770b3b54ba41c03c0b4663b94fb48a9fe62c
+    revision: sha256:52692ea94e7b489c62cadeb5dea7b824878956b8166afbbaba406cd84e7ad2b7
   business_rules:
   - rule_id: openspec:temporal-finops-expedition:temporal-hub:th-004-the-hub-meets-the-established-experience-quality-standard:keyboard-only-hub-traversal
     name: Keyboard-only hub traversal
@@ -818,46 +873,132 @@ requirements:
   evidence_links: []
   completeness_findings: []
 - schema_version: '1'
-  requirement_id: openspec:temporal-finops-expedition:era-expeditions:ee-006-each-era-presents-an-authored-realistic-visual-identity
-  title: EE-006 Each era presents an authored, realistic visual identity
-  summary: "Each era SHALL ship three authored realistic images unique to its civilization\
-    \ \u2014 scene backdrop, mentor portrait, and trial tableau \u2014 generated at\
-    \ authoring time from recorded art briefs, curated for historical accuracy, and\
-    \ committed as optimized static assets. All era interaction SHALL use the established\
-    \ dialogue-panel pattern with fixed multiple-choice options rendered over the\
-    \ imagery; text SHALL never be baked into images. Every image SHALL carry authored\
-    \ alt text. The compressed payload SHALL NOT exceed 200 KB per image and 3.0 MB\
-    \ across all era imagery, images SHALL lazy-load per era, and the base game's\
-    \ initial payload SHALL be unchanged. Dialogue panels SHALL keep required text\
-    \ contrast over any imagery, high-contrast mode SHALL use a solid panel background,\
-    \ and reduced motion SHALL disable any backdrop motion treatment."
+  requirement_id: openspec:interactive-dialogue-branches:dialogue-scene-art:da-001-dialogue-art-is-original-local-and-accessible
+  title: DA-001 Dialogue art is original, local, and accessible
+  summary: The game SHALL ship one local original illustration for each of Brother
+    Matteo, the baker, and Leonardo. Each dialogue scene SHALL have meaningful alternative
+    text, a readable foreground panel, and no network image dependency.
   sources:
   - source_type: openspec_change
-    locator: openspec/changes/temporal-finops-expedition/specs/era-expeditions/spec.md
-    title: era-expeditions
-    revision: sha256:ab7a834bb9ba87e06a79f6faaf3be4e84a3ff77146a5fea42590cf841bcfce0f
+    locator: openspec/changes/interactive-dialogue-branches/specs/dialogue-scene-art/spec.md
+    title: dialogue-scene-art
+    revision: sha256:161b5efb2aa579453bd289153253a0537125a7b0e2fc67951cc0830678c30898
   business_rules:
-  - rule_id: openspec:temporal-finops-expedition:era-expeditions:ee-006-each-era-presents-an-authored-realistic-visual-identity:era-imagery-loads-offline-with-alt-text
-    name: Era imagery loads offline with alt text
-    given: the site is served statically with no network beyond the page itself
-    when: the player enters any era
-    then: the backdrop, mentor portrait, and trial tableau render from local assets
-      and each exposes its authored alt text
+  - rule_id: openspec:interactive-dialogue-branches:dialogue-scene-art:da-001-dialogue-art-is-original-local-and-accessible:a-dialogue-scene-opens-on-a-narrow-display
+    name: A dialogue scene opens on a narrow display
+    given: "a player opens any dialogue at 390 \xD7 844"
+    when: the art and choice panel render
+    then: the scene remains readable, choices remain reachable, and no horizontal
+      overflow occurs
     priority: null
-  - rule_id: openspec:temporal-finops-expedition:era-expeditions:ee-006-each-era-presents-an-authored-realistic-visual-identity:dialogue-stays-readable-over-imagery
-    name: Dialogue stays readable over imagery
-    given: a dialogue panel with multiple-choice options over the brightest region
-      of an era backdrop
-    when: rendered in default and high-contrast modes
-    then: the panel meets contrast requirements in both, using a solid background
-      in high contrast
+  constraints: []
+  evidence_links: []
+  completeness_findings: []
+- schema_version: '1'
+  requirement_id: openspec:interactive-dialogue-branches:interactive-dialogue:id-001-dialogue-choices-are-deterministic-and-earned
+  title: ID-001 Dialogue choices are deterministic and earned
+  summary: 'Brother Matteo and the baker SHALL each offer exactly one authored value
+    choice: insight, compassion, or ambition. Each valid choice SHALL persist once,
+    preserve core puzzle solvability, and unlock its matching successful Leonardo
+    resolution.'
+  sources:
+  - source_type: openspec_change
+    locator: openspec/changes/interactive-dialogue-branches/specs/interactive-dialogue/spec.md
+    title: interactive-dialogue
+    revision: sha256:a659d5f8392aeeeb7907dd56f2c478612475b92a02e0dd8c8fe289dea7a83aea
+  business_rules:
+  - rule_id: openspec:interactive-dialogue-branches:interactive-dialogue:id-001-dialogue-choices-are-deterministic-and-earned:a-baker-choice-preserves-the-bread-route
+    name: A baker choice preserves the bread route
+    given: a new chronicle at the baker stall
+    when: the player makes any valid dialogue choice
+    then: the value is saved, bread is awarded, and both randomized gear routes remain
+      playable
     priority: null
-  - rule_id: openspec:temporal-finops-expedition:era-expeditions:ee-006-each-era-presents-an-authored-realistic-visual-identity:payload-budget-holds
-    name: Payload budget holds
-    given: the complete set of committed era images
-    when: compressed sizes are measured in the automated check
-    then: no image exceeds 200 KB and the total does not exceed 3.0 MB, and the base
-      game's initial payload is unchanged
+  - rule_id: openspec:interactive-dialogue-branches:interactive-dialogue:id-001-dialogue-choices-are-deterministic-and-earned:a-finale-offers-only-earned-resolutions
+    name: A finale offers only earned resolutions
+    given: a chronicle with one or more earned dialogue values
+    when: Leonardo opens the final dialogue
+    then: every matching ending is selectable, at least one ending is available, and
+      selecting it saves the terminal resolution
+    priority: null
+  - rule_id: openspec:interactive-dialogue-branches:interactive-dialogue:id-001-dialogue-choices-are-deterministic-and-earned:a-terminal-dialogue-cannot-strand-a-chronicle
+    name: A terminal dialogue cannot strand a chronicle
+    given: Leonardo's final dialogue is open
+    when: the player presses Escape or cycles keyboard focus
+    then: the ending choices remain available and keyboard focus stays within the
+      dialogue until an ending is selected
+    priority: null
+  constraints: []
+  evidence_links: []
+  completeness_findings: []
+- schema_version: '1'
+  requirement_id: openspec:interactive-dialogue-branches:interactive-dialogue:id-002-chronicles-retain-compatible-dialogue-data
+  title: ID-002 Chronicles retain compatible dialogue data
+  summary: The game SHALL migrate valid version-1 saves with empty dialogue and Field
+    Notes data. Invalid dialogue or ending data SHALL invalidate the chronicle safely.
+  sources:
+  - source_type: openspec_change
+    locator: openspec/changes/interactive-dialogue-branches/specs/interactive-dialogue/spec.md
+    title: interactive-dialogue
+    revision: sha256:a659d5f8392aeeeb7907dd56f2c478612475b92a02e0dd8c8fe289dea7a83aea
+  business_rules:
+  - rule_id: openspec:interactive-dialogue-branches:interactive-dialogue:id-002-chronicles-retain-compatible-dialogue-data:a-prior-chronicle-resumes
+    name: A prior chronicle resumes
+    given: a structurally valid version-1 chronicle
+    when: it is loaded by the version-2 game
+    then: it resumes with no earned values or notes and remains playable
+    priority: null
+  - rule_id: openspec:interactive-dialogue-branches:interactive-dialogue:id-002-chronicles-retain-compatible-dialogue-data:a-prior-bread-reward-still-permits-its-dialogue
+    name: A prior bread reward still permits its dialogue
+    given: a valid version-1 chronicle where the baker's bread was already taken
+    when: it is migrated and the player returns to the baker
+    then: the baker dialogue remains available, records one value, and does not award
+      duplicate bread
+    priority: null
+  constraints: []
+  evidence_links: []
+  completeness_findings: []
+- schema_version: '1'
+  requirement_id: openspec:interactive-dialogue-branches:navigation-and-affordance-integrity:na-001-every-visible-navigation-control-reaches-a-valid-destination
+  title: NA-001 Every visible navigation control reaches a valid destination
+  summary: The scene graph SHALL define every visible arrow target. A navigation control
+    SHALL only be visible when its target exists and its condition is satisfied. Duomo
+    Vestibule SHALL return to Piazza and expose Whispering Gallery navigation after
+    the bell gate unlocks; Whispering Gallery SHALL return to the Vestibule.
+  sources:
+  - source_type: openspec_change
+    locator: openspec/changes/interactive-dialogue-branches/specs/navigation-and-affordance-integrity/spec.md
+    title: navigation-and-affordance-integrity
+    revision: sha256:257b428bce03b5fbaa80ba8051a8c614aebf382974bec6da0e7f282c39736f11
+  business_rules:
+  - rule_id: openspec:interactive-dialogue-branches:navigation-and-affordance-integrity:na-001-every-visible-navigation-control-reaches-a-valid-destination:the-duomo-bell-gate-opens-a-navigation-route
+    name: The Duomo bell gate opens a navigation route
+    given: a player is in the Duomo Vestibule
+    when: they complete the current bell sequence
+    then: the right navigation control names and enters the Whispering Gallery
+    priority: null
+  constraints: []
+  evidence_links: []
+  completeness_findings: []
+- schema_version: '1'
+  requirement_id: openspec:interactive-dialogue-branches:navigation-and-affordance-integrity:na-002-every-marked-interactable-has-a-persistent-gameplay-purpose
+  title: NA-002 Every marked interactable has a persistent gameplay purpose
+  summary: Every `data-hs` interactable SHALL have a registry entry categorized as
+    puzzle, reusable clue, curiosity, transition, or dialogue. The Window, Easel,
+    Candle, Candelabra, and Florence Below SHALL create persistent, reopenable Field
+    Notes with an authored useful insight.
+  sources:
+  - source_type: openspec_change
+    locator: openspec/changes/interactive-dialogue-branches/specs/navigation-and-affordance-integrity/spec.md
+    title: navigation-and-affordance-integrity
+    revision: sha256:257b428bce03b5fbaa80ba8051a8c614aebf382974bec6da0e7f282c39736f11
+  business_rules:
+  - rule_id: openspec:interactive-dialogue-branches:navigation-and-affordance-integrity:na-002-every-marked-interactable-has-a-persistent-gameplay-purpose:an-observation-is-reopened
+    name: An observation is reopened
+    given: a player has inspected the Workshop Window
+    when: they open Field Notes later in the chronicle
+    then: the window's authored travel insight is available without revisiting the
+      hotspot
     priority: null
   constraints: []
   evidence_links: []

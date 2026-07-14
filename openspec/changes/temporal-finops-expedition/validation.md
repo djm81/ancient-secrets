@@ -21,8 +21,8 @@ Status: **pending** — populated per wave as evidence lands (see tasks.md). No 
 | FM-001 per-domain mastery attribution | unit | — | pending |
 | FM-002 rank derivation; retry never demotes | unit | — | pending |
 | FM-003 honest local Ledger; no score egress | manual (UI + network inspection) | — | pending |
-| EC-001 v2 schema; mid-expedition/mid-trial resume | unit + manual refresh scenarios | — | pending |
-| EC-002 lossless v1 migration | unit | — | pending |
+| EC-001 v3 schema; mid-expedition/mid-trial resume | unit + manual refresh scenarios | — | pending |
+| EC-002 lossless v1/v2 migration | unit | — | pending |
 | EC-003 expedition-block degradation | unit | — | pending |
 
 ## Manual scenario notes

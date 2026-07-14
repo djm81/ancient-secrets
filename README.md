@@ -20,7 +20,27 @@ A compact Renaissance point-and-click adventure set in Florence in 1503. You pla
 - **Static-first:** GitHub Pages hosts the complete game. Browser storage holds only the current chronicle; no account or analytics is required.
 - **Bounded guidance:** the player chooses Nudge, Stronger Hint, or Reveal Next Step. The game sends no free text, identity, or save history. The Worker independently validates the whitelisted game summary and may only word the already-calculated next action.
 - **Safe fallback:** if no Worker URL is configured—or the Worker, model provider, CORS policy, or rate limit fails—the game displays an authored hint and remains fully playable.
-- **Evidence-led changes:** [the active OpenSpec change](openspec/changes/proof-of-excellence-pass/) maps requirements to tests and manual QA evidence.
+- **Evidence-led changes:** OpenSpec changes under [`openspec/changes/`](openspec/changes/) map requirements to tests and manual QA evidence. All accepted requirements are additionally captured as a [SpecFact requirements bundle](.specfact/projects/ancient-secrets/) (`specfact requirements validate --bundle .specfact/projects/ancient-secrets`) so evidence coverage is machine-checkable.
+
+## Planned extension: The Codex Rationum
+
+A proposed second act, specified in [`openspec/changes/temporal-finops-expedition/`](openspec/changes/temporal-finops-expedition/) and not yet implemented. After finding the Maestro, the player discovers the **Codex Rationum** — a ledger-codex Leonardo assembled with Fra Luca Pacioli, the father of double-entry bookkeeping (their collaboration is historical). Seven folios are missing, each bound to how one civilization ran its finances. Leonardo's **Occhio del Tempo** projects the player into each era to earn the folio back.
+
+Each era is a self-contained expedition grounded in documented instruments of its time:
+
+| Era | Trial | Timeless discipline |
+|---|---|---|
+| Babylon, ~1750 BCE | Reconcile a temple grain ledger; price loans within Hammurabi's interest caps | Cost visibility, allocation, anomaly detection |
+| Egypt, ~1300 BCE | Forecast the harvest from nilometer readings; budget granaries and reserves | Planning, forecasting, budgeting |
+| Athens, ~447 BCE | Allocate Delian tribute; assign liturgies; compute cost per trireme | Chargeback, unit economics, benchmarking |
+| Rome, ~70 CE | Choose farmed tax contracts vs. direct collection; audit the publicani | Commitment discounts, rate optimization, governance |
+| Champagne Fairs, ~1250 | Route a Templar letter of credit from Bruges to Genoa at least cost and risk | Placement, settlement, rate optimization |
+| Florence, 1494 | Balance Medici books with Pacioli; expose the fraud the totals conceal | Reporting, the full Inform loop |
+| The Age to Come | Operate Leonardo's metered water-works on rented capacity | The variable cost model, end to end |
+
+Mechanics: explore each era's realistically illustrated scenes, learn from an era mentor, pass (or withdraw from and retry) a deterministic trial, then debrief with Leonardo through fixed multiple-choice dialogue that names what you understood and what you missed. Every recovered folio uncovers one of Leonardo's hidden inventions in the workshop, and a local **Ledger of Mastery** tracks understanding across the four FinOps domains toward a rank of Garzone, Discepolo, or Maestro dei Conti (mirroring the Crawl/Walk/Run maturity model).
+
+The concept translates the [FinOps Framework](https://www.finops.org/framework/) (FinOps Foundation) into pre-cloud financial operations; it teaches the discipline's ideas and claims no certification. All content stays authored and static-first: era imagery is produced at authoring time under a strict payload budget, dialogue remains fixed-choice, and the expedition is fully playable without any AI service.
 
 ## Optional AI guidance deployment
 

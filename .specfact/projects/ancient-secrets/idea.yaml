@@ -1,0 +1,9 @@
+title: Ancient Secrets
+narrative: Auto-derived plan from brownfield analysis of Ancient Secrets
+target_users: []
+value_hypothesis: ''
+constraints:
+- Python 3.11+
+- Typer for CLI
+- Pydantic for data validation
+metrics:

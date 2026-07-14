@@ -6,9 +6,9 @@ const run = { route: 'fresco', gearRoute: 'well', code: [1, 2, 3, 4], bellPatter
 const baseFlags = { mirrorTaken: false, noteRead: false, keyTaken: false, breadTaken: false, gearTaken: false, gearInstalled: false, trapdoorShown: false, chestOpen: false, lensTaken: false, cipherSeen: false, boxOpen: false, ornateTaken: false, catClicks: 0, wellUsed: false, duomoSolved: false, galleryVisited: false, bellSteps: [] };
 const secrets = { cat: false, pigeon: false, well: false, spiral: false, redbook: false };
 
-async function setChronicle(page, state) {
+async function setChronicle(page, state, version = 1, chronicleRun = run) {
   await page.goto('/maestros-secret.html');
-  await page.evaluate(({ key, value }) => localStorage.setItem(key, JSON.stringify(value)), { key: saveKey, value: { version: 1, savedAt: '2026-07-13T23:18:02+0200', state, run } });
+  await page.evaluate(({ key, value }) => localStorage.setItem(key, JSON.stringify(value)), { key: saveKey, value: { version, savedAt: '2026-07-13T23:18:02+0200', state, run: chronicleRun } });
   await page.reload();
 }
 
@@ -62,11 +62,121 @@ test('EQ-002: contrast persists and reduced motion removes essential animation',
   await expect(page.locator('#titlescreen .vitr')).toHaveCSS('animation-name', 'none');
 });
 
+test('NA-001 and NA-002: Field Notes and every reachable Duomo arrow remain useful', async ({ page }) => {
+  await page.goto('/maestros-secret.html');
+  await page.getByRole('button', { name: 'Begin the Adventure' }).click();
+  await page.locator('[data-hs="window"]').click();
+  await page.getByRole('button', { name: 'NOTES' }).click();
+  await expect(page.getByRole('heading', { name: 'Florentine Bearings' })).toBeVisible();
+  await expect(page.getByText(/dome is the surest landmark/i)).toBeVisible();
+  await page.getByRole('button', { name: 'Close' }).click();
+
+  const v2State = {
+    scene: 'duomoentry', inv: [], selected: null,
+    flags: { ...baseFlags, duomoSolved: true }, secrets,
+    dialogue: { choices: { matteo: null, baker: null }, ending: null },
+    notes: { window: false, easel: false, candle: false, candelabra: false, duomoview: false }
+  };
+  await setChronicle(page, v2State, 2);
+  await continueChronicle(page);
+  await expect(page.getByRole('button', { name: /Go left to Piazza della Signoria/ })).toBeVisible();
+  await expect(page.getByRole('button', { name: /Go right to Il Duomo — Whispering Gallery/ })).toBeVisible();
+  await page.getByRole('button', { name: /Go right to Il Duomo — Whispering Gallery/ }).click();
+  await expect(page.locator('#sc-duomogallery')).toHaveClass(/active/);
+  await page.getByRole('button', { name: /Go left to Il Duomo — Vestibule/ }).click();
+  await expect(page.locator('#sc-duomoentry')).toHaveClass(/active/);
+});
+
+test('ID-001: the baker dialogue awards bread and the finale saves an earned resolution', async ({ page }) => {
+  await page.goto('/maestros-secret.html');
+  await page.getByRole('button', { name: 'Begin the Adventure' }).click();
+  await page.getByRole('button', { name: /Go right to Piazza della Signoria/ }).click();
+  await page.locator('[data-hs="bread"]').click();
+  await expect(page.getByRole('dialog', { name: 'The Baker’s Gift' })).toBeVisible();
+  await page.getByRole('button', { name: 'Offer care' }).click();
+  await expect(page.getByRole('button', { name: 'Select Fresh Bread' })).toBeVisible();
+
+  const finalState = {
+    scene: 'workshop', inv: ['ornatekey'], selected: 'ornatekey',
+    flags: { ...baseFlags, mirrorTaken: true, noteRead: true, keyTaken: true, breadTaken: true, gearTaken: true, gearInstalled: true, trapdoorShown: true, chestOpen: true, lensTaken: true, cipherSeen: true, boxOpen: true, ornateTaken: true },
+    secrets,
+    dialogue: { choices: { matteo: null, baker: 'compassion' }, ending: null },
+    notes: { window: false, easel: false, candle: false, candelabra: false, duomoview: false }
+  };
+  await setChronicle(page, finalState, 2);
+  await continueChronicle(page);
+  await page.locator('[data-hs="trapdoor"]').click();
+  await expect(page.getByRole('dialog', { name: 'Leonardo’s Lesson' })).toBeVisible({ timeout: 5_000 });
+  await expect(page.getByRole('button', { name: 'Put the designs to Florence’s service' })).toBeEnabled();
+  await page.getByRole('button', { name: 'Put the designs to Florence’s service' }).click();
+  await expect(page.getByRole('dialog', { name: 'Florence’s Light' })).toBeVisible();
+});
+
+test('ID-002: a migrated bread reward still permits the baker dialogue without duplicate bread', async ({ page }) => {
+  const migratedBreadState = {
+    scene: 'piazza', inv: [], selected: null,
+    flags: { ...baseFlags, mirrorTaken: true, noteRead: true, breadTaken: true }, secrets
+  };
+  await setChronicle(page, migratedBreadState);
+  await continueChronicle(page);
+  await page.locator('[data-hs="bread"]').click();
+  await expect(page.getByRole('dialog', { name: 'The Baker’s Gift' })).toBeVisible();
+  await page.getByRole('button', { name: 'Offer care' }).click();
+  await expect(page.getByRole('button', { name: 'Select Fresh Bread' })).toHaveCount(0);
+  await expect.poll(() => page.evaluate(key => JSON.parse(localStorage.getItem(key)).state.dialogue.choices.baker, saveKey)).toBe('compassion');
+});
+
+test('ID-001: Leonardo’s terminal dialogue retains focus and cannot be escaped', async ({ page }) => {
+  const finalState = {
+    scene: 'workshop', inv: ['ornatekey'], selected: 'ornatekey',
+    flags: { ...baseFlags, mirrorTaken: true, noteRead: true, keyTaken: true, breadTaken: true, gearTaken: true, gearInstalled: true, trapdoorShown: true, chestOpen: true, lensTaken: true, cipherSeen: true, boxOpen: true, ornateTaken: true },
+    secrets,
+    dialogue: { choices: { matteo: null, baker: 'compassion' }, ending: null },
+    notes: { window: false, easel: false, candle: false, candelabra: false, duomoview: false }
+  };
+  await setChronicle(page, finalState, 2);
+  await continueChronicle(page);
+  await page.locator('[data-hs="trapdoor"]').click();
+  const dialogue = page.getByRole('dialog', { name: 'Leonardo’s Lesson' });
+  const light = page.getByRole('button', { name: 'Put the designs to Florence’s service' });
+  await expect(dialogue).toBeVisible({ timeout: 5_000 });
+  await expect(light).toBeFocused();
+  await page.keyboard.press('Shift+Tab');
+  await expect(page.getByRole('button', { name: 'Return to the Study' })).toBeFocused();
+  await page.keyboard.press('Tab');
+  await expect(light).toBeFocused();
+  await page.keyboard.press('Escape');
+  await expect(dialogue).toBeVisible();
+  await light.click();
+  await expect(page.getByRole('dialog', { name: 'Florence’s Light' })).toBeVisible();
+});
+
+test('ID-001: Brother Matteo keeps the monk cipher route after a dialogue choice', async ({ page }) => {
+  const monkRun = { ...run, route: 'monk' };
+  const monkState = {
+    scene: 'library', inv: ['lens'], selected: 'lens',
+    flags: { ...baseFlags, mirrorTaken: true, noteRead: true, keyTaken: true, breadTaken: true, gearTaken: true, gearInstalled: true, chestOpen: true, lensTaken: true },
+    secrets,
+    dialogue: { choices: { matteo: null, baker: 'insight' }, ending: null },
+    notes: { window: false, easel: false, candle: false, candelabra: false, duomoview: false }
+  };
+  await setChronicle(page, monkState, 2, monkRun);
+  await continueChronicle(page);
+  await page.locator('[data-hs="monk"]').click();
+  await expect(page.getByRole('dialog', { name: 'Brother Matteo' })).toBeVisible();
+  await page.getByRole('button', { name: 'Seek understanding' }).click();
+  await expect(page.locator('#msg')).toContainText('I · II · III · IV');
+});
+
 test('@a11y landing page and game title screen have no automated accessibility violations', async ({ page }) => {
   await page.goto('/');
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
   await page.goto('/maestros-secret.html');
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
+  await page.getByRole('button', { name: 'Begin the Adventure' }).click();
+  await page.getByRole('button', { name: /Go right to Piazza della Signoria/ }).click();
+  await page.locator('[data-hs="bread"]').click();
+  expect((await new AxeBuilder({ page }).include('#dialogue').analyze()).violations).toEqual([]);
 });
 
 test.describe('mobile title screen', () => {

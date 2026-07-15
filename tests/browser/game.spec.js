@@ -190,3 +190,129 @@ test.describe('mobile title screen', () => {
     })).toBe(true);
   });
 });
+
+test.describe('portrait-phone gameplay', () => {
+  test.use({ viewport: { width: 390, height: 844 } });
+
+  test('MG-001: portrait actions mirror scene hotspots and navigation with touch-sized controls', async ({ page }) => {
+    await page.goto('/maestros-secret.html');
+    await page.getByRole('button', { name: 'Begin the Adventure' }).click();
+
+    const actions = page.locator('#portrait-actions');
+    await expect(actions).toBeVisible();
+    const mirror = actions.getByRole('button', { name: 'Hand Mirror' });
+    await expect(mirror).toBeVisible();
+    expect((await mirror.boundingBox()).height).toBeGreaterThanOrEqual(44);
+    await mirror.click();
+    await expect(page.getByRole('button', { name: 'Select Hand Mirror' })).toBeVisible();
+
+    await actions.getByRole('button', { name: 'Go right to Piazza della Signoria' }).click();
+    await expect(page.locator('#sc-piazza')).toHaveClass(/active/);
+  });
+
+  test('MG-002: portrait dialogue has readable in-flow choices', async ({ page }) => {
+    await page.goto('/maestros-secret.html');
+    await page.getByRole('button', { name: 'Begin the Adventure' }).click();
+    const actions = page.locator('#portrait-actions');
+    await actions.getByRole('button', { name: 'Go right to Piazza della Signoria' }).click();
+    await actions.getByRole('button', { name: "Baker's Stall" }).click();
+    const dialogue = page.getByRole('dialog', { name: 'The Baker’s Gift' });
+    await expect(dialogue).toBeVisible();
+    const choice = dialogue.getByRole('button', { name: 'Offer care' });
+    await expect(choice).toBeVisible();
+    expect(Number.parseFloat(await choice.evaluate(element => getComputedStyle(element).fontSize))).toBeGreaterThanOrEqual(12);
+  });
+
+  test('MG-001: a delayed trapdoor reveal refreshes portrait actions', async ({ page }) => {
+    const repairState = {
+      scene: 'workshop', inv: ['gear'], selected: 'gear',
+      flags: { ...baseFlags, mirrorTaken: true, noteRead: true, keyTaken: true, breadTaken: true, gearTaken: true },
+      secrets,
+      dialogue: { choices: { matteo: null, baker: null }, ending: null },
+      notes: { window: false, easel: false, candle: false, candelabra: false, duomoview: false }
+    };
+    await setChronicle(page, repairState, 2);
+    await continueChronicle(page);
+    const actions = page.locator('#portrait-actions');
+    await actions.getByRole('button', { name: 'Flying Machine' }).click();
+    await expect(actions.getByRole('button', { name: 'Trapdoor' })).toBeVisible({ timeout: 4_000 });
+  });
+});
+
+test('MA-001: a suspended audio context resumes before game sounds are scheduled', async ({ page }) => {
+  await page.addInitScript(() => {
+    window.__audioProbe = { resumes: 0, startsBeforeResume: 0 };
+    class FakeAudioContext {
+      constructor() {
+        this.currentTime = 0;
+        this.destination = {};
+        this.state = 'suspended';
+      }
+      resume() {
+        window.__audioProbe.resumes += 1;
+        return new Promise(resolve => setTimeout(() => {
+          this.state = 'running';
+          resolve();
+        }, 0));
+      }
+      createOscillator() {
+        const context = this;
+        return {
+          frequency: { value: 0 }, type: 'sine', connect() {},
+          start() { if (context.state !== 'running') window.__audioProbe.startsBeforeResume += 1; },
+          stop() {}
+        };
+      }
+      createGain() {
+        return { gain: { value: 0, setValueAtTime() {}, exponentialRampToValueAtTime() {}, cancelScheduledValues() {} }, connect() {} };
+      }
+      createBiquadFilter() {
+        return { frequency: { value: 0, setTargetAtTime() {} }, connect() {}, type: 'lowpass' };
+      }
+    }
+    window.AudioContext = FakeAudioContext;
+    window.webkitAudioContext = FakeAudioContext;
+  });
+  await page.goto('/maestros-secret.html');
+  await page.getByRole('button', { name: 'Begin the Adventure' }).click();
+  await expect.poll(() => page.evaluate(() => window.__audioProbe.resumes)).toBeGreaterThan(0);
+  await expect.poll(() => page.evaluate(() => window.__audioProbe.startsBeforeResume)).toBe(0);
+});
+
+test('MA-001: music scheduling resumes after a later context suspension', async ({ page }) => {
+  await page.addInitScript(() => {
+    window.__lifecycleAudio = { starts: 0, context: null };
+    class FakeAudioContext {
+      constructor() {
+        this.currentTime = 0;
+        this.destination = {};
+        this.state = 'running';
+        window.__lifecycleAudio.context = this;
+      }
+      resume() { this.state = 'running'; return Promise.resolve(); }
+      createOscillator() {
+        return { frequency: { value: 0 }, type: 'sine', connect() {}, start() { window.__lifecycleAudio.starts += 1; }, stop() {} };
+      }
+      createGain() {
+        return { gain: { value: 0, setValueAtTime() {}, exponentialRampToValueAtTime() {}, cancelScheduledValues() {} }, connect() {} };
+      }
+      createBiquadFilter() {
+        return { frequency: { value: 0, setTargetAtTime() {} }, connect() {}, type: 'lowpass' };
+      }
+    }
+    window.AudioContext = FakeAudioContext;
+    window.webkitAudioContext = FakeAudioContext;
+  });
+  await page.goto('/maestros-secret.html');
+  await page.getByRole('button', { name: 'Begin the Adventure' }).click();
+  await expect.poll(() => page.evaluate(() => window.__lifecycleAudio.starts)).toBeGreaterThan(0);
+  await page.waitForTimeout(150);
+  const startsBeforeSuspend = await page.evaluate(() => window.__lifecycleAudio.starts);
+  await page.evaluate(() => { window.__lifecycleAudio.context.state = 'suspended'; });
+  await page.waitForTimeout(500);
+  await page.evaluate(() => {
+    window.__lifecycleAudio.context.currentTime = 3;
+    window.__lifecycleAudio.context.state = 'running';
+  });
+  await expect.poll(() => page.evaluate(() => window.__lifecycleAudio.starts)).toBeGreaterThan(startsBeforeSuspend);
+});

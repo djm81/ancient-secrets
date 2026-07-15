@@ -18,6 +18,12 @@ At a portrait viewport no wider than 620 CSS px, the game SHALL use the availabl
 - **WHEN** the player selects the destination from the portrait action surface
 - **THEN** the declared destination becomes the active scene
 
+#### Scenario: A delayed puzzle reveal adds its portrait action
+
+- **GIVEN** a portrait-phone player repairs the flying machine with the bronze gear
+- **WHEN** its authored transition exposes the trapdoor
+- **THEN** the portrait action surface adds the Trapdoor control without requiring navigation or refresh
+
 ### Requirement: MG-002 Portrait overlays remain readable and operable
 
 At a portrait viewport no wider than 620 CSS px, title content, inventory controls, modal panels, and dialogue choices SHALL remain within the visual viewport or provide vertical scrolling. Dialogue copy and buttons SHALL not be reduced below readable phone-scale text.

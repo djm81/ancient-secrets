@@ -222,6 +222,21 @@ test.describe('portrait-phone gameplay', () => {
     await expect(choice).toBeVisible();
     expect(Number.parseFloat(await choice.evaluate(element => getComputedStyle(element).fontSize))).toBeGreaterThanOrEqual(12);
   });
+
+  test('MG-001: a delayed trapdoor reveal refreshes portrait actions', async ({ page }) => {
+    const repairState = {
+      scene: 'workshop', inv: ['gear'], selected: 'gear',
+      flags: { ...baseFlags, mirrorTaken: true, noteRead: true, keyTaken: true, breadTaken: true, gearTaken: true },
+      secrets,
+      dialogue: { choices: { matteo: null, baker: null }, ending: null },
+      notes: { window: false, easel: false, candle: false, candelabra: false, duomoview: false }
+    };
+    await setChronicle(page, repairState, 2);
+    await continueChronicle(page);
+    const actions = page.locator('#portrait-actions');
+    await actions.getByRole('button', { name: 'Flying Machine' }).click();
+    await expect(actions.getByRole('button', { name: 'Trapdoor' })).toBeVisible({ timeout: 4_000 });
+  });
 });
 
 test('MA-001: a suspended audio context resumes before game sounds are scheduled', async ({ page }) => {

@@ -12,6 +12,12 @@ The game SHALL resume a suspended Web Audio context from a player activation bef
 - **WHEN** the player begins a chronicle or enables music
 - **THEN** the game requests `resume()` and schedules music only after that request resolves
 
+#### Scenario: A running context is later suspended
+
+- **GIVEN** generative music is enabled and the browser later suspends its running audio context
+- **WHEN** the context returns to the running state
+- **THEN** the music scheduler remains active and resumes scheduling bars without requiring the player to toggle music
+
 #### Scenario: Audio cannot be resumed
 
 - **GIVEN** the browser rejects an audio resume request

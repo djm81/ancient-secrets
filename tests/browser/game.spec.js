@@ -278,3 +278,41 @@ test('MA-001: a suspended audio context resumes before game sounds are scheduled
   await expect.poll(() => page.evaluate(() => window.__audioProbe.resumes)).toBeGreaterThan(0);
   await expect.poll(() => page.evaluate(() => window.__audioProbe.startsBeforeResume)).toBe(0);
 });
+
+test('MA-001: music scheduling resumes after a later context suspension', async ({ page }) => {
+  await page.addInitScript(() => {
+    window.__lifecycleAudio = { starts: 0, context: null };
+    class FakeAudioContext {
+      constructor() {
+        this.currentTime = 0;
+        this.destination = {};
+        this.state = 'running';
+        window.__lifecycleAudio.context = this;
+      }
+      resume() { this.state = 'running'; return Promise.resolve(); }
+      createOscillator() {
+        return { frequency: { value: 0 }, type: 'sine', connect() {}, start() { window.__lifecycleAudio.starts += 1; }, stop() {} };
+      }
+      createGain() {
+        return { gain: { value: 0, setValueAtTime() {}, exponentialRampToValueAtTime() {}, cancelScheduledValues() {} }, connect() {} };
+      }
+      createBiquadFilter() {
+        return { frequency: { value: 0, setTargetAtTime() {} }, connect() {}, type: 'lowpass' };
+      }
+    }
+    window.AudioContext = FakeAudioContext;
+    window.webkitAudioContext = FakeAudioContext;
+  });
+  await page.goto('/maestros-secret.html');
+  await page.getByRole('button', { name: 'Begin the Adventure' }).click();
+  await expect.poll(() => page.evaluate(() => window.__lifecycleAudio.starts)).toBeGreaterThan(0);
+  await page.waitForTimeout(150);
+  const startsBeforeSuspend = await page.evaluate(() => window.__lifecycleAudio.starts);
+  await page.evaluate(() => { window.__lifecycleAudio.context.state = 'suspended'; });
+  await page.waitForTimeout(500);
+  await page.evaluate(() => {
+    window.__lifecycleAudio.context.currentTime = 3;
+    window.__lifecycleAudio.context.state = 'running';
+  });
+  await expect.poll(() => page.evaluate(() => window.__lifecycleAudio.starts)).toBeGreaterThan(startsBeforeSuspend);
+});

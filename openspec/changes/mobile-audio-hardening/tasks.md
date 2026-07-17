@@ -6,3 +6,8 @@
 - [x] Implement activation-safe audio resume and failure handling.
 - [x] Run relevant browser scenarios at desktop, 390 × 844, and narrow-phone widths; record manual visual/audio evidence.
 - [x] Run `npm run check`, `npm test`, `npm run test:browser`, `npm run test:a11y`, and `git diff --check`; record results.
+- [x] Extend the specs, risks, validation matrix, and TDD evidence for the iOS audio confirmation, first-chronicle assistant, and responsive dialogue controls.
+- [x] Add failing browser scenarios for a context that resolves without running, first-chronicle assistant persistence, and narrow/short dialogue actions; record the baseline.
+- [x] Implement the confirmed audio unlock/retry path, local-only assistant, and resilient dialogue layout.
+- [x] Re-run targeted browser scenarios at desktop, 390 × 844, and narrow/short phone dimensions; update README and validation evidence.
+- [x] Run required quality gates and record passing evidence.

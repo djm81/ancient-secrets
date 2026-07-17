@@ -8,6 +8,7 @@
 | MA-001 iOS non-running resume | Playwright fake-context retry check + physical iOS check | iOS-style resolved-but-suspended retry scenario passed 2026-07-17; physical iOS audio check remains release QA | automated passed; device check pending |
 | FTA-001 First-chronicle orientation | Playwright new/start/dismiss/continue scenarios + manual keyboard check | `FTA-001` passed 2026-07-17; manual first-time assistant screenshot reviewed at 390 × 844 | passed locally |
 | MG-002 Responsive dialogue controls | Playwright narrow/short landscape layout check + manual screenshot review | Short 844 × 390 dialogue scenario passed 2026-07-17; workshop interaction/dialogue screenshot reviewed at 844 × 390 | passed locally |
+| MG-002 Desktop art-aware dialogue placement | Playwright baker-dialogue geometry + desktop and phone screenshot review | Targeted 1024 × 600 regression passed 2026-07-17; settled-state review confirms lower-right desktop parchment placement and unchanged 390 × 844 in-flow copy | passed locally |
 
 ## Manual scenario notes
 

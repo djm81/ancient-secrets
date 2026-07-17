@@ -11,3 +11,6 @@
 - [x] Implement the confirmed audio unlock/retry path, local-only assistant, and resilient dialogue layout.
 - [x] Re-run targeted browser scenarios at desktop, 390 × 844, and narrow/short phone dimensions; update README and validation evidence.
 - [x] Run required quality gates and record passing evidence.
+- [x] Add failing desktop baker-dialogue placement coverage and record the baseline.
+- [x] Mark dialogue scenes by authored composition and place the baker copy in its right-side parchment area without changing compact layouts.
+- [x] Re-run affected browser and quality gates; record evidence.

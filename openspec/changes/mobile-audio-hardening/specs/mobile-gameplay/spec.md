@@ -39,3 +39,9 @@ At a portrait viewport no wider than 620 CSS px, title content, inventory contro
 - **GIVEN** a phone or compact landscape viewport with little vertical room opens a dialogue
 - **WHEN** the dialogue image is cropped to preserve room for copy
 - **THEN** every dialogue choice is in-flow with the copy, visible or reachable by vertical scrolling, and does not overlap an unrelated scene control
+
+#### Scenario: Desktop dialogue copy uses the illustration’s parchment area
+
+- **GIVEN** the baker dialogue opens on a desktop viewport
+- **WHEN** its authored backdrop reserves the lower-right parchment area for reading
+- **THEN** the dialogue copy is anchored in that lower-right area and does not cover the baker character or leave the intended parchment area empty

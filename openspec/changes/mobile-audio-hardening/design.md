@@ -20,6 +20,10 @@ After a new chronicle begins, a local, modal assistant introduces the three auth
 
 Dialogue art remains decorative context; its copy and controls form a single anchored control region. At narrow or short viewports the region switches to document flow beneath a bounded art header, with a scrollable modal container, so button coordinates are derived from the copy rather than the image crop. Desktop preserves the current image-overlay composition.
 
+## Art-aware desktop dialogue placement
+
+The authored dialogue art includes a parchment reading area: Brother Matteo and Leonardo reserve the lower left, while the baker reserves the lower right. `openDialogue()` marks the active encounter on the dialogue scene and a narrowly scoped desktop rule moves only the baker’s copy to the right. Narrow and short viewport rules continue to place every dialogue copy in normal flow, independent of art composition.
+
 ## Rollback
 
 Removing the portrait media rules/action surface and restoring the former audio helpers returns the prior static layout. No save or deployment migration is necessary.

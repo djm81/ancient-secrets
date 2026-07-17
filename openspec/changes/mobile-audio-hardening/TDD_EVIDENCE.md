@@ -2,6 +2,18 @@
 
 All timestamps use Europe/Berlin. This change follows specification → tests → failing evidence → implementation → passing evidence.
 
+## Desktop baker-dialogue composition follow-up — test evidence
+
+- **Specification:** `specs/mobile-gameplay/spec.md` (MG-002 desktop parchment placement).
+- **Test to add:** at a 1024 × 600 desktop viewport, open the baker dialogue and assert that the copy is right-aligned within the dialogue scene while the selected dialogue image is the baker art.
+- **Expected pre-implementation result:** the shared dialogue-copy rule keeps the baker copy left-aligned, covering the baker while the authored right-side parchment area remains empty.
+- **Command:** `npm run test:browser -- --grep 'desktop baker dialogue copy'`.
+- **Failing baseline:** 2026-07-17 23:04:21 CEST — failed as expected: copy left `66.265625` was below the required `492.74125` (48% of the dialogue-scene width), leaving the Baker's authored right-side parchment area empty.
+- **Implementation:** set `data-encounter` in `openDialogue()` and apply a Baker-only desktop rule which anchors `.dialogue-copy` to the right; compact/mobile viewports retain the in-flow rule.
+- **Passing result:** 2026-07-17 23:05:08 CEST — `npm run test:browser -- --grep 'desktop baker dialogue copy'` passed (1/1).
+- **Visual evidence:** 2026-07-17 23:10:28 CEST — settled-state screenshots at 1024 × 600 and 390 × 844 confirm that desktop copy occupies the lower-right parchment panel and the phone copy remains beneath the image.
+- **Final regression gates:** 2026-07-17 23:10:28 CEST — `npm run check`, `npm test` (25/25), `npm run test:browser` (20/20), `npm run test:a11y` (1/1), `npx openspec validate mobile-audio-hardening --strict`, and `git diff --check` passed.
+
 ## iOS audio, first-time assistant, and responsive-dialogue follow-up — test design
 
 - **Specifications:** `specs/mobile-audio/spec.md` (MA-001 non-running resume), `specs/first-time-assistant/spec.md` (FTA-001), and `specs/mobile-gameplay/spec.md` (MG-002 short-viewport dialogue).

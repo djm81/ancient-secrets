@@ -292,6 +292,28 @@ test.describe('short mobile dialogue', () => {
   });
 });
 
+test.describe('desktop dialogue composition', () => {
+  test.use({ viewport: { width: 1024, height: 600 } });
+
+  test('MG-002: desktop baker dialogue copy uses the authored right-side parchment area', async ({ page }) => {
+    await page.goto('/maestros-secret.html');
+    await page.getByRole('button', { name: 'Begin the Adventure' }).click();
+    await page.getByRole('button', { name: 'Begin Exploring' }).click();
+    await page.getByRole('button', { name: 'Go right to Piazza della Signoria' }).click();
+    await page.locator('[data-hs="bread"]').click();
+
+    const dialogue = page.getByRole('dialog', { name: 'The Baker’s Gift' });
+    await expect(dialogue).toBeVisible();
+    const bounds = await dialogue.locator('.dialogue-scene').evaluate(scene => {
+      const root = scene.getBoundingClientRect();
+      const copy = scene.querySelector('.dialogue-copy').getBoundingClientRect();
+      return { copyLeft: copy.left, copyRight: copy.right, rootLeft: root.left, rootRight: root.right, rootWidth: root.width };
+    });
+    expect(bounds.copyLeft).toBeGreaterThanOrEqual(bounds.rootLeft + bounds.rootWidth * 0.48);
+    expect(bounds.copyRight).toBeLessThanOrEqual(bounds.rootRight);
+  });
+});
+
 test('MA-001: a suspended audio context resumes before game sounds are scheduled', async ({ page }) => {
   await page.addInitScript(() => {
     window.__audioProbe = { resumes: 0, startsBeforeResume: 0 };

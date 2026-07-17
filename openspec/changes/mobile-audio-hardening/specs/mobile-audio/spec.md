@@ -4,13 +4,19 @@
 
 ### Requirement: MA-001 Web Audio is resumed from player activation before playback
 
-The game SHALL resume a suspended Web Audio context from a player activation before it schedules sound effects or generative music. If the browser refuses audio, the game SHALL remain playable and the music control SHALL indicate that audio is muted.
+The game SHALL create and schedule its first generative-music sources from the same direct player activation that requests a suspended Web Audio context to resume. It SHALL show a starting state until the context is confirmed running. If the browser refuses audio, the game SHALL remain playable and the music control SHALL indicate that audio is muted.
 
 #### Scenario: A phone browser begins with a suspended context
 
 - **GIVEN** a browser exposes a suspended `AudioContext`
 - **WHEN** the player begins a chronicle or enables music
-- **THEN** the game requests `resume()` and schedules music only after that request resolves
+- **THEN** the game requests `resume()` and schedules the initial music sources in that same activation, while showing that music is starting until the context is confirmed running
+
+#### Scenario: The music control reports its actual activation state
+
+- **GIVEN** a player taps the music control
+- **WHEN** audio is waiting to resume, succeeds, or fails
+- **THEN** the control respectively reports starting, playing, or muted rather than relying on a subtle visual opacity change
 
 #### Scenario: A running context is later suspended
 

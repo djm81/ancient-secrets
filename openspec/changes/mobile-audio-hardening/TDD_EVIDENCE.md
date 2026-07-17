@@ -2,6 +2,42 @@
 
 All timestamps use Europe/Berlin. This change follows specification → tests → failing evidence → implementation → passing evidence.
 
+## First-time assistant Escape dismissal — test evidence
+
+- **Review thread:** `PRRT_kwDOTW1Bac6R50_K`, `maestros-secret.html:1748`.
+- **Specification:** `specs/first-time-assistant/spec.md` (FTA-001 dismissal by Escape).
+- **Test to add:** open the assistant on a fresh chronicle, press Escape, and assert that the completion preference is saved and focus reaches the hand-mirror interaction.
+- **Expected pre-implementation result:** Escape uses the generic modal close path, which neither saves completion nor overrides focus back to the scene interaction.
+- **Command:** `npm run test:browser -- --grep 'Escape completes the first-time assistant'`.
+- **Failing baseline:** 2026-07-18 00:07 CEST — `npm run test:browser -- --grep 'Escape completes the first-time assistant'` failed as expected: the completion preference remained `null` after Escape.
+- **Implementation:** `completeFirstTimeAssistant()` centralizes persistence, close, and hand-mirror focus. Both the visible dismissal control and the Escape handler call it.
+- **Passing result:** 2026-07-18 00:08 CEST — the targeted Escape regression passed (1/1).
+- **Final regression gates:** 2026-07-18 00:09:58 CEST — `npm run check`, `npm test` (25/25), `npm run test:browser` (22/22), `npm run test:a11y` (1/1), `npx openspec validate mobile-audio-hardening --strict`, and `git diff --check` passed.
+
+## iOS trusted-tap music follow-up — test evidence
+
+- **Specification:** `specs/mobile-audio/spec.md` (MA-001 direct-tap source and control state).
+- **Test to add:** with a fake suspended context whose `resume()` remains pending, start a chronicle and assert that real oscillator sources have already been scheduled by the trusted activation and that the music control reports `Starting music`.
+- **Expected pre-implementation result:** no real oscillator source is created until the asynchronous resume callback runs, while the control offers no starting state.
+- **Command:** `npm run test:browser -- --grep 'direct-tap music sources'`.
+- **Failing baseline:** 2026-07-17 23:43 CEST — `npm run test:browser -- --grep 'direct-tap music sources'` failed as expected: a permanently pending `resume()` left real oscillator starts at `0`.
+- **Implementation:** the gesture path now initializes the music graph and schedules its first bar before calling the shared resume promise. The control reports `Starting music` until the context is confirmed running, then shows `Mute music`; failures return it to `Play music` while retaining a retry request.
+- **Passing result:** 2026-07-17 23:47 CEST — `npm run test:browser -- --grep 'MA-001'` passed (4/4), including the delayed-resume direct-tap scenario.
+- **Final regression gates:** 2026-07-17 23:48:53 CEST — `npm run check`, `npm test` (25/25), `npm run test:browser` (21/21), `npm run test:a11y` (1/1), `npx openspec validate mobile-audio-hardening --strict`, and `git diff --check` passed.
+- **Visual evidence:** 2026-07-17 23:48:53 CEST — local Chromium at 390 × 844 shows the active music glyph in the phone HUD after direct start; physical iOS output remains required release QA.
+
+## Desktop baker-dialogue composition follow-up — test evidence
+
+- **Specification:** `specs/mobile-gameplay/spec.md` (MG-002 desktop parchment placement).
+- **Test to add:** at a 1024 × 600 desktop viewport, open the baker dialogue and assert that the copy is right-aligned within the dialogue scene while the selected dialogue image is the baker art.
+- **Expected pre-implementation result:** the shared dialogue-copy rule keeps the baker copy left-aligned, covering the baker while the authored right-side parchment area remains empty.
+- **Command:** `npm run test:browser -- --grep 'desktop baker dialogue copy'`.
+- **Failing baseline:** 2026-07-17 23:04:21 CEST — failed as expected: copy left `66.265625` was below the required `492.74125` (48% of the dialogue-scene width), leaving the Baker's authored right-side parchment area empty.
+- **Implementation:** set `data-encounter` in `openDialogue()` and apply a Baker-only desktop rule which anchors `.dialogue-copy` to the right; compact/mobile viewports retain the in-flow rule.
+- **Passing result:** 2026-07-17 23:05:08 CEST — `npm run test:browser -- --grep 'desktop baker dialogue copy'` passed (1/1).
+- **Visual evidence:** 2026-07-17 23:10:28 CEST — settled-state screenshots at 1024 × 600 and 390 × 844 confirm that desktop copy occupies the lower-right parchment panel and the phone copy remains beneath the image.
+- **Final regression gates:** 2026-07-17 23:10:28 CEST — `npm run check`, `npm test` (25/25), `npm run test:browser` (20/20), `npm run test:a11y` (1/1), `npx openspec validate mobile-audio-hardening --strict`, and `git diff --check` passed.
+
 ## iOS audio, first-time assistant, and responsive-dialogue follow-up — test design
 
 - **Specifications:** `specs/mobile-audio/spec.md` (MA-001 non-running resume), `specs/first-time-assistant/spec.md` (FTA-001), and `specs/mobile-gameplay/spec.md` (MG-002 short-viewport dialogue).

@@ -11,3 +11,12 @@
 - [x] Implement the confirmed audio unlock/retry path, local-only assistant, and resilient dialogue layout.
 - [x] Re-run targeted browser scenarios at desktop, 390 × 844, and narrow/short phone dimensions; update README and validation evidence.
 - [x] Run required quality gates and record passing evidence.
+- [x] Add failing desktop baker-dialogue placement coverage and record the baseline.
+- [x] Mark dialogue scenes by authored composition and place the baker copy in its right-side parchment area without changing compact layouts.
+- [x] Re-run affected browser and quality gates; record evidence.
+- [x] Add a failing direct-tap iOS music-source regression and state-feedback coverage; record the baseline.
+- [x] Schedule the first music bar inside the trusted activation and make music state visible.
+- [x] Re-run browser, mobile visual, and quality gates; record evidence and update the release PR.
+- [x] Add a failing Escape-dismissal assistant regression from PR review thread `PRRT_kwDOTW1Bac6R50_K`.
+- [x] Route Escape and the visible dismissal control through the same completion and focus logic.
+- [x] Re-run affected checks and update the review evidence.

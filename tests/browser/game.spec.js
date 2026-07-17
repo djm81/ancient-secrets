@@ -266,6 +266,19 @@ test('FTA-001: a new chronicle gets a skippable first-time interaction assistant
   await expect(assistant).not.toBeVisible();
 });
 
+test('FTA-001: Escape completes the first-time assistant and returns focus to the opening interaction', async ({ page }) => {
+  await page.goto('/maestros-secret.html');
+  await page.getByRole('button', { name: 'Begin the Adventure' }).click();
+  const assistant = page.getByRole('dialog', { name: 'Your First Steps' });
+  await expect(assistant).toBeVisible();
+
+  await page.keyboard.press('Escape');
+
+  await expect(assistant).not.toBeVisible();
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('maestros-secret:first-time-assistant'))).toBe('complete');
+  await expect(page.locator('[data-hs="mirror"]')).toBeFocused();
+});
+
 test.describe('short mobile dialogue', () => {
   test.use({ viewport: { width: 844, height: 390 } });
 
@@ -292,7 +305,29 @@ test.describe('short mobile dialogue', () => {
   });
 });
 
-test('MA-001: a suspended audio context resumes before game sounds are scheduled', async ({ page }) => {
+test.describe('desktop dialogue composition', () => {
+  test.use({ viewport: { width: 1024, height: 600 } });
+
+  test('MG-002: desktop baker dialogue copy uses the authored right-side parchment area', async ({ page }) => {
+    await page.goto('/maestros-secret.html');
+    await page.getByRole('button', { name: 'Begin the Adventure' }).click();
+    await page.getByRole('button', { name: 'Begin Exploring' }).click();
+    await page.getByRole('button', { name: 'Go right to Piazza della Signoria' }).click();
+    await page.locator('[data-hs="bread"]').click();
+
+    const dialogue = page.getByRole('dialog', { name: 'The Baker’s Gift' });
+    await expect(dialogue).toBeVisible();
+    const bounds = await dialogue.locator('.dialogue-scene').evaluate(scene => {
+      const root = scene.getBoundingClientRect();
+      const copy = scene.querySelector('.dialogue-copy').getBoundingClientRect();
+      return { copyLeft: copy.left, copyRight: copy.right, rootLeft: root.left, rootRight: root.right, rootWidth: root.width };
+    });
+    expect(bounds.copyLeft).toBeGreaterThanOrEqual(bounds.rootLeft + bounds.rootWidth * 0.48);
+    expect(bounds.copyRight).toBeLessThanOrEqual(bounds.rootRight);
+  });
+});
+
+test('MA-001: a suspended audio context resumes while its first music sources are scheduled in the activation', async ({ page }) => {
   await page.addInitScript(() => {
     window.__audioProbe = { resumes: 0, startsBeforeResume: 0 };
     class FakeAudioContext {
@@ -330,7 +365,34 @@ test('MA-001: a suspended audio context resumes before game sounds are scheduled
   await page.getByRole('button', { name: 'Begin the Adventure' }).click();
   await page.getByRole('button', { name: 'Begin Exploring' }).click();
   await expect.poll(() => page.evaluate(() => window.__audioProbe.resumes)).toBeGreaterThan(0);
-  await expect.poll(() => page.evaluate(() => window.__audioProbe.startsBeforeResume)).toBe(0);
+  await expect.poll(() => page.evaluate(() => window.__audioProbe.startsBeforeResume)).toBeGreaterThan(0);
+});
+
+test('MA-001: direct-tap music sources are scheduled before an iOS resume promise settles', async ({ page }) => {
+  await page.addInitScript(() => {
+    window.__directTapAudio = { resumes: 0, oscillatorStarts: 0 };
+    class FakeAudioContext {
+      constructor() { this.currentTime = 0; this.destination = {}; this.state = 'suspended'; }
+      resume() { window.__directTapAudio.resumes += 1; return new Promise(() => {}); }
+      createOscillator() {
+        return { frequency: { value: 0 }, type: 'sine', connect() {}, start() { window.__directTapAudio.oscillatorStarts += 1; }, stop() {} };
+      }
+      createGain() {
+        return { gain: { value: 0, setValueAtTime() {}, exponentialRampToValueAtTime() {}, cancelScheduledValues() {} }, connect() {} };
+      }
+      createBiquadFilter() {
+        return { frequency: { value: 0, setTargetAtTime() {} }, connect() {}, type: 'lowpass' };
+      }
+    }
+    window.AudioContext = FakeAudioContext;
+    window.webkitAudioContext = FakeAudioContext;
+  });
+  await page.goto('/maestros-secret.html');
+  await page.getByRole('button', { name: 'Begin the Adventure' }).click();
+
+  await expect.poll(() => page.evaluate(() => window.__directTapAudio.resumes)).toBeGreaterThan(0);
+  await expect.poll(() => page.evaluate(() => window.__directTapAudio.oscillatorStarts)).toBeGreaterThan(0);
+  await expect(page.getByRole('button', { name: 'Starting music' })).toBeVisible();
 });
 
 test('MA-001: music scheduling resumes after a later context suspension', async ({ page }) => {
@@ -399,7 +461,7 @@ test('MA-001: an iOS-style resolved-but-suspended context stays muted until a la
   await expect.poll(() => page.evaluate(() => window.__iosAudioProbe.resumes)).toBeGreaterThan(0);
   await expect(page.getByRole('button', { name: 'Mute music' })).toHaveCount(0);
   await expect(page.getByRole('button', { name: 'Play music' })).toBeVisible();
-  await expect.poll(() => page.evaluate(() => window.__iosAudioProbe.starts)).toBe(0);
+  await expect.poll(() => page.evaluate(() => window.__iosAudioProbe.starts)).toBeGreaterThan(0);
 
   await page.evaluate(() => { window.__iosAudioProbe.allowResume = true; });
   await page.getByRole('button', { name: 'Play music' }).click();

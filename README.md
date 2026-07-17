@@ -6,7 +6,7 @@ A compact Renaissance point-and-click adventure set in Florence in 1503. You pla
 
 ## Highlights
 
-- One self-contained HTML game: illustrated SVG scenes, responsive layout, inventory, dialogue, sound effects, and generative lute music. Portrait phones retain the complete scene and offer touch-sized scene-action controls; sound unlocks from the player’s first activation and continues after temporary browser audio suspensions.
+- One self-contained HTML game: illustrated SVG scenes, responsive layout, inventory, dialogue, sound effects, and generative lute music. A local first-chronicle assistant introduces scene inspection, the satchel, and travel; portrait phones retain the complete scene and offer touch-sized scene-action controls. Sound starts only after the browser reports an actually running audio context and retries safely after a temporary suspension.
 - Replayable mysteries: every new chronicle randomizes the strongbox code, its Roman-numeral clue location, the Piazza gear route, and the Duomo bell sequence.
 - A nested Il Duomo adventure: solve the vestibule's star-and-bell lock to reach the Whispering Gallery and its alternate clue path.
 - Five optional curiosities reward close observation without blocking completion.
@@ -67,7 +67,7 @@ npm run test:a11y
 openspec validate proof-of-excellence-pass --strict
 ```
 
-Manual QA: open the root page at desktop and narrow/mobile widths; at 390 × 844 use the portrait action controls to take the mirror, navigate, and open the baker dialogue; start and resume a chronicle after a refresh; complete the mirror-to-note sequence with only Tab, Enter, and Space; enable high contrast; confirm sound after an explicit start or music-button activation; and request each guidance tier with and without the Worker enabled.
+Manual QA: open the root page at desktop and narrow/mobile widths; at 390 × 844 start a fresh chronicle, dismiss the first-chronicle assistant, then use the portrait action controls to take the mirror, navigate, and open the baker dialogue. Confirm a resumed chronicle does not show the assistant again. At a short 844 × 390 landscape viewport, confirm dialogue image and action controls stay visible and usable. Complete the mirror-to-note sequence with only Tab, Enter, and Space; enable high contrast; confirm sound after an explicit start or music-button activation (including on physical iOS release QA); and request each guidance tier with and without the Worker enabled.
 
 ## Point-and-click design
 

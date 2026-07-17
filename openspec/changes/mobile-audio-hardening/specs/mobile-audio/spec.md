@@ -23,3 +23,9 @@ The game SHALL resume a suspended Web Audio context from a player activation bef
 - **GIVEN** the browser rejects an audio resume request
 - **WHEN** the player starts a chronicle
 - **THEN** no exception blocks gameplay and the music control remains muted
+
+#### Scenario: An iOS-style resume resolves without a running context
+
+- **GIVEN** a phone browser resolves `AudioContext.resume()` while its context remains `interrupted` or `suspended`
+- **WHEN** the player begins a chronicle or enables music
+- **THEN** the game schedules no sound, keeps the music control muted, and retries on the next direct player activation

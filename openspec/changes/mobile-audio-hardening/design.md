@@ -8,9 +8,17 @@ The title screen and modal panels use the full viewport. Dialogue art becomes a 
 
 ## Audio lifecycle
 
-The shared `AudioContext` is created and resumed only in direct user-activation paths. Sound effects defer their oscillator scheduling until a suspended context's `resume()` promise settles. Music marks itself enabled, waits for the context to run, then initializes its graph and schedules bars. If resumption fails, the music control returns to its muted state and gameplay continues.
+The shared `AudioContext` is created and resumed only in direct user-activation paths. Sound effects defer their oscillator scheduling until a suspended context's `resume()` promise settles. Music enters a pending state while it waits for the context to run, then initializes its graph and schedules bars only after `AudioContext.state === 'running'`. A resolve from `resume()` is not treated as success by itself: iOS can leave the context `interrupted` or `suspended`. In that case the control returns to muted and a later direct pointer/key activation can retry. The initial activation also primes a zero-gain oscillator, which is a safe, no-audible-output Web Audio activation path for Safari. If resumption fails, gameplay continues.
 
 The title start, continue, mobile action, and music-control paths all pass through this shared behavior. No external media, permission prompt, telemetry, or persisted audio preference is added.
+
+## First-chronicle assistant
+
+After a new chronicle begins, a local, modal assistant introduces the three authored interaction modes: inspect visible objects, select an item in the satchel then use it in the scene, and use the left/right navigation controls. It has one explicit dismissal control and does not block normal progression once dismissed. Completion uses a dedicated local preference key and never changes the chronicle payload; if local storage is unavailable it remains an in-memory, once-per-page-session hint. Continuing a saved chronicle never shows it.
+
+## Responsive dialogue controls
+
+Dialogue art remains decorative context; its copy and controls form a single anchored control region. At narrow or short viewports the region switches to document flow beneath a bounded art header, with a scrollable modal container, so button coordinates are derived from the copy rather than the image crop. Desktop preserves the current image-overlay composition.
 
 ## Rollback
 

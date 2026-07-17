@@ -2,6 +2,22 @@
 
 All timestamps use Europe/Berlin. This change follows specification → tests → failing evidence → implementation → passing evidence.
 
+## iOS audio, first-time assistant, and responsive-dialogue follow-up — test design
+
+- **Specifications:** `specs/mobile-audio/spec.md` (MA-001 non-running resume), `specs/first-time-assistant/spec.md` (FTA-001), and `specs/mobile-gameplay/spec.md` (MG-002 short-viewport dialogue).
+- **Tests to add:** a fake `AudioContext` whose first resume resolves while remaining suspended, new/start/dismiss/continue onboarding checks, and a short landscape dialogue action-bounds check.
+- **Expected pre-implementation result:** the audio control remains marked enabled after a resolved-but-suspended context, no assistant dialog exists, and dialogue action bounds are not explicitly protected at a short landscape viewport.
+- **Command:** `npm run test:browser -- --grep 'MA-001: an iOS-style|FTA-001|MG-002: short portrait'`.
+- **Status:** baseline recorded below.
+
+## iOS audio, first-time assistant, and responsive-dialogue follow-up — baseline and passing evidence
+
+- **Failing baseline:** `2026-07-17` (Europe/Berlin), `npm run test:browser -- --grep 'MA-001: an iOS-style|FTA-001|MG-002: short portrait'` — 0/3 passed before implementation. The assistant dialog was absent, short-viewport dialogue copy stayed absolutely positioned, and a resume promise that resolved while the fake context remained suspended incorrectly marked music as enabled.
+- **Implementation:** audio activation now primes a zero-length buffer on the player gesture, treats `AudioContext.state === 'running'` as the only successful unlock, and retains a requested-play retry for later gestures. A local-storage-backed first-chronicle assistant explains inspection, satchel use, and travel, then returns focus to the hand-mirror interaction. Short landscape dialogue keeps its copy in normal flow and bounds its image so choices stay reachable.
+- **Passing targeted evidence:** `2026-07-17` (Europe/Berlin), `npm run test:browser -- --grep 'MA-001: an iOS-style|FTA-001|MG-002: short portrait'` — 3/3 passed.
+- **Passing regression evidence:** `2026-07-17` (Europe/Berlin), `npm run check`, `npm test` (25/25), `npm run test:browser` (19/19), `npm run test:a11y` (1/1), `npx openspec validate mobile-audio-hardening --strict`, and `git diff --check` — passed.
+- **Manual evidence:** `2026-07-17` (Europe/Berlin), local Chromium screenshots inspected at 390 × 844 (first-time assistant), 844 × 390 (workshop interaction/dialogue layout), and 1440 × 900 (desktop scene). Physical iOS audio output remains release QA because this environment has no physical iOS audio device.
+
 ## Failing baseline
 
 - **Specifications:** `specs/mobile-gameplay/spec.md` (MG-001, MG-002) and `specs/mobile-audio/spec.md` (MA-001).

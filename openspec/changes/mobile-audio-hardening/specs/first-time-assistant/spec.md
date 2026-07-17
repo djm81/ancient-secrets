@@ -12,10 +12,10 @@ The game SHALL show a first-chronicle assistant after a player starts a new chro
 - **WHEN** the player selects “Begin the Adventure”
 - **THEN** a labelled assistant dialog describes inspection, satchel interaction, and scene navigation
 
-#### Scenario: A player dismisses the assistant
+#### Scenario: A player dismisses the assistant with its control or Escape
 
 - **GIVEN** the first-time assistant is visible
-- **WHEN** the player selects its dismissal control
+- **WHEN** the player selects its dismissal control or presses Escape
 - **THEN** focus moves to the opening scene’s hand-mirror interaction, the chronicle remains playable, and the assistant completion preference is saved without changing the chronicle schema
 
 #### Scenario: A returning player continues a chronicle

@@ -2,6 +2,18 @@
 
 All timestamps use Europe/Berlin. This change follows specification → tests → failing evidence → implementation → passing evidence.
 
+## First-time assistant Escape dismissal — test evidence
+
+- **Review thread:** `PRRT_kwDOTW1Bac6R50_K`, `maestros-secret.html:1748`.
+- **Specification:** `specs/first-time-assistant/spec.md` (FTA-001 dismissal by Escape).
+- **Test to add:** open the assistant on a fresh chronicle, press Escape, and assert that the completion preference is saved and focus reaches the hand-mirror interaction.
+- **Expected pre-implementation result:** Escape uses the generic modal close path, which neither saves completion nor overrides focus back to the scene interaction.
+- **Command:** `npm run test:browser -- --grep 'Escape completes the first-time assistant'`.
+- **Failing baseline:** 2026-07-18 00:07 CEST — `npm run test:browser -- --grep 'Escape completes the first-time assistant'` failed as expected: the completion preference remained `null` after Escape.
+- **Implementation:** `completeFirstTimeAssistant()` centralizes persistence, close, and hand-mirror focus. Both the visible dismissal control and the Escape handler call it.
+- **Passing result:** 2026-07-18 00:08 CEST — the targeted Escape regression passed (1/1).
+- **Final regression gates:** 2026-07-18 00:09:58 CEST — `npm run check`, `npm test` (25/25), `npm run test:browser` (22/22), `npm run test:a11y` (1/1), `npx openspec validate mobile-audio-hardening --strict`, and `git diff --check` passed.
+
 ## iOS trusted-tap music follow-up — test evidence
 
 - **Specification:** `specs/mobile-audio/spec.md` (MA-001 direct-tap source and control state).

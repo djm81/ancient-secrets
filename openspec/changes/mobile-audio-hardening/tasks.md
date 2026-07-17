@@ -17,3 +17,6 @@
 - [x] Add a failing direct-tap iOS music-source regression and state-feedback coverage; record the baseline.
 - [x] Schedule the first music bar inside the trusted activation and make music state visible.
 - [x] Re-run browser, mobile visual, and quality gates; record evidence and update the release PR.
+- [x] Add a failing Escape-dismissal assistant regression from PR review thread `PRRT_kwDOTW1Bac6R50_K`.
+- [x] Route Escape and the visible dismissal control through the same completion and focus logic.
+- [x] Re-run affected checks and update the review evidence.

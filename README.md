@@ -67,7 +67,7 @@ npm run test:a11y
 openspec validate proof-of-excellence-pass --strict
 ```
 
-Manual QA: open the root page at desktop and narrow/mobile widths; at 390 × 844 start a fresh chronicle, dismiss the first-chronicle assistant, then use the portrait action controls to take the mirror, navigate, and open the baker dialogue. Confirm a resumed chronicle does not show the assistant again. At a short 844 × 390 landscape viewport, confirm dialogue image and action controls stay visible and usable. Complete the mirror-to-note sequence with only Tab, Enter, and Space; enable high contrast; confirm sound after an explicit start or music-button activation (including on physical iOS release QA); and request each guidance tier with and without the Worker enabled.
+Manual QA: open the root page at desktop and narrow/mobile widths; at 390 × 844 start a fresh chronicle, dismiss the first-chronicle assistant with both its button and Escape, then use the portrait action controls to take the mirror, navigate, and open the baker dialogue. Confirm a resumed chronicle does not show the assistant again. At a short 844 × 390 landscape viewport, confirm dialogue image and action controls stay visible and usable. Complete the mirror-to-note sequence with only Tab, Enter, and Space; enable high contrast; confirm sound after an explicit start or music-button activation (including on physical iOS release QA); and request each guidance tier with and without the Worker enabled.
 
 ## Point-and-click design
 

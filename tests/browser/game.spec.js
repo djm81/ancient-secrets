@@ -266,6 +266,19 @@ test('FTA-001: a new chronicle gets a skippable first-time interaction assistant
   await expect(assistant).not.toBeVisible();
 });
 
+test('FTA-001: Escape completes the first-time assistant and returns focus to the opening interaction', async ({ page }) => {
+  await page.goto('/maestros-secret.html');
+  await page.getByRole('button', { name: 'Begin the Adventure' }).click();
+  const assistant = page.getByRole('dialog', { name: 'Your First Steps' });
+  await expect(assistant).toBeVisible();
+
+  await page.keyboard.press('Escape');
+
+  await expect(assistant).not.toBeVisible();
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('maestros-secret:first-time-assistant'))).toBe('complete');
+  await expect(page.locator('[data-hs="mirror"]')).toBeFocused();
+});
+
 test.describe('short mobile dialogue', () => {
   test.use({ viewport: { width: 844, height: 390 } });
 

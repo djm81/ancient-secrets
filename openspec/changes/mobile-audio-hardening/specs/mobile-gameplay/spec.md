@@ -33,3 +33,9 @@ At a portrait viewport no wider than 620 CSS px, title content, inventory contro
 - **GIVEN** a player opens the baker dialogue at 390 × 844
 - **WHEN** the art, copy, and choices render
 - **THEN** the player can read a choice and select it without horizontal scrolling or clipped controls
+
+#### Scenario: Dialogue choices remain anchored below a cropped image
+
+- **GIVEN** a phone or compact landscape viewport with little vertical room opens a dialogue
+- **WHEN** the dialogue image is cropped to preserve room for copy
+- **THEN** every dialogue choice is in-flow with the copy, visible or reachable by vertical scrolling, and does not overlap an unrelated scene control

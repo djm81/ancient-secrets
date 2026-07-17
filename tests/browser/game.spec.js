@@ -40,6 +40,8 @@ test('EQ-001: keyboard-only opening sequence reads the note', async ({ page }) =
   await page.goto('/maestros-secret.html');
   await page.getByRole('button', { name: 'Begin the Adventure' }).focus();
   await page.keyboard.press('Enter');
+  await page.getByRole('button', { name: 'Begin Exploring' }).focus();
+  await page.keyboard.press('Enter');
   await page.locator('[data-hs="mirror"]').focus();
   await page.keyboard.press('Enter');
   await page.getByRole('button', { name: 'Select Hand Mirror' }).focus();
@@ -56,6 +58,7 @@ test('EQ-002: contrast persists and reduced motion removes essential animation',
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/maestros-secret.html');
   await page.getByRole('button', { name: 'Begin the Adventure' }).click();
+  await page.getByRole('button', { name: 'Begin Exploring' }).click();
   await page.getByRole('button', { name: 'CONTRAST' }).click();
   await page.reload();
   await expect(page.locator('body')).toHaveClass(/high-contrast/);
@@ -65,6 +68,7 @@ test('EQ-002: contrast persists and reduced motion removes essential animation',
 test('NA-001 and NA-002: Field Notes and every reachable Duomo arrow remain useful', async ({ page }) => {
   await page.goto('/maestros-secret.html');
   await page.getByRole('button', { name: 'Begin the Adventure' }).click();
+  await page.getByRole('button', { name: 'Begin Exploring' }).click();
   await page.locator('[data-hs="window"]').click();
   await page.getByRole('button', { name: 'NOTES' }).click();
   await expect(page.getByRole('heading', { name: 'Florentine Bearings' })).toBeVisible();
@@ -90,6 +94,7 @@ test('NA-001 and NA-002: Field Notes and every reachable Duomo arrow remain usef
 test('ID-001: the baker dialogue awards bread and the finale saves an earned resolution', async ({ page }) => {
   await page.goto('/maestros-secret.html');
   await page.getByRole('button', { name: 'Begin the Adventure' }).click();
+  await page.getByRole('button', { name: 'Begin Exploring' }).click();
   await page.getByRole('button', { name: /Go right to Piazza della Signoria/ }).click();
   await page.locator('[data-hs="bread"]').click();
   await expect(page.getByRole('dialog', { name: 'The Baker’s Gift' })).toBeVisible();
@@ -174,6 +179,7 @@ test('@a11y landing page and game title screen have no automated accessibility v
   await page.goto('/maestros-secret.html');
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
   await page.getByRole('button', { name: 'Begin the Adventure' }).click();
+  await page.getByRole('button', { name: 'Begin Exploring' }).click();
   await page.getByRole('button', { name: /Go right to Piazza della Signoria/ }).click();
   await page.locator('[data-hs="bread"]').click();
   expect((await new AxeBuilder({ page }).include('#dialogue').analyze()).violations).toEqual([]);
@@ -197,6 +203,7 @@ test.describe('portrait-phone gameplay', () => {
   test('MG-001: portrait actions mirror scene hotspots and navigation with touch-sized controls', async ({ page }) => {
     await page.goto('/maestros-secret.html');
     await page.getByRole('button', { name: 'Begin the Adventure' }).click();
+    await page.getByRole('button', { name: 'Begin Exploring' }).click();
 
     const actions = page.locator('#portrait-actions');
     await expect(actions).toBeVisible();
@@ -213,6 +220,7 @@ test.describe('portrait-phone gameplay', () => {
   test('MG-002: portrait dialogue has readable in-flow choices', async ({ page }) => {
     await page.goto('/maestros-secret.html');
     await page.getByRole('button', { name: 'Begin the Adventure' }).click();
+    await page.getByRole('button', { name: 'Begin Exploring' }).click();
     const actions = page.locator('#portrait-actions');
     await actions.getByRole('button', { name: 'Go right to Piazza della Signoria' }).click();
     await actions.getByRole('button', { name: "Baker's Stall" }).click();
@@ -236,6 +244,51 @@ test.describe('portrait-phone gameplay', () => {
     const actions = page.locator('#portrait-actions');
     await actions.getByRole('button', { name: 'Flying Machine' }).click();
     await expect(actions.getByRole('button', { name: 'Trapdoor' })).toBeVisible({ timeout: 4_000 });
+  });
+});
+
+test('FTA-001: a new chronicle gets a skippable first-time interaction assistant', async ({ page }) => {
+  await page.goto('/maestros-secret.html');
+  await page.getByRole('button', { name: 'Begin the Adventure' }).click();
+
+  const assistant = page.getByRole('dialog', { name: 'Your First Steps' });
+  await expect(assistant).toBeVisible();
+  await expect(assistant).toContainText('Inspect the scene');
+  await expect(assistant).toContainText('satchel');
+  await expect(assistant).toContainText('left and right');
+  await page.getByRole('button', { name: 'Begin Exploring' }).click();
+  await expect(assistant).not.toBeVisible();
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('maestros-secret:first-time-assistant'))).toBe('complete');
+  await expect(page.locator('[data-hs="mirror"]')).toBeFocused();
+
+  await page.reload();
+  await page.getByRole('button', { name: 'Continue Chronicle' }).click();
+  await expect(assistant).not.toBeVisible();
+});
+
+test.describe('short mobile dialogue', () => {
+  test.use({ viewport: { width: 844, height: 390 } });
+
+  test('MG-002: short portrait-or-landscape dialogue actions follow the image instead of overlaying it', async ({ page }) => {
+    await page.goto('/maestros-secret.html');
+    await page.getByRole('button', { name: 'Begin the Adventure' }).click();
+    await page.getByRole('button', { name: 'Begin Exploring' }).click();
+    await page.getByRole('button', { name: 'Go right to Piazza della Signoria' }).click();
+    await page.locator('[data-hs="bread"]').click();
+
+    const dialogue = page.getByRole('dialog', { name: 'The Baker’s Gift' });
+    await expect(dialogue).toBeVisible();
+    const copy = dialogue.locator('.dialogue-copy');
+    await expect(copy).toHaveCSS('position', 'relative');
+    const bounds = await dialogue.locator('.dialogue-scene').evaluate(scene => {
+      const image = scene.querySelector('img').getBoundingClientRect();
+      const choice = scene.querySelector('.dialogue-choices .btn').getBoundingClientRect();
+      const root = scene.getBoundingClientRect();
+      return { imageBottom: image.bottom, choiceTop: choice.top, choiceLeft: choice.left, choiceRight: choice.right, rootLeft: root.left, rootRight: root.right };
+    });
+    expect(bounds.choiceTop).toBeGreaterThanOrEqual(bounds.imageBottom);
+    expect(bounds.choiceLeft).toBeGreaterThanOrEqual(bounds.rootLeft);
+    expect(bounds.choiceRight).toBeLessThanOrEqual(bounds.rootRight);
   });
 });
 
@@ -275,6 +328,7 @@ test('MA-001: a suspended audio context resumes before game sounds are scheduled
   });
   await page.goto('/maestros-secret.html');
   await page.getByRole('button', { name: 'Begin the Adventure' }).click();
+  await page.getByRole('button', { name: 'Begin Exploring' }).click();
   await expect.poll(() => page.evaluate(() => window.__audioProbe.resumes)).toBeGreaterThan(0);
   await expect.poll(() => page.evaluate(() => window.__audioProbe.startsBeforeResume)).toBe(0);
 });
@@ -305,6 +359,7 @@ test('MA-001: music scheduling resumes after a later context suspension', async 
   });
   await page.goto('/maestros-secret.html');
   await page.getByRole('button', { name: 'Begin the Adventure' }).click();
+  await page.getByRole('button', { name: 'Begin Exploring' }).click();
   await expect.poll(() => page.evaluate(() => window.__lifecycleAudio.starts)).toBeGreaterThan(0);
   await page.waitForTimeout(150);
   const startsBeforeSuspend = await page.evaluate(() => window.__lifecycleAudio.starts);
@@ -315,4 +370,39 @@ test('MA-001: music scheduling resumes after a later context suspension', async 
     window.__lifecycleAudio.context.state = 'running';
   });
   await expect.poll(() => page.evaluate(() => window.__lifecycleAudio.starts)).toBeGreaterThan(startsBeforeSuspend);
+});
+
+test('MA-001: an iOS-style resolved-but-suspended context stays muted until a later activation can run it', async ({ page }) => {
+  await page.addInitScript(() => {
+    window.__iosAudioProbe = { resumes: 0, starts: 0, allowResume: false };
+    class FakeAudioContext {
+      constructor() { this.currentTime = 0; this.destination = {}; this.state = 'suspended'; }
+      resume() {
+        window.__iosAudioProbe.resumes += 1;
+        if (window.__iosAudioProbe.allowResume) this.state = 'running';
+        return Promise.resolve();
+      }
+      createOscillator() {
+        return { frequency: { value: 0 }, type: 'sine', connect() {}, start() { window.__iosAudioProbe.starts += 1; }, stop() {} };
+      }
+      createGain() {
+        return { gain: { value: 0, setValueAtTime() {}, exponentialRampToValueAtTime() {}, cancelScheduledValues() {} }, connect() {} };
+      }
+      createBiquadFilter() { return { frequency: { value: 0, setTargetAtTime() {} }, connect() {}, type: 'lowpass' }; }
+    }
+    window.AudioContext = FakeAudioContext;
+    window.webkitAudioContext = FakeAudioContext;
+  });
+  await page.goto('/maestros-secret.html');
+  await page.getByRole('button', { name: 'Begin the Adventure' }).click();
+  await page.getByRole('button', { name: 'Begin Exploring' }).click();
+  await expect.poll(() => page.evaluate(() => window.__iosAudioProbe.resumes)).toBeGreaterThan(0);
+  await expect(page.getByRole('button', { name: 'Mute music' })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Play music' })).toBeVisible();
+  await expect.poll(() => page.evaluate(() => window.__iosAudioProbe.starts)).toBe(0);
+
+  await page.evaluate(() => { window.__iosAudioProbe.allowResume = true; });
+  await page.getByRole('button', { name: 'Play music' }).click();
+  await expect(page.getByRole('button', { name: 'Mute music' })).toBeVisible();
+  await expect.poll(() => page.evaluate(() => window.__iosAudioProbe.starts)).toBeGreaterThan(0);
 });

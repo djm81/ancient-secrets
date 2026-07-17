@@ -2,6 +2,18 @@
 
 All timestamps use Europe/Berlin. This change follows specification → tests → failing evidence → implementation → passing evidence.
 
+## iOS trusted-tap music follow-up — test evidence
+
+- **Specification:** `specs/mobile-audio/spec.md` (MA-001 direct-tap source and control state).
+- **Test to add:** with a fake suspended context whose `resume()` remains pending, start a chronicle and assert that real oscillator sources have already been scheduled by the trusted activation and that the music control reports `Starting music`.
+- **Expected pre-implementation result:** no real oscillator source is created until the asynchronous resume callback runs, while the control offers no starting state.
+- **Command:** `npm run test:browser -- --grep 'direct-tap music sources'`.
+- **Failing baseline:** 2026-07-17 23:43 CEST — `npm run test:browser -- --grep 'direct-tap music sources'` failed as expected: a permanently pending `resume()` left real oscillator starts at `0`.
+- **Implementation:** the gesture path now initializes the music graph and schedules its first bar before calling the shared resume promise. The control reports `Starting music` until the context is confirmed running, then shows `Mute music`; failures return it to `Play music` while retaining a retry request.
+- **Passing result:** 2026-07-17 23:47 CEST — `npm run test:browser -- --grep 'MA-001'` passed (4/4), including the delayed-resume direct-tap scenario.
+- **Final regression gates:** 2026-07-17 23:48:53 CEST — `npm run check`, `npm test` (25/25), `npm run test:browser` (21/21), `npm run test:a11y` (1/1), `npx openspec validate mobile-audio-hardening --strict`, and `git diff --check` passed.
+- **Visual evidence:** 2026-07-17 23:48:53 CEST — local Chromium at 390 × 844 shows the active music glyph in the phone HUD after direct start; physical iOS output remains required release QA.
+
 ## Desktop baker-dialogue composition follow-up — test evidence
 
 - **Specification:** `specs/mobile-gameplay/spec.md` (MG-002 desktop parchment placement).

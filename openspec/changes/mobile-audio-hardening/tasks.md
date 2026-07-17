@@ -14,3 +14,6 @@
 - [x] Add failing desktop baker-dialogue placement coverage and record the baseline.
 - [x] Mark dialogue scenes by authored composition and place the baker copy in its right-side parchment area without changing compact layouts.
 - [x] Re-run affected browser and quality gates; record evidence.
+- [x] Add a failing direct-tap iOS music-source regression and state-feedback coverage; record the baseline.
+- [x] Schedule the first music bar inside the trusted activation and make music state visible.
+- [x] Re-run browser, mobile visual, and quality gates; record evidence and update the release PR.

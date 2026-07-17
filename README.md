@@ -6,7 +6,7 @@ A compact Renaissance point-and-click adventure set in Florence in 1503. You pla
 
 ## Highlights
 
-- One self-contained HTML game: illustrated SVG scenes, responsive layout, inventory, dialogue, sound effects, and generative lute music. A local first-chronicle assistant introduces scene inspection, the satchel, and travel; portrait phones retain the complete scene and offer touch-sized scene-action controls. Sound starts only after the browser reports an actually running audio context and retries safely after a temporary suspension.
+- One self-contained HTML game: illustrated SVG scenes, responsive layout, inventory, dialogue, sound effects, and generative lute music. A local first-chronicle assistant introduces scene inspection, the satchel, and travel; portrait phones retain the complete scene and offer touch-sized scene-action controls. The first music notes are scheduled inside a direct player action; the music control explicitly reports starting, playing, or muted and retries safely after a temporary suspension.
 - Replayable mysteries: every new chronicle randomizes the strongbox code, its Roman-numeral clue location, the Piazza gear route, and the Duomo bell sequence.
 - A nested Il Duomo adventure: solve the vestibule's star-and-bell lock to reach the Whispering Gallery and its alternate clue path.
 - Five optional curiosities reward close observation without blocking completion.

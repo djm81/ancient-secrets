@@ -10,6 +10,7 @@ At phone portrait sizes the fixed 16:9 game stage leaves too little vertical roo
 - Make title, HUD, inventory, panels, and dialogue readable and operable within the visual viewport at 390 × 844.
 - Unlock and resume Web Audio from a user activation before scheduling effects or generative music; retain an explicit music control.
 - Confirm that a resume request actually leaves the audio context running before presenting music as enabled, and re-attempt unlock on a subsequent player activation when iOS leaves it interrupted or suspended.
+- Schedule the first real generative-music sources in the same trusted tap/click that requests audio, rather than waiting for the asynchronous resume callback; show starting, playing, and muted states on the music control.
 - Show a small, skippable first-chronicle assistant explaining inspection, satchel use, and scene navigation. Its completion is a local preference, not game state.
 - Keep dialogue action controls anchored to their dialogue copy at narrow and short viewports so image cropping cannot leave choices displaced or unreachable.
 - Place desktop dialogue copy in each illustration’s authored parchment area so it does not cover the character or leave the intended reading area empty.

@@ -2,6 +2,18 @@
 
 All timestamps use Europe/Berlin. This change follows specification → tests → failing evidence → implementation → passing evidence.
 
+## Suspended-audio scheduler-chain review follow-up — test plan
+
+- **Review thread:** `PRRT_kwDOTW1Bac6SHtXz`, `maestros-secret.html:1124` (outdated anchor; verified against current `dev`).
+- **Specification:** `specs/mobile-audio/spec.md` (MA-001 single scheduler chain after resume).
+- **Test to add:** start music with a fake suspended context, resolve its pending resume, and assert that only the initially queued 400 ms scheduler remains pending before the first scheduler tick.
+- **Expected pre-implementation result:** the initial `mLoop()` and the resume callback each queue a 400 ms scheduler, producing two parallel chains.
+- **Command:** `npm run test:browser -- --grep 'keeps one scheduler chain'`.
+- **Failing baseline:** 2026-07-20 00:51 CEST — the targeted test failed as expected. After resume it observed 26 queued 400 ms scheduler callbacks within the 5-second assertion window, confirming independently recurring chains.
+- **Implementation:** `mLoop()` records an active scheduler chain and only its own next timeout releases that guard; `musicStop()` clears both the timer and guard.
+- **Passing result:** 2026-07-20 00:52 CEST — the targeted regression passed (1/1), leaving only the initial 400 ms scheduler queued after resume.
+- **Final regression gates:** 2026-07-20 00:52 CEST — `npm run check`, `npm test` (25/25), `npm run test:browser` (23/23), `npm run test:a11y` (1/1), `npx openspec validate mobile-audio-hardening --strict`, and `git diff --check` passed.
+
 ## First-time assistant Escape dismissal — test evidence
 
 - **Review thread:** `PRRT_kwDOTW1Bac6R50_K`, `maestros-secret.html:1748`.

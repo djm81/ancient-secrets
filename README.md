@@ -4,6 +4,8 @@ A compact Renaissance point-and-click adventure set in Florence in 1503. You pla
 
 [Play the game on GitHub Pages](https://djm81.github.io/ancient-secrets/)
 
+> **Why this project is different — and where it honestly isn't yet:** read the [value proposition](docs/VALUE_PROPOSITION.md). Short version: the game is competent genre work; the differentiators are the provably bounded AI architecture, the requirement-to-evidence chain, and the FinOps teaching niche — with shipped and proposed claims labeled separately.
+
 ## Highlights
 
 - One self-contained HTML game: illustrated SVG scenes, responsive layout, inventory, dialogue, sound effects, and generative lute music. A local first-chronicle assistant introduces scene inspection, the satchel, and travel; portrait phones retain the complete scene and offer touch-sized scene-action controls. The first music notes are scheduled inside a direct player action; the music control explicitly reports starting, playing, or muted and retries safely after a temporary suspension.
@@ -41,6 +43,22 @@ Each era is a self-contained expedition grounded in documented instruments of it
 Mechanics: explore each era's realistically illustrated scenes, learn from an era mentor, pass (or withdraw from and retry) a deterministic trial, then debrief with Leonardo through fixed multiple-choice dialogue that names what you understood and what you missed. Every recovered folio uncovers one of Leonardo's hidden inventions in the workshop, and a local **Ledger of Mastery** tracks understanding across the four FinOps domains toward a rank of Garzone, Discepolo, or Maestro dei Conti (mirroring the Crawl/Walk/Run maturity model).
 
 The concept translates the [FinOps Framework](https://www.finops.org/framework/) (FinOps Foundation) into pre-cloud financial operations; it teaches the discipline's ideas and claims no certification. All content stays authored and static-first: era imagery is produced at authoring time under a strict payload budget, dialogue remains fixed-choice, and the expedition is fully playable without any AI service.
+
+## Planned AI roadmap
+
+Seven further proposal-stage changes, specified under [`openspec/changes/`](openspec/changes/) and not yet implemented, grow the game's demonstrable AI capability while keeping every existing guarantee: the game stays fully playable without any AI service, model output never mutates game state, and every AI feature ships requirement-level jailbreak scenarios verified by an evaluation harness.
+
+| Change | What it adds |
+|---|---|
+| [`ai-guardrail-evals`](openspec/changes/ai-guardrail-evals/proposal.md) | The guardrail contract as reusable requirements, an adversarial red-team corpus replayed in CI, and a live-model evaluation gate for model swaps |
+| [`on-device-guidance`](openspec/changes/on-device-guidance/proposal.md) | An opt-in local LLM backend (Chrome Prompt API → WebLLM → transformers.js) for the Maestro's Guidance — same validated boundary, nothing leaves the device |
+| [`local-npc-conversation`](openspec/changes/local-npc-conversation/proposal.md) | Bounded free-text conversation with NPCs, processed entirely on device; game state changes only through a closed, deterministic intent enum |
+| [`adaptive-guidance`](openspec/changes/adaptive-guidance/proposal.md) | A telemetry-free local struggle model that suggests the right hint tier — deterministic, dismissible, no AI required |
+| [`verified-puzzle-pipeline`](openspec/changes/verified-puzzle-pipeline/proposal.md) | Authoring-time generate-then-verify puzzle variants: a model proposes, a deterministic solver proves solvability, a human curates, only frozen static data ships |
+| [`expedition-debrief-judge`](openspec/changes/expedition-debrief-judge/proposal.md) | Optional free-form debrief answers for the Codex Rationum, graded by an LLM judge constrained to rubric booleans with authored feedback and an opt-in consent flow |
+| [`ai-case-study-docs`](openspec/changes/ai-case-study-docs/proposal.md) | A public AI-engineering case study and a threat model covering every AI surface, with claim-level traceability to requirements and evidence |
+
+The ordering is deliberate: the guardrail contract and evaluation harness land first, so every later AI feature is born inside a tested boundary rather than retrofitted into one.
 
 ## Optional AI guidance deployment
 

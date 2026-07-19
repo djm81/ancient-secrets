@@ -20,3 +20,5 @@
 - [x] Add a failing Escape-dismissal assistant regression from PR review thread `PRRT_kwDOTW1Bac6R50_K`.
 - [x] Route Escape and the visible dismissal control through the same completion and focus logic.
 - [x] Re-run affected checks and update the review evidence.
+- [x] Add a scheduler-chain regression for a suspended context that later resumes.
+- [x] Ensure music keeps exactly one scheduler chain through audio activation and resume.

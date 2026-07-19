@@ -395,6 +395,36 @@ test('MA-001: direct-tap music sources are scheduled before an iOS resume promis
   await expect(page.getByRole('button', { name: 'Starting music' })).toBeVisible();
 });
 
+test('MA-001: a suspended context keeps one scheduler chain when its resume completes', async ({ page }) => {
+  await page.addInitScript(() => {
+    window.__schedulerProbe = { schedulerTimeouts: 0, completeResume: null };
+    const nativeSetTimeout = window.setTimeout.bind(window);
+    window.setTimeout = (callback, delay, ...args) => {
+      if (delay === 400) window.__schedulerProbe.schedulerTimeouts += 1;
+      return nativeSetTimeout(callback, delay, ...args);
+    };
+    class FakeAudioContext {
+      constructor() { this.currentTime = 0; this.destination = {}; this.state = 'suspended'; }
+      resume() {
+        return new Promise(resolve => {
+          window.__schedulerProbe.completeResume = () => { this.state = 'running'; resolve(); };
+        });
+      }
+      createOscillator() { return { frequency: { value: 0 }, type: 'sine', connect() {}, start() {}, stop() {} }; }
+      createGain() { return { gain: { value: 0, setValueAtTime() {}, exponentialRampToValueAtTime() {}, cancelScheduledValues() {} }, connect() {} }; }
+      createBiquadFilter() { return { frequency: { value: 0, setTargetAtTime() {} }, connect() {}, type: 'lowpass' }; }
+    }
+    window.AudioContext = FakeAudioContext;
+    window.webkitAudioContext = FakeAudioContext;
+  });
+  await page.goto('/maestros-secret.html');
+  await page.getByRole('button', { name: 'Begin the Adventure' }).click();
+  await expect.poll(() => page.evaluate(() => window.__schedulerProbe.schedulerTimeouts)).toBe(1);
+
+  await page.evaluate(() => window.__schedulerProbe.completeResume());
+  await expect.poll(() => page.evaluate(() => window.__schedulerProbe.schedulerTimeouts)).toBe(1);
+});
+
 test('MA-001: music scheduling resumes after a later context suspension', async ({ page }) => {
   await page.addInitScript(() => {
     window.__lifecycleAudio = { starts: 0, context: null };

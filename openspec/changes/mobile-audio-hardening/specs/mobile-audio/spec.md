@@ -24,6 +24,12 @@ The game SHALL create and schedule its first generative-music sources from the s
 - **WHEN** the context returns to the running state
 - **THEN** the music scheduler remains active and resumes scheduling bars without requiring the player to toggle music
 
+#### Scenario: A suspended context resumes after music scheduling begins
+
+- **GIVEN** a player activation starts music while the audio context remains suspended
+- **WHEN** the context subsequently enters the running state
+- **THEN** the existing music scheduler remains the only active scheduler chain
+
 #### Scenario: Audio cannot be resumed
 
 - **GIVEN** the browser rejects an audio resume request

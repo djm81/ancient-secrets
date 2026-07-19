@@ -50,6 +50,6 @@ The consequence is stated plainly: **most of the uniqueness currently lives in s
 
 ## Who this is for
 
-- **Hiring reviewers and technical peers** — the primary audience. The engineering judgment, guardrail architecture, and evidence discipline are the exhibit.
+- **Technical peers and reviewers** — the primary audience. The engineering judgment, guardrail architecture, and evidence discipline are the exhibit.
 - **The FinOps community** — the expedition, once built, targets practitioners who have no game-shaped way to teach their discipline.
 - **Players** — get a polished, accessible short mystery. They will never see the engineering, and that is the point: responsible AI done well is invisible at play time.

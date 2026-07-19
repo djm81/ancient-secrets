@@ -2,7 +2,7 @@
 
 ## Product intent
 
-The project is a compact, browser-based Renaissance point-and-click adventure. It is also a public proof of engineering judgment for hiring reviewers and technical peers.
+The project is a compact, browser-based Renaissance point-and-click adventure. It is also a public proof of engineering judgment for reviewers and technical peers.
 
 ## Non-negotiables
 

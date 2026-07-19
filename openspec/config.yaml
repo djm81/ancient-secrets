@@ -4,7 +4,7 @@ schema: spec-driven
 # imposing process designed for a large multi-repository platform.
 context: |
   Product: The Maestro's Secret, a compact Renaissance point-and-click web adventure
-  Audience: players plus hiring reviewers assessing product, frontend, and responsible-AI judgment
+  Audience: players plus reviewers assessing product, frontend, and responsible-AI judgment
   Stack: semantic HTML, CSS, vanilla ES modules, inline SVG scenes, Web Audio, browser localStorage
   Hosting: static GitHub Pages; optional Cloudflare Worker for bounded AI guidance
   Testing: Node's built-in test runner for pure logic; browser/manual checks for interaction and visual behavior

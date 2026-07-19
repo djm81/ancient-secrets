@@ -2,7 +2,7 @@
 
 ## Why
 
-The repository is explicitly a public proof of engineering judgment, yet its most differentiating quality — a growing AI surface built entirely inside verifiable guardrails — is legible only by reading code and scattered specs. A hiring reviewer, community reader, or security auditor should be able to understand the whole architecture, its threat model, and its evidence trail from two documents. Writing them also imposes a useful discipline: every claim must trace to a requirement ID or committed evidence, and every AI surface must have an enumerated threat analysis.
+The repository is explicitly a public proof of engineering judgment, yet its most differentiating quality — a growing AI surface built entirely inside verifiable guardrails — is legible only by reading code and scattered specs. A reviewer, community reader, or security auditor should be able to understand the whole architecture, its threat model, and its evidence trail from two documents. Writing them also imposes a useful discipline: every claim must trace to a requirement ID or committed evidence, and every AI surface must have an enumerated threat analysis.
 
 ## What Changes
 

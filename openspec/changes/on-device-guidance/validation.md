@@ -12,6 +12,7 @@ Status: **pending** — populated per wave as evidence lands (see tasks.md). No 
 | GB-001 player-controlled preference, authored default | unit + manual | — | pending |
 | GB-002 network silence after opt-in download | manual (recorded network inspection) | — | pending |
 | GB-003 accessible persisted preference; safe degradation | unit (save round-trip) + manual + a11y run | — | pending |
+| TM-003 threat-model update for the local-inference surface | documented review of `docs/ai-threat-model.md` (once baseline exists) | — | pending |
 
 ## Required commands
 

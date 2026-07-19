@@ -30,3 +30,4 @@ Ordering follows the repository discipline: spec → tests → failing evidence 
 - [ ] D1. Run all gates; network + save inspection evidence for NC-002/SF-002 recorded.
 - [ ] D2. Apply the scoped `openspec/project.md` chatbot-clause amendment exactly as worded in the proposal's Impact section.
 - [ ] D3. README subsection on the hybrid persona/intent architecture; validation matrix complete for NC-, IB-, SF- rows.
+- [ ] D4. Update `docs/ai-threat-model.md` for the conversation surface if the baseline threat model exists (TM-003); record the review.

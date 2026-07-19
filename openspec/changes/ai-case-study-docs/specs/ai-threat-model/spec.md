@@ -24,10 +24,10 @@ Each enumerated threat SHALL reference the requirement ID that mitigates it or c
 
 ### Requirement: TM-003 Changes adding an AI surface update the threat model before merge
 
-Any change that introduces or extends a model-visible input or model-produced output SHALL update the threat model in the same change, and its validation matrix SHALL include the threat-model row.
+Once the baseline threat model exists, any change that introduces or extends a model-visible input or model-produced output SHALL update the threat model before its implementation merges, and its validation matrix SHALL include a threat-model row. The sibling AI-surface proposals accepted alongside this change (`on-device-guidance`, `local-npc-conversation`, `expedition-debrief-judge`, `verified-puzzle-pipeline`) already carry that row; their surfaces are additionally covered by the baseline inventory (TM-001).
 
 #### Scenario: New surface without threat-model update is incomplete
 
-- **GIVEN** a proposed change adding an AI surface
+- **GIVEN** a change adding an AI surface whose implementation is proposed after the baseline threat model lands
 - **WHEN** its validation matrix is reviewed
 - **THEN** it contains a threat-model update row, and absence blocks completion

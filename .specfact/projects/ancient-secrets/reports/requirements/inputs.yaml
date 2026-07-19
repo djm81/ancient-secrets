@@ -1132,7 +1132,7 @@ requirements:
   - source_type: openspec_change
     locator: openspec/changes/ai-guardrail-evals/specs/guardrail-contract/spec.md
     title: guardrail-contract
-    revision: sha256:a60b5b49bd23ef43930e6aa74ea80cd94c1554cb6ebe55d7c133c66075ac3056
+    revision: sha256:045dbe36f1a312264659c39517d2c53c8dca34a3bfd9e518bb35fb78900c70c0
   business_rules:
   - rule_id: openspec:ai-guardrail-evals:guardrail-contract:gr-001-model-output-never-mutates-game-state-directly:reply-cannot-advance-progression
     name: Reply cannot advance progression
@@ -1155,7 +1155,7 @@ requirements:
   - source_type: openspec_change
     locator: openspec/changes/ai-guardrail-evals/specs/guardrail-contract/spec.md
     title: guardrail-contract
-    revision: sha256:a60b5b49bd23ef43930e6aa74ea80cd94c1554cb6ebe55d7c133c66075ac3056
+    revision: sha256:045dbe36f1a312264659c39517d2c53c8dca34a3bfd9e518bb35fb78900c70c0
   business_rules:
   - rule_id: openspec:ai-guardrail-evals:guardrail-contract:gr-002-a-deterministic-validator-sits-between-every-model-reply-and-the-game:tampered-next-action-is-discarded
     name: Tampered next action is discarded
@@ -1177,7 +1177,7 @@ requirements:
   - source_type: openspec_change
     locator: openspec/changes/ai-guardrail-evals/specs/guardrail-contract/spec.md
     title: guardrail-contract
-    revision: sha256:a60b5b49bd23ef43930e6aa74ea80cd94c1554cb6ebe55d7c133c66075ac3056
+    revision: sha256:045dbe36f1a312264659c39517d2c53c8dca34a3bfd9e518bb35fb78900c70c0
   business_rules:
   - rule_id: openspec:ai-guardrail-evals:guardrail-contract:gr-003-an-authored-fallback-is-always-available-and-progression-equivalent:complete-playthrough-with-no-ai-configured
     name: Complete playthrough with no AI configured
@@ -1199,7 +1199,7 @@ requirements:
   - source_type: openspec_change
     locator: openspec/changes/ai-guardrail-evals/specs/guardrail-contract/spec.md
     title: guardrail-contract
-    revision: sha256:a60b5b49bd23ef43930e6aa74ea80cd94c1554cb6ebe55d7c133c66075ac3056
+    revision: sha256:045dbe36f1a312264659c39517d2c53c8dca34a3bfd9e518bb35fb78900c70c0
   business_rules:
   - rule_id: openspec:ai-guardrail-evals:guardrail-contract:gr-004-ai-features-fail-closed-on-missing-or-invalid-configuration:partial-worker-configuration-refuses-service
     name: Partial worker configuration refuses service
@@ -1214,21 +1214,32 @@ requirements:
 - schema_version: '1'
   requirement_id: openspec:ai-guardrail-evals:guardrail-contract:gr-005-model-visible-input-is-restricted-to-an-allowlisted-schema
   title: GR-005 Model-visible input is restricted to an allowlisted schema
-  summary: The only data any model SHALL ever see is an explicitly allowlisted, schema-validated
-    summary. Free text, saves, identity, and any field not on the allowlist SHALL
-    never reach a model, and servers SHALL re-validate the allowlist independently
-    of the client.
+  summary: "Every model-visible input SHALL be an explicitly allowlisted, schema-validated\
+    \ payload. Saves, identity, and any field not on the allowlist SHALL never reach\
+    \ a model. Player free text SHALL reach a model only where a capability's accepted\
+    \ specification declares that surface explicitly \u2014 either processed entirely\
+    \ on the device, or transmitted under explicit opt-in consent with strict length\
+    \ and schema caps \u2014 never implicitly or by default. Servers SHALL re-validate\
+    \ allowlists independently of the client."
   sources:
   - source_type: openspec_change
     locator: openspec/changes/ai-guardrail-evals/specs/guardrail-contract/spec.md
     title: guardrail-contract
-    revision: sha256:a60b5b49bd23ef43930e6aa74ea80cd94c1554cb6ebe55d7c133c66075ac3056
+    revision: sha256:045dbe36f1a312264659c39517d2c53c8dca34a3bfd9e518bb35fb78900c70c0
   business_rules:
   - rule_id: openspec:ai-guardrail-evals:guardrail-contract:gr-005-model-visible-input-is-restricted-to-an-allowlisted-schema:extra-fields-are-rejected-server-side
     name: Extra fields are rejected server-side
     given: a request containing any key outside the allowlisted guidance schema
     when: the worker validates it
     then: the request is rejected before any model call occurs
+    priority: null
+  - rule_id: openspec:ai-guardrail-evals:guardrail-contract:gr-005-model-visible-input-is-restricted-to-an-allowlisted-schema:undeclared-free-text-surface-is-a-defect
+    name: Undeclared free-text surface is a defect
+    given: a change whose implementation lets player text reach a model without a
+      spec-level declaration of that surface (device-local or consented, with its
+      caps)
+    when: the change is reviewed against this contract
+    then: it is rejected as violating GR-005 until the surface is specified explicitly
     priority: null
   constraints: []
   evidence_links: []
@@ -1245,7 +1256,7 @@ requirements:
   - source_type: openspec_change
     locator: openspec/changes/ai-guardrail-evals/specs/guardrail-contract/spec.md
     title: guardrail-contract
-    revision: sha256:a60b5b49bd23ef43930e6aa74ea80cd94c1554cb6ebe55d7c133c66075ac3056
+    revision: sha256:045dbe36f1a312264659c39517d2c53c8dca34a3bfd9e518bb35fb78900c70c0
   business_rules:
   - rule_id: openspec:ai-guardrail-evals:guardrail-contract:gr-006-every-ai-capability-ships-adversarial-scenarios-registered-with-the-eval-harness:new-ai-capability-without-corpus-entries-is-incomplete
     name: New AI capability without corpus entries is incomplete
@@ -2301,7 +2312,7 @@ requirements:
   - source_type: openspec_change
     locator: openspec/changes/ai-case-study-docs/specs/ai-threat-model/spec.md
     title: ai-threat-model
-    revision: sha256:c0e28bf578851e0dafb9de8c0d9ddae5eef6f89b0196ef5c81b4cfedde805bca
+    revision: sha256:ed112242da656e7867128ecfa7730efdbef3f464dab097899ccd1d63baf1644a
   business_rules:
   - rule_id: openspec:ai-case-study-docs:ai-threat-model:tm-001-the-threat-model-enumerates-every-ai-surface-with-its-trust-boundaries:inventory-completeness
     name: Inventory completeness
@@ -2323,7 +2334,7 @@ requirements:
   - source_type: openspec_change
     locator: openspec/changes/ai-case-study-docs/specs/ai-threat-model/spec.md
     title: ai-threat-model
-    revision: sha256:c0e28bf578851e0dafb9de8c0d9ddae5eef6f89b0196ef5c81b4cfedde805bca
+    revision: sha256:ed112242da656e7867128ecfa7730efdbef3f464dab097899ccd1d63baf1644a
   business_rules:
   - rule_id: openspec:ai-case-study-docs:ai-threat-model:tm-002-every-identified-threat-maps-to-a-mitigation-or-an-explicit-accepted-risk:unmapped-threat-is-a-defect
     name: Unmapped threat is a defect
@@ -2338,18 +2349,23 @@ requirements:
 - schema_version: '1'
   requirement_id: openspec:ai-case-study-docs:ai-threat-model:tm-003-changes-adding-an-ai-surface-update-the-threat-model-before-merge
   title: TM-003 Changes adding an AI surface update the threat model before merge
-  summary: Any change that introduces or extends a model-visible input or model-produced
-    output SHALL update the threat model in the same change, and its validation matrix
-    SHALL include the threat-model row.
+  summary: Once the baseline threat model exists, any change that introduces or extends
+    a model-visible input or model-produced output SHALL update the threat model before
+    its implementation merges, and its validation matrix SHALL include a threat-model
+    row. The sibling AI-surface proposals accepted alongside this change (`on-device-guidance`,
+    `local-npc-conversation`, `expedition-debrief-judge`, `verified-puzzle-pipeline`)
+    already carry that row; their surfaces are additionally covered by the baseline
+    inventory (TM-001).
   sources:
   - source_type: openspec_change
     locator: openspec/changes/ai-case-study-docs/specs/ai-threat-model/spec.md
     title: ai-threat-model
-    revision: sha256:c0e28bf578851e0dafb9de8c0d9ddae5eef6f89b0196ef5c81b4cfedde805bca
+    revision: sha256:ed112242da656e7867128ecfa7730efdbef3f464dab097899ccd1d63baf1644a
   business_rules:
   - rule_id: openspec:ai-case-study-docs:ai-threat-model:tm-003-changes-adding-an-ai-surface-update-the-threat-model-before-merge:new-surface-without-threat-model-update-is-incomplete
     name: New surface without threat-model update is incomplete
-    given: a proposed change adding an AI surface
+    given: a change adding an AI surface whose implementation is proposed after the
+      baseline threat model lands
     when: its validation matrix is reviewed
     then: it contains a threat-model update row, and absence blocks completion
     priority: null

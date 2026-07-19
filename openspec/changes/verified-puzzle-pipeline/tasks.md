@@ -22,3 +22,4 @@ Ordering follows the repository discipline: spec → tests → failing evidence 
 
 - [ ] C1. Wire variant text into scene/clue rendering; save/resume stability tests (VP-005); offline playthrough evidence (VP-001).
 - [ ] C2. Run all gates; README generate-then-verify subsection; validation matrix complete for VP- rows.
+- [ ] C3. Update `docs/ai-threat-model.md` for the authoring-pipeline surface if the baseline threat model exists (TM-003); record the review.

@@ -44,13 +44,19 @@ When an AI capability's configuration is absent, partial, or invalid (missing or
 
 ### Requirement: GR-005 Model-visible input is restricted to an allowlisted schema
 
-The only data any model SHALL ever see is an explicitly allowlisted, schema-validated summary. Free text, saves, identity, and any field not on the allowlist SHALL never reach a model, and servers SHALL re-validate the allowlist independently of the client.
+Every model-visible input SHALL be an explicitly allowlisted, schema-validated payload. Saves, identity, and any field not on the allowlist SHALL never reach a model. Player free text SHALL reach a model only where a capability's accepted specification declares that surface explicitly — either processed entirely on the device, or transmitted under explicit opt-in consent with strict length and schema caps — never implicitly or by default. Servers SHALL re-validate allowlists independently of the client.
 
 #### Scenario: Extra fields are rejected server-side
 
 - **GIVEN** a request containing any key outside the allowlisted guidance schema
 - **WHEN** the worker validates it
 - **THEN** the request is rejected before any model call occurs
+
+#### Scenario: Undeclared free-text surface is a defect
+
+- **GIVEN** a change whose implementation lets player text reach a model without a spec-level declaration of that surface (device-local or consented, with its caps)
+- **WHEN** the change is reviewed against this contract
+- **THEN** it is rejected as violating GR-005 until the surface is specified explicitly
 
 ### Requirement: GR-006 Every AI capability ships adversarial scenarios registered with the eval harness
 

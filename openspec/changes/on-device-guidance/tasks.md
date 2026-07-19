@@ -31,3 +31,4 @@ Ordering follows the repository discipline: spec → tests → failing evidence 
 
 - [ ] D1. Network-silence evidence: recorded browser session showing zero guidance traffic with the local backend active (GB-002); confirm initial page payload unchanged.
 - [ ] D2. Run all gates; README subsection on the three backends and opt-in download; validation matrix complete for LI-, GB- rows.
+- [ ] D3. Update `docs/ai-threat-model.md` for the local-inference surface if the baseline threat model exists (TM-003); record the review.

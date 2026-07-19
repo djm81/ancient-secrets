@@ -31,3 +31,4 @@ Ordering follows the repository discipline: spec → tests → failing evidence 
 - [ ] D2. Run a live evaluation of the judge over the DJ-004 corpus per LM-002; commit transcripts as model-swap-gate baseline evidence.
 - [ ] D3. Apply the `openspec/project.md` third-non-negotiable amendment exactly as worded in the proposal's Impact section.
 - [ ] D4. Run all gates; README judge/consent/deployment subsection; validation matrix complete for FR-, DJ- rows.
+- [ ] D5. Update `docs/ai-threat-model.md` for the judge surface if the baseline threat model exists (TM-003); record the review.

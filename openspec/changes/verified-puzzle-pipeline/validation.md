@@ -9,6 +9,7 @@ Status: **pending** — populated per wave as evidence lands (see tasks.md). No 
 | VP-003 committed, reproducible verification log | audit re-run evidence | — | pending |
 | VP-004 schema validation + curation records in CI | unit (data-validation suite) | — | pending |
 | VP-005 seed-deterministic, save-stable selection | unit (save round-trip) | — | pending |
+| TM-003 threat-model update for the authoring-pipeline surface | documented review of `docs/ai-threat-model.md` (once baseline exists) | — | pending |
 
 ## Required commands
 

@@ -42,6 +42,22 @@ Mechanics: explore each era's realistically illustrated scenes, learn from an er
 
 The concept translates the [FinOps Framework](https://www.finops.org/framework/) (FinOps Foundation) into pre-cloud financial operations; it teaches the discipline's ideas and claims no certification. All content stays authored and static-first: era imagery is produced at authoring time under a strict payload budget, dialogue remains fixed-choice, and the expedition is fully playable without any AI service.
 
+## Planned AI roadmap
+
+Seven further proposal-stage changes, specified under [`openspec/changes/`](openspec/changes/) and not yet implemented, grow the game's demonstrable AI capability while keeping every existing guarantee: the game stays fully playable without any AI service, model output never mutates game state, and every AI feature ships requirement-level jailbreak scenarios verified by an evaluation harness.
+
+| Change | What it adds |
+|---|---|
+| [`ai-guardrail-evals`](openspec/changes/ai-guardrail-evals/proposal.md) | The guardrail contract as reusable requirements, an adversarial red-team corpus replayed in CI, and a live-model evaluation gate for model swaps |
+| [`on-device-guidance`](openspec/changes/on-device-guidance/proposal.md) | An opt-in local LLM backend (Chrome Prompt API → WebLLM → transformers.js) for the Maestro's Guidance — same validated boundary, nothing leaves the device |
+| [`local-npc-conversation`](openspec/changes/local-npc-conversation/proposal.md) | Bounded free-text conversation with NPCs, processed entirely on device; game state changes only through a closed, deterministic intent enum |
+| [`adaptive-guidance`](openspec/changes/adaptive-guidance/proposal.md) | A telemetry-free local struggle model that suggests the right hint tier — deterministic, dismissible, no AI required |
+| [`verified-puzzle-pipeline`](openspec/changes/verified-puzzle-pipeline/proposal.md) | Authoring-time generate-then-verify puzzle variants: a model proposes, a deterministic solver proves solvability, a human curates, only frozen static data ships |
+| [`expedition-debrief-judge`](openspec/changes/expedition-debrief-judge/proposal.md) | Optional free-form debrief answers for the Codex Rationum, graded by an LLM judge constrained to rubric booleans with authored feedback and an opt-in consent flow |
+| [`ai-case-study-docs`](openspec/changes/ai-case-study-docs/proposal.md) | A public AI-engineering case study and a threat model covering every AI surface, with claim-level traceability to requirements and evidence |
+
+The ordering is deliberate: the guardrail contract and evaluation harness land first, so every later AI feature is born inside a tested boundary rather than retrofitted into one.
+
 ## Optional AI guidance deployment
 
 The live guide is deliberately optional. By default, `js/runtime-config.js` contains an empty endpoint and the game uses authored guidance instantly.

@@ -4,6 +4,8 @@ A compact Renaissance point-and-click adventure set in Florence in 1503. You pla
 
 [Play the game on GitHub Pages](https://djm81.github.io/ancient-secrets/)
 
+> **Why this project is different — and where it honestly isn't yet:** read the [value proposition](docs/VALUE_PROPOSITION.md). Short version: the game is competent genre work; the differentiators are the provably bounded AI architecture, the requirement-to-evidence chain, and the FinOps teaching niche — with shipped and proposed claims labeled separately.
+
 ## Highlights
 
 - One self-contained HTML game: illustrated SVG scenes, responsive layout, inventory, dialogue, sound effects, and generative lute music. A local first-chronicle assistant introduces scene inspection, the satchel, and travel; portrait phones retain the complete scene and offer touch-sized scene-action controls. The first music notes are scheduled inside a direct player action; the music control explicitly reports starting, playing, or muted and retries safely after a temporary suspension.

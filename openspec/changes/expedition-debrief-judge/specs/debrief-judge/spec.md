@@ -4,7 +4,7 @@
 
 ### Requirement: DJ-001 The judge route mirrors the established Worker discipline
 
-The judge Worker route SHALL enforce: an allowlisted request schema (`era`, `questionId`, `answer` only) with era and question validated against the authored bank server-side, a strict answer length cap and total payload cap, origin pinning, a rate-limit binding, and fail-closed behavior when an AI key is present without origin or rate-limit configuration. The route SHALL neither log nor store answer text.
+The judge Worker route SHALL enforce: an allowlisted request schema (`era`, `questionId`, `answer` only) with era and question validated against the authored bank server-side, a strict answer length cap and total payload cap, origin pinning, a rate-limit binding, and fail-closed behavior when an AI key is present without origin or rate-limit configuration. The route SHALL neither log nor store answer text, and the deployment configuration SHALL keep platform-level request-body logging (request logs, tail workers, WAF payload capture) disabled for this route, verified by a documented deployment-configuration review.
 
 #### Scenario: Unknown question is rejected before any model call
 

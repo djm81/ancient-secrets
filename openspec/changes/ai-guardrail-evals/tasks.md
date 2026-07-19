@@ -5,7 +5,7 @@ Ordering follows the repository discipline: spec → tests → failing evidence 
 ## Wave 0 — proposal stage (the only work performed now)
 
 - [ ] 0a. Confirm specs in this change are accepted; record any scope adjustments back into proposal/design before coding.
-- [ ] 0b. `openspec validate ai-guardrail-evals --strict` passes; run `specfact requirements validate --bundle .specfact/projects/ancient-secrets` (if spec harvest into the bundle requires a separate CLI step, record the exact command here before Wave A).
+- [ ] 0b. `openspec validate ai-guardrail-evals --strict` passes; harvest specs with `specfact requirements import --from-openspec --bundle .specfact/projects/ancient-secrets openspec/changes/ai-guardrail-evals`, then `specfact requirements validate --bundle .specfact/projects/ancient-secrets`.
 
 ## Wave A — contract codification and replay skeleton
 

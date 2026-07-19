@@ -5,7 +5,7 @@ Ordering follows the repository discipline: spec → tests → failing evidence 
 ## Wave 0 — proposal stage (the only work performed now)
 
 - [ ] 0a. Confirm specs in this change are accepted; coordinate the save-version bump with whichever sibling change lands first; record adjustments before coding.
-- [ ] 0b. `openspec validate adaptive-guidance --strict` passes; `specfact requirements validate --bundle .specfact/projects/ancient-secrets` run noted.
+- [ ] 0b. `openspec validate adaptive-guidance --strict` passes; harvest specs with `specfact requirements import --from-openspec --bundle .specfact/projects/ancient-secrets openspec/changes/adaptive-guidance`, then `specfact requirements validate --bundle .specfact/projects/ancient-secrets`.
 
 ## Wave A — model and persistence
 

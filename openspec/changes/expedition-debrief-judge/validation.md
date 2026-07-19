@@ -7,7 +7,7 @@ Status: **pending** — populated per wave as evidence lands (see tasks.md). No 
 | FR-001 MCQ path always available, mastery-equivalent | unit + manual MCQ-only parity run | — | pending |
 | FR-002 judge never blocks progression nor demotes below MCQ floor | unit (floor invariant, outage fallback) + manual outage scenario | — | pending |
 | FR-003 explicit revocable consent; no egress without it | browser test (network inspection) + manual | — | pending |
-| DJ-001 worker discipline (allowlist, caps, origin, rate limit, fail closed, no storage) | unit (`worker.fetch` suite) + deployment config review | — | pending |
+| DJ-001 worker discipline (allowlist, caps, origin, rate limit, fail closed, no storage) | unit (`worker.fetch` suite) + documented deployment-config review incl. platform request-body logging disabled | — | pending |
 | DJ-002 schema-constrained booleans; authored-bank feedback only | unit (server + client discard paths) | — | pending |
 | DJ-003 client-side pure delta function; MD-004 parity | unit | — | pending |
 | DJ-004 injection containment; harness registration | unit (corpus replay) + live evaluation transcript | — | pending |

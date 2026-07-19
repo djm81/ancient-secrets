@@ -5,7 +5,7 @@ Ordering follows the repository discipline: spec → tests → failing evidence 
 ## Wave 0 — proposal stage (the only work performed now)
 
 - [ ] 0a. Confirm specs in this change are accepted; confirm the scoped project.md chatbot-clause amendment wording with the maintainer; record adjustments before coding.
-- [ ] 0b. `openspec validate local-npc-conversation --strict` passes; `specfact requirements validate --bundle .specfact/projects/ancient-secrets` run noted.
+- [ ] 0b. `openspec validate local-npc-conversation --strict` passes; harvest specs with `specfact requirements import --from-openspec --bundle .specfact/projects/ancient-secrets openspec/changes/local-npc-conversation`, then `specfact requirements validate --bundle .specfact/projects/ancient-secrets`.
 
 ## Wave A — intent boundary in game-core
 

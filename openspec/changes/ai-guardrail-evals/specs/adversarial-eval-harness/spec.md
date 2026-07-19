@@ -34,7 +34,7 @@ A deterministic validator SHALL reject any model reply that references scenes, i
 
 ### Requirement: AE-004 Spoiler and tier-appropriateness checks bound every tier
 
-Per-tier checks SHALL ensure a nudge reply never contains solution tokens for the current run (strongbox digits, bell order, gear route, clue location), a hint reveals no more than the authored hint sentence's information class, and only the reveal tier may state the authored action.
+Per-tier checks SHALL ensure a nudge reply never contains solution tokens for the current run (strongbox digits, bell order, gear route, clue location), a hint reveals no more than the authored hint sentence's information class, and only the reveal tier may state the authored action. Because run data never enters the model-visible summary, enforcement SHALL be client-side, applied to every reply regardless of backend (worker or local).
 
 #### Scenario: Nudge leaking the code is rejected
 

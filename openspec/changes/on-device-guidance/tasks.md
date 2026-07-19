@@ -5,7 +5,7 @@ Ordering follows the repository discipline: spec → tests → failing evidence 
 ## Wave 0 — proposal stage (the only work performed now)
 
 - [ ] 0a. Confirm specs in this change are accepted; record any scope adjustments back into proposal/design before coding.
-- [ ] 0b. `openspec validate on-device-guidance --strict` passes; `specfact requirements validate --bundle .specfact/projects/ancient-secrets` run noted.
+- [ ] 0b. `openspec validate on-device-guidance --strict` passes; harvest specs with `specfact requirements import --from-openspec --bundle .specfact/projects/ancient-secrets openspec/changes/on-device-guidance`, then `specfact requirements validate --bundle .specfact/projects/ancient-secrets`.
 
 ## Wave A — backend abstraction
 

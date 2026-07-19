@@ -5,7 +5,7 @@ Ordering follows the repository discipline: spec → tests → failing evidence 
 ## Wave 0 — proposal stage (the only work performed now)
 
 - [ ] 0a. Confirm specs in this change are accepted; record any scope adjustments before coding.
-- [ ] 0b. `openspec validate verified-puzzle-pipeline --strict` passes; `specfact requirements validate --bundle .specfact/projects/ancient-secrets` run noted.
+- [ ] 0b. `openspec validate verified-puzzle-pipeline --strict` passes; harvest specs with `specfact requirements import --from-openspec --bundle .specfact/projects/ancient-secrets openspec/changes/verified-puzzle-pipeline`, then `specfact requirements validate --bundle .specfact/projects/ancient-secrets`.
 
 ## Wave A — schema and verifier
 

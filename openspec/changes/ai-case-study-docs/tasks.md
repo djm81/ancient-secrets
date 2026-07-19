@@ -5,7 +5,7 @@ Ordering follows the repository discipline. Evidence for this change is largely 
 ## Wave 0 — proposal stage (the only work performed now)
 
 - [ ] 0a. Confirm specs in this change are accepted; record any scope adjustments before writing.
-- [ ] 0b. `openspec validate ai-case-study-docs --strict` passes; `specfact requirements validate --bundle .specfact/projects/ancient-secrets` run noted.
+- [ ] 0b. `openspec validate ai-case-study-docs --strict` passes; harvest specs with `specfact requirements import --from-openspec --bundle .specfact/projects/ancient-secrets openspec/changes/ai-case-study-docs`, then `specfact requirements validate --bundle .specfact/projects/ancient-secrets`.
 
 ## Wave A — threat model
 

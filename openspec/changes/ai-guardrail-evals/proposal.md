@@ -22,7 +22,7 @@ This change codifies the guardrail contract as requirements that every current a
 ## Impact
 
 - New test files under `tests/` and a committed corpus directory `tests/fixtures/adversarial/`; one optional GitHub Actions workflow file for live evaluations.
-- No runtime behavior change: `js/`, `workers/`, and the shipped payload are untouched except where a hallucination/spoiler validator is added as a pure function alongside `validateGuidance` (exported for tests and reused by the existing reply path).
+- No player-visible behavior change: the client reply path gains one additional rejection check — a hallucination/spoiler validator added as a pure function alongside `validateGuidance` (exported for tests) — and rejected replies fall back to authored hints exactly as today; `workers/` and the shipped payload are otherwise untouched.
 - No `openspec/project.md` non-negotiable is touched. This change strengthens all four: it adds proof that the static game, the AI-optional posture, the payload privacy boundary, and the compact experience survive hostile input.
 - README gains a short "AI guardrails and evaluations" subsection linking the corpus and the workflow.
 

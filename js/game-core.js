@@ -51,6 +51,15 @@ export const INTERACTABLES = Object.freeze({
   gallerydoor: interaction('transition', 'Returns to the Duomo Vestibule.')
 });
 
+export const SCENE_INTERACTION_IDS = Object.freeze({
+  workshop: Object.freeze(['window', 'machine', 'easel', 'pots', 'mirror', 'note', 'candle', 'strongbox', 'rug', 'trapdoor', 'cat']),
+  piazza: Object.freeze(['duomo', 'lion', 'pigeon', 'bread', 'well', 'spiral']),
+  library: Object.freeze(['fresco', 'redbook', 'monk', 'chest', 'candelabra']),
+  duomoentry: Object.freeze(['mosaic', 'bell0', 'bell1', 'bell2', 'bell3', 'duomogate', 'duomoexit']),
+  duomogallery: Object.freeze(['starchart', 'duomoview', 'gallerydoor']),
+  cellar: Object.freeze([])
+});
+
 export const ROUTES = Object.freeze({
   fresco: { label: 'the faded fresco in the Scriptorium', short: 'the fresco' },
   duomo: { label: 'the star chart high in Il Duomo', short: 'the Duomo' },
@@ -245,6 +254,45 @@ export function nextActionFor(state) {
   if (!flags.cipherSeen) return 'find-cipher';
   if (!flags.boxOpen) return 'open-strongbox';
   return flags.ornateTaken ? 'open-trapdoor' : 'open-strongbox';
+}
+
+const CONTEXTUAL_ACTIONS = Object.freeze({
+  'take-mirror': Object.freeze(['mirror', 'note', 'pots']),
+  'read-note': Object.freeze(['note', 'pots', 'mirror']),
+  'find-brass-key': Object.freeze(['pots', 'note', 'machine']),
+  'take-bread': Object.freeze(['bread', 'lion', 'well']),
+  'recover-gear': Object.freeze(['lion', 'well', 'bread']),
+  'repair-machine': Object.freeze(['machine', 'note', 'rug']),
+  'open-chest': Object.freeze(['chest', 'fresco', 'monk']),
+  'take-lens': Object.freeze(['chest', 'fresco', 'monk']),
+  'find-cipher': Object.freeze(['fresco', 'starchart', 'monk']),
+  'open-strongbox': Object.freeze(['strongbox', 'fresco', 'starchart']),
+  'open-trapdoor': Object.freeze(['trapdoor', 'rug', 'machine']),
+  complete: Object.freeze([])
+});
+
+const SCENE_CONTEXTUAL_FALLBACKS = Object.freeze({
+  workshop: Object.freeze(['mirror', 'note', 'pots']),
+  piazza: Object.freeze(['bread', 'lion', 'well']),
+  library: Object.freeze(['chest', 'fresco', 'monk']),
+  duomoentry: Object.freeze(['mosaic', 'bell0', 'duomogate']),
+  duomogallery: Object.freeze(['starchart', 'duomoview', 'gallerydoor']),
+  cellar: Object.freeze([])
+});
+
+/**
+ * Returns stable interaction identifiers for the Casebook. Rendering decides whether
+ * an authored object is currently visible; this pure contract keeps every control
+ * wired to the same interaction handler as its scene hotspot.
+ */
+export function deriveContextualActions(state, scene = state?.scene) {
+  const allActionIds = SCENE_INTERACTION_IDS[scene] || [];
+  const preferred = CONTEXTUAL_ACTIONS[nextActionFor(state)] || [];
+  const revealed = state?.flags?.trapdoorShown && scene === 'workshop' ? ['trapdoor'] : [];
+  const contextualActionIds = [...preferred, ...revealed, ...(SCENE_CONTEXTUAL_FALLBACKS[scene] || []), ...allActionIds]
+    .filter((id, index, ids) => allActionIds.includes(id) && ids.indexOf(id) === index)
+    .slice(0, 3);
+  return { contextualActionIds, allActionIds: allActionIds.slice() };
 }
 
 export function getProgress(state) {

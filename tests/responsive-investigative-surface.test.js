@@ -12,6 +12,7 @@ test('RI-001: contextual actions cap relevant actions while retaining every scen
   assert.deepEqual(casebook.allActionIds, ['window', 'machine', 'easel', 'pots', 'mirror', 'note', 'candle', 'strongbox', 'rug', 'trapdoor', 'cat']);
 
   assert.deepEqual(deriveContextualActions(state, 'piazza').contextualActionIds, ['bread', 'lion', 'well']);
+  assert.ok(deriveContextualActions(state, 'piazza').allActionIds.includes('libdoor'));
 });
 
 test('RI-001: Casebook action identifiers have parity with registered interactions', () => {

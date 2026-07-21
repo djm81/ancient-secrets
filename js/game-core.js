@@ -53,7 +53,7 @@ export const INTERACTABLES = Object.freeze({
 
 export const SCENE_INTERACTION_IDS = Object.freeze({
   workshop: Object.freeze(['window', 'machine', 'easel', 'pots', 'mirror', 'note', 'candle', 'strongbox', 'rug', 'trapdoor', 'cat']),
-  piazza: Object.freeze(['duomo', 'lion', 'pigeon', 'bread', 'well', 'spiral']),
+  piazza: Object.freeze(['duomo', 'libdoor', 'lion', 'pigeon', 'bread', 'well', 'spiral']),
   library: Object.freeze(['fresco', 'redbook', 'monk', 'chest', 'candelabra']),
   duomoentry: Object.freeze(['mosaic', 'bell0', 'bell1', 'bell2', 'bell3', 'duomogate', 'duomoexit']),
   duomogallery: Object.freeze(['starchart', 'duomoview', 'gallerydoor']),

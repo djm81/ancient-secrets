@@ -79,6 +79,8 @@ Requires Node.js 22 or newer.
 
 Install browser-test dependencies once with `npm ci`, then install the Chromium test browser with `npx playwright install chromium`.
 
+GitHub Actions runs this same quality gate on every branch push and pull request. It is read-only and does not deploy; the existing Pages workflow remains responsible for publishing from `main`.
+
 ```bash
 npm run check
 npm test

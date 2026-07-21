@@ -2,7 +2,7 @@
 
 ## Why
 
-The project's AI surface is about to grow: local on-device inference, bounded NPC conversation, and an expedition debrief judge are proposed as sibling changes. Today's guardrails — `validateGuidance` in `js/game-core.js`, the strict request validation and fail-closed configuration in `workers/maestro-guide.js` — are implemented and unit-tested, but they exist only as code. They are not stated as a reusable contract that new AI features must satisfy, and they are not adversarially regression-tested: no test feeds the boundary a prompt-injection payload, no check rejects a model reply that invents game facts, and a model swap (for example changing `OPENAI_MODEL`) is gated by nothing.
+The project's AI surface is about to grow: browser-native inference, bounded NPC conversation, and an expedition debrief judge are proposed as sibling changes. Today's guardrails — `validateGuidance` in `js/game-core.js`, the strict request validation and fail-closed configuration in `workers/maestro-guide.js` — are implemented and unit-tested, but they exist only as code. They are not stated as a reusable contract that new AI features must satisfy, and they are not adversarially regression-tested: no test feeds the boundary a prompt-injection payload, no check rejects a model reply that names an unrecognised canonical game identifier, and a model swap (for example changing `OPENAI_MODEL`) is gated by nothing.
 
 This change codifies the guardrail contract as requirements that every current and future AI capability cites, and builds the evaluation harness that proves the contract holds under attack — before any new AI feature lands.
 
@@ -10,7 +10,7 @@ This change codifies the guardrail contract as requirements that every current a
 
 - Codify the six-point **guardrail contract** (model output never mutates state; deterministic validator between model and game; authored fallback always; fail-closed configuration; allowlisted input schema; adversarial scenarios required per AI capability) as requirements that sibling AI changes reference by ID.
 - Add a **deterministic adversarial replay harness** to default CI: a committed corpus of hostile payloads (prompt injection embedded in every model-visible field, oversized and malformed inputs, spoofed model replies) driven through `validateGuidance` and `worker.fetch(Request)` with Node's built-in test runner, following the existing `tests/worker.test.js` pattern. No network, no secrets, no live model.
-- Add **hallucination and spoiler checks**: validators that reject model replies referencing nonexistent scenes, items, or actions, and tier-appropriateness checks ensuring a nudge never contains solution tokens.
+- Add **canonical-identifier and spoiler checks**: validators that reject model replies using a non-authored canonical scene, item, or action identifier, and tier-appropriateness checks ensuring a nudge never contains solution tokens. Broader semantic truthfulness in free prose is documented as an accepted risk, not overstated as mechanically proven.
 - Add an **optional live-model evaluation workflow**: manually dispatched, secrets only in CI environment, producing committed transcript artifacts; passing this evaluation gates model swaps. It is advisory to the static-site deploy and can never block it.
 
 ## Capabilities
@@ -22,9 +22,10 @@ This change codifies the guardrail contract as requirements that every current a
 ## Impact
 
 - New test files under `tests/` and a committed corpus directory `tests/fixtures/adversarial/`; one optional GitHub Actions workflow file for live evaluations.
-- No player-visible behavior change: the client reply path gains one additional rejection check — a hallucination/spoiler validator added as a pure function alongside `validateGuidance` (exported for tests) — and rejected replies fall back to authored hints exactly as today; `workers/` and the shipped payload are otherwise untouched.
+- No player-visible behavior change: the client reply path gains one additional rejection check — a canonical-identifier/spoiler validator added as a pure function alongside `validateGuidance` (exported for tests) — and rejected replies fall back to authored hints exactly as today; `workers/` and the shipped payload are otherwise untouched.
 - No `openspec/project.md` non-negotiable is touched. This change strengthens all four: it adds proof that the static game, the AI-optional posture, the payload privacy boundary, and the compact experience survive hostile input.
 - README gains a short "AI guardrails and evaluations" subsection linking the corpus and the workflow.
+- Depends on `ai-case-study-docs` for the baseline threat model and accepted-risk register before implementation begins.
 
 ## Constraints
 

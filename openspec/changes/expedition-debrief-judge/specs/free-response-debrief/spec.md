@@ -30,7 +30,7 @@ No judge verdict, failure, or unavailability SHALL prevent a debrief from comple
 
 ### Requirement: FR-003 Free-form answering requires explicit informed consent that is revocable
 
-Before any answer text leaves the device, the player SHALL see a disclosure naming exactly what is sent, the destination, and that nothing is stored; consent SHALL be per-session, never pre-checked, and revocable, with revocation hiding the free-form path without penalty.
+Before any answer text leaves the device, the player SHALL see a disclosure naming exactly what is sent, the project Worker and model-provider destination, the separately documented application, platform, and provider retention postures, and a warning not to enter personal data. Consent SHALL be per-session, never pre-checked, and revocable, with revocation hiding the free-form path without penalty and clearing unsent text from the client surface.
 
 #### Scenario: No consent, no egress
 

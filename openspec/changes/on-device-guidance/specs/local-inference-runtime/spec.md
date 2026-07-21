@@ -2,35 +2,29 @@
 
 ## ADDED Requirements
 
-### Requirement: LI-001 Backend capability detection fails closed to authored hints
+### Requirement: LI-001 Browser-native capability detection fails closed without application loading
 
-Detection of local inference support (Prompt API, WebGPU, WASM) SHALL be lazy and side-effect-free, and every unsupported, failed, or partially available outcome SHALL resolve the guidance path to authored hints without error dialogs or blocked interaction.
+Detection of the browser-provided Prompt API SHALL be lazy and side-effect-free: it SHALL perform no dynamic import or application-initiated model/engine request. Every unsupported, failed, or partially available outcome SHALL resolve the guidance path to authored hints without error dialogs or blocked interaction.
 
 #### Scenario: Unsupported browser degrades silently
 
-- **GIVEN** a browser with no Prompt API, no WebGPU, and WASM engine initialization failing
+- **GIVEN** a browser with no usable Prompt API
 - **WHEN** the player has selected the local backend and requests a nudge
 - **THEN** the authored nudge is served, the settings surface shows the local backend as unavailable, and the game remains fully playable
 
-### Requirement: LI-002 Model assets download only after explicit informed opt-in and are evictable
+### Requirement: LI-002 Browser-native inference is activated only after explicit informed opt-in
 
-No model or engine asset SHALL download until the player confirms a disclosure stating the approximate size and that all processing stays on the device. Assets SHALL never ship in the repository or site payload, SHALL be stored only in browser-managed caches, and SHALL be removable via an eviction control that also reverts the backend preference.
+The application SHALL not activate browser-native inference until the player confirms a disclosure stating the allowlisted game summary passed to the browser runtime, that the application makes no guidance request and does not bundle or request model assets, and that browser-managed availability is outside the application's control. Model assets SHALL never ship in the repository or site payload.
 
-#### Scenario: No download without consent
+#### Scenario: No application asset request without consent
 
 - **GIVEN** a fresh chronicle with default settings
 - **WHEN** the player plays without opening the backend setting
-- **THEN** no model or engine asset is requested from any origin
-
-#### Scenario: Eviction removes assets and reverts preference
-
-- **GIVEN** a player who previously opted in and downloaded a local model
-- **WHEN** they activate the eviction control
-- **THEN** cached model assets are cleared, the preference reverts to authored-only, and guidance continues via authored hints
+- **THEN** the application issues no model or engine asset request from any origin
 
 ### Requirement: LI-003 Local replies pass the unchanged shared validation boundary
 
-Every locally generated reply SHALL pass the same `validateGuidance` checks as remote replies (requested tier preserved, `nextActionId` equal to the game's own computation, 45-word cap) plus the hallucination and spoiler validators, and any rejection SHALL serve the authored hint for the requested tier.
+Every locally generated reply SHALL pass the same `validateGuidance` checks as remote replies (requested tier preserved, `nextActionId` equal to the game's own computation, 45-word cap) plus the canonical-identifier and spoiler validators, and any rejection SHALL serve the authored hint for the requested tier.
 
 #### Scenario: Local reply tampering is discarded
 

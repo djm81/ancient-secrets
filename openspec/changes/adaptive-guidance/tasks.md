@@ -1,16 +1,16 @@
 # Tasks: adaptive-guidance
 
-Ordering follows the repository discipline: spec → tests → failing evidence → implementation → passing evidence → quality gates → docs. Each task targets roughly two hours; each wave leaves the site shippable.
+Ordering follows the repository discipline: spec → tests → failing evidence → implementation → passing evidence → quality gates → docs. Each task targets roughly two hours; each wave leaves the site shippable. Follow `openspec/IMPLEMENTATION_ORDER.md`: this change follows `temporal-finops-expedition` (migration registry) and `on-device-guidance` when its backend preference is present.
 
 ## Wave 0 — proposal stage (the only work performed now)
 
-- [ ] 0a. Confirm specs in this change are accepted; coordinate the save-version bump with whichever sibling change lands first; record adjustments before coding.
+- [ ] 0a. Confirm specs in this change are accepted; confirm `temporal-finops-expedition` has established the registry, then agree the ordered step and preservation contract with `on-device-guidance` before coding.
 - [ ] 0b. `openspec validate adaptive-guidance --strict` passes; harvest specs with `specfact requirements import --from-openspec --bundle .specfact/projects/ancient-secrets openspec/changes/adaptive-guidance`, then `specfact requirements validate --bundle .specfact/projects/ancient-secrets`.
 
 ## Wave A — model and persistence
 
 - [ ] A1. Write failing unit tests for `suggestTier` purity, threshold behavior, and reveal-only-after-hint (AG-001); implement; record evidence.
-- [ ] A2. Write failing tests for the `struggle` save block: migration from older saves, malformed-block reset, `isValidState` shape checks; implement; record evidence.
+- [ ] A2. Write failing tests for the `struggle` save block: migration through the ordered registry, preservation of expedition and sibling backend-preference state, malformed-block reset, complete-state resume restoration, and `isValidState` shape checks; implement; record evidence.
 - [ ] A3. Write failing tests proving signals never enter `summarizeForGuidance` (AG-002); implement exclusion; record evidence.
 
 ## Wave B — suggestion surface

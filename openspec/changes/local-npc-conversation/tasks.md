@@ -1,10 +1,10 @@
 # Tasks: local-npc-conversation
 
-Ordering follows the repository discipline: spec → tests → failing evidence → implementation → passing evidence → quality gates → docs. Each task targets roughly two hours; each wave leaves the site shippable. Depends on `ai-guardrail-evals` and `on-device-guidance` being implemented.
+Ordering follows the repository discipline: spec → tests → failing evidence → implementation → passing evidence → quality gates → docs. Each task targets roughly two hours; each wave leaves the site shippable. Depends on `ai-case-study-docs`, `ai-guardrail-evals`, and `on-device-guidance` being implemented.
 
 ## Wave 0 — proposal stage (the only work performed now)
 
-- [ ] 0a. Confirm specs in this change are accepted; confirm the scoped project.md chatbot-clause amendment wording with the maintainer; record adjustments before coding.
+- [ ] 0a. Confirm specs in this change are accepted; confirm the baseline threat model and scoped project.md chatbot-clause amendment wording with the maintainer; record adjustments before coding.
 - [ ] 0b. `openspec validate local-npc-conversation --strict` passes; harvest specs with `specfact requirements import --from-openspec --bundle .specfact/projects/ancient-secrets openspec/changes/local-npc-conversation`, then `specfact requirements validate --bundle .specfact/projects/ancient-secrets`.
 
 ## Wave A — intent boundary in game-core

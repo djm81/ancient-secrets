@@ -11,7 +11,8 @@ Status: **pending** — populated per wave as evidence lands (see tasks.md). No 
 | DJ-002 schema-constrained booleans; authored-bank feedback only | unit (server + client discard paths) | — | pending |
 | DJ-003 client-side pure delta function; MD-004 parity | unit | — | pending |
 | DJ-004 injection containment; harness registration | unit (corpus replay) + live evaluation transcript | — | pending |
-| TM-003 threat-model update for the judge surface | documented review of `docs/ai-threat-model.md` (once baseline exists) | — | pending |
+| DJ-005 truthful, deployment-verifiable privacy disclosure | documented provider-retention and platform-logging review + browser consent/revocation check | — | pending |
+| TM-003 baseline threat model prerequisite and judge update | documented review of `docs/ai-threat-model.md` before implementation | — | pending |
 
 ## Required commands
 

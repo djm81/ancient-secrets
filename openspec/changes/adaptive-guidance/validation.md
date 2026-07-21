@@ -9,6 +9,8 @@ Status: **pending** — populated per wave as evidence lands (see tasks.md). No 
 | AG-003 dismissible, never auto-reveals, no re-prompt | browser test + manual | — | pending |
 | AG-004 fully functional with no AI configured | unit + manual AI-free flow | — | pending |
 | AG-005 opt-out disables and clears | unit + manual | — | pending |
+| AG-006 active-play time excludes background and resume gaps | unit (injected timer) + manual background/resume check | — | pending |
+| AG-007 ordered save migration preserves sibling fields | unit (v2 and both migration orders) + browser resume check | — | pending |
 
 ## Required commands
 

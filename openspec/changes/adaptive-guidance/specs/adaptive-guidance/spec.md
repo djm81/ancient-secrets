@@ -51,3 +51,23 @@ An accessible opt-out SHALL stop signal accumulation and clear any stored signal
 - **GIVEN** a save with accumulated signals
 - **WHEN** the player opts out
 - **THEN** stored signals are cleared, no further accumulation occurs, and no suggestion ever appears
+
+### Requirement: AG-006 Elapsed struggle time measures active play only
+
+Elapsed struggle time SHALL be supplied by an active, foreground-play timer; it SHALL pause while the document is backgrounded or suspended and SHALL NOT include wall-clock time between saving and resuming.
+
+#### Scenario: Background time does not trigger a suggestion
+
+- **GIVEN** a scene with elapsed time below the nudge threshold
+- **WHEN** the document is backgrounded for longer than that threshold and then resumed
+- **THEN** the elapsed struggle signal is unchanged by the background interval and no new suggestion is caused by it
+
+### Requirement: AG-007 Struggle persistence uses ordered, composable save migrations
+
+The struggle block SHALL be introduced through an ordered save-migration mechanism that composes with sibling additive fields, preserves already-migrated fields, and restores the complete validated state on resume.
+
+#### Scenario: Existing backend preference survives struggle migration
+
+- **GIVEN** a valid save containing the sibling backend preference but no struggle block
+- **WHEN** it is parsed by a release containing the struggle migration
+- **THEN** the preference is unchanged, an empty valid struggle block is added, and resuming restores both fields

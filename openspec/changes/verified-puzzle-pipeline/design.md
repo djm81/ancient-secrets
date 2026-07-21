@@ -6,11 +6,11 @@
 
 ## 2. Solver design
 
-The verifier is a Node script importing `js/game-core.js` directly: it instantiates runs across the seed space with the candidate applied, replays the canonical solution path with the existing pure functions, and asserts completion, `isValidRun` conformance, uniqueness of the strongbox solution, and a vocabulary sweep (tokens restricted to authored scenes/items/actions plus a curated lexicon). Any assertion failure rejects the candidate with a machine-readable reason.
+The verifier is a Node script importing `js/game-core.js` directly: it instantiates runs across the seed space with the candidate applied, replays the canonical solution path with the existing pure functions, and asserts completion, `isValidRun` conformance, uniqueness of the strongbox solution, and a vocabulary sweep (tokens restricted to authored scenes/items/actions plus a curated lexicon). Any assertion failure rejects the candidate with a machine-readable reason. These are structural checks; they do not claim to prove that arbitrary prose is clear, fair, or semantically non-contradictory.
 
 ## 3. Provenance and evidence
 
-Every batch commit contains: candidates file (as proposed), verdict log, curation records, and the resulting data module — all sha-pinned by the commit itself. This makes the AI contribution auditable end-to-end: a reviewer can re-run the verifier against the committed candidates and reproduce the verdicts.
+Every batch commit contains: candidates file (as proposed), verdict log, curation records, and the resulting data module — all sha-pinned by the commit itself. Curation records name the reviewer and record a checklist review of clue clarity, factual consistency with the route/code, vocabulary appropriateness, and spoiler/tier appropriateness. This makes the AI contribution auditable end-to-end: a reviewer can re-run the verifier against the committed candidates and reproduce the structural verdicts, then inspect the separate human judgment.
 
 ## 4. Runtime selection determinism and save stability
 

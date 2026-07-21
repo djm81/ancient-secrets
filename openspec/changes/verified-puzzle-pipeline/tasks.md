@@ -4,7 +4,7 @@ Ordering follows the repository discipline: spec → tests → failing evidence 
 
 ## Wave 0 — proposal stage (the only work performed now)
 
-- [ ] 0a. Confirm specs in this change are accepted; record any scope adjustments before coding.
+- [ ] 0a. Confirm specs in this change are accepted and the `ai-case-study-docs` baseline threat model is merged; record any scope adjustments before coding.
 - [ ] 0b. `openspec validate verified-puzzle-pipeline --strict` passes; harvest specs with `specfact requirements import --from-openspec --bundle .specfact/projects/ancient-secrets openspec/changes/verified-puzzle-pipeline`, then `specfact requirements validate --bundle .specfact/projects/ancient-secrets`.
 
 ## Wave A — schema and verifier
@@ -14,7 +14,7 @@ Ordering follows the repository discipline: spec → tests → failing evidence 
 
 ## Wave B — pipeline and first batch
 
-- [ ] B1. Implement the proposal script and verdict-log format; run a first model batch in the authoring environment; commit candidates, verdicts, and curation records (VP-003).
+- [ ] B1. Implement the proposal script, verdict-log format, and curation checklist; run a first model batch in the authoring environment; commit candidates, structural verdicts, and curation records (VP-003, VP-006).
 - [ ] B2. Freeze the first accepted variants into the static data module; extend `createRun`/`isValidRun` for the variant index with failing-then-passing tests (VP-005).
 - [ ] B3. Add the default-CI data-validation suite over shipped variants (VP-004); reproduce a verdict log from committed candidates as audit evidence (VP-003).
 

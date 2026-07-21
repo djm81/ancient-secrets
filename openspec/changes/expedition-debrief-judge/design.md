@@ -11,7 +11,7 @@ Each debrief question gains an authored rubric: two to four named criteria, each
 - Request body: `{era, questionId, answer}` — era and questionId validated against the authored bank server-side; answer a single string under a strict length cap; any extra key rejects the request; total payload capped as the guide route is today.
 - Origin pinning, rate-limit binding, and fail-closed behavior identical to the guide Worker: an AI key without origin or rate-limit configuration returns 503.
 - Model call uses a strict JSON-schema response format enumerating exactly the question's criterion IDs with boolean values; the Worker re-validates the parsed reply (unknown criteria, missing criteria, or non-boolean values discard the reply).
-- On any failure the route returns a typed `unavailable` response; it never fabricates verdicts. The Worker neither logs nor stores the answer.
+- On any failure the route returns a typed `unavailable` response; it never fabricates verdicts. The Worker neither logs nor stores the answer. Deployment review verifies platform request-body logging controls; the model provider's documented retention posture is identified in the consent disclosure and is not represented as an application-controlled guarantee.
 
 ## 3. Score floor invariant
 
@@ -28,7 +28,7 @@ The hostile field is the player's answer itself — free text flowing to a model
 
 ## 5. Consent UX and disclosure
 
-The free-form option renders disabled until the player opens a consent disclosure stating: exactly what is sent (`era`, `questionId`, the answer text), the destination (the project's own Worker), retention (none), and the alternative (multiple-choice, always). Consent is per-session, revocable from the same surface, and never pre-checked. Declining or revoking hides the free-form path with no penalty.
+The free-form option renders disabled until the player opens a consent disclosure stating: exactly what is sent (`era`, `questionId`, the answer text), the destination (the project's Worker and the named model provider), the separate application/platform/provider retention postures, a warning not to enter personal data, and the alternative (multiple-choice, always). Consent is per-session, revocable from the same surface, and never pre-checked. Declining or revoking hides the free-form path with no penalty and clears the unsent answer from the client surface.
 
 ## 6. Fallbacks
 

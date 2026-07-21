@@ -15,7 +15,7 @@ Status: **pending** — populated per wave as evidence lands (see tasks.md). No 
 | SF-001 lexical filter both directions with deflections | unit | — | pending |
 | SF-002 no conversation content in any egress/persistence surface | unit + manual inspection | — | pending |
 | SF-003 red-team corpus registered with harness | unit (registry sweep) | — | pending |
-| TM-003 threat-model update for the conversation surface | documented review of `docs/ai-threat-model.md` (once baseline exists) | — | pending |
+| TM-003 baseline threat model prerequisite and conversation update | documented review of `docs/ai-threat-model.md` before implementation | — | pending |
 
 ## Required commands
 

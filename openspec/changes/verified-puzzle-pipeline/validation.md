@@ -5,11 +5,12 @@ Status: **pending** — populated per wave as evidence lands (see tasks.md). No 
 | Requirement | Evidence type | Evidence | Status |
 |---|---|---|---|
 | VP-001 static verified data only; zero runtime model calls | manual offline playthrough + payload inspection | — | pending |
-| VP-002 every shipped variant passes the solver | unit (verifier suite) + committed verdict log | — | pending |
+| VP-002 every shipped variant passes the structural solver | unit (verifier suite) + committed verdict log | — | pending |
 | VP-003 committed, reproducible verification log | audit re-run evidence | — | pending |
 | VP-004 schema validation + curation records in CI | unit (data-validation suite) | — | pending |
 | VP-005 seed-deterministic, save-stable selection | unit (save round-trip) | — | pending |
-| TM-003 threat-model update for the authoring-pipeline surface | documented review of `docs/ai-threat-model.md` (once baseline exists) | — | pending |
+| VP-006 semantic clarity and fairness receive recorded human curation | committed checklist + reviewer record | — | pending |
+| TM-003 baseline threat model prerequisite and authoring-pipeline update | documented review of `docs/ai-threat-model.md` before implementation | — | pending |
 
 ## Required commands
 

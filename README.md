@@ -26,9 +26,11 @@ A compact Renaissance point-and-click adventure set in Florence in 1503. You pla
 
 ## Planned extension: The Codex Rationum
 
+Implementation follows the proposal-stage [implementation order](openspec/IMPLEMENTATION_ORDER.md): responsive play surface, installable offline shell, Babylon vertical slice, then further story and optional AI work.
+
 A proposed second act, specified in [`openspec/changes/temporal-finops-expedition/`](openspec/changes/temporal-finops-expedition/) and not yet implemented. After finding the Maestro, the player discovers the **Codex Rationum** — a ledger-codex Leonardo assembled with Fra Luca Pacioli, the father of double-entry bookkeeping (their collaboration is historical). Seven folios are missing, each bound to how one civilization ran its finances. Leonardo's **Occhio del Tempo** projects the player into each era to earn the folio back.
 
-Each era is a self-contained expedition grounded in documented instruments of its time:
+The seven eras form a paced three-act mystery: players choose within an act, inventions and Codex evidence unlock the next act, and the final folio resolves what the apprentice will build with that knowledge. Each era is a self-contained investigation grounded in documented instruments of its time:
 
 | Era | Trial | Timeless discipline |
 |---|---|---|
@@ -40,7 +42,7 @@ Each era is a self-contained expedition grounded in documented instruments of it
 | Florence, 1494 | Balance Medici books with Pacioli; expose the fraud the totals conceal | Reporting, the full Inform loop |
 | The Age to Come | Operate Leonardo's metered water-works on rented capacity | The variable cost model, end to end |
 
-Mechanics: explore each era's realistically illustrated scenes, learn from an era mentor, pass (or withdraw from and retry) a deterministic trial, then debrief with Leonardo through fixed multiple-choice dialogue that names what you understood and what you missed. Every recovered folio uncovers one of Leonardo's hidden inventions in the workshop, and a local **Ledger of Mastery** tracks understanding across the four FinOps domains toward a rank of Garzone, Discepolo, or Maestro dei Conti (mirroring the Crawl/Walk/Run maturity model).
+Mechanics: investigate clues, choose and test a bounded plan, see an authored scene/mentor consequence, then pass (or withdraw from and retry) a deterministic trial and debrief with Leonardo through fixed multiple-choice dialogue. Every recovered folio uncovers one of Leonardo's hidden inventions in the workshop, and a local **Ledger of Mastery** tracks understanding across the four FinOps domains toward a rank of Garzone, Discepolo, or Maestro dei Conti (mirroring the Crawl/Walk/Run maturity model).
 
 The concept translates the [FinOps Framework](https://www.finops.org/framework/) (FinOps Foundation) into pre-cloud financial operations; it teaches the discipline's ideas and claims no certification. All content stays authored and static-first: era imagery is produced at authoring time under a strict payload budget, dialogue remains fixed-choice, and the expedition is fully playable without any AI service.
 
@@ -51,7 +53,7 @@ Seven further proposal-stage changes, specified under [`openspec/changes/`](open
 | Change | What it adds |
 |---|---|
 | [`ai-guardrail-evals`](openspec/changes/ai-guardrail-evals/proposal.md) | The guardrail contract as reusable requirements, an adversarial red-team corpus replayed in CI, and a live-model evaluation gate for model swaps |
-| [`on-device-guidance`](openspec/changes/on-device-guidance/proposal.md) | An opt-in local LLM backend (Chrome Prompt API → WebLLM → transformers.js) for the Maestro's Guidance — same validated boundary, nothing leaves the device |
+| [`on-device-guidance`](openspec/changes/on-device-guidance/proposal.md) | An opt-in browser-native Prompt API backend for the Maestro's Guidance — same validated boundary, no application-initiated guidance request |
 | [`local-npc-conversation`](openspec/changes/local-npc-conversation/proposal.md) | Bounded free-text conversation with NPCs, processed entirely on device; game state changes only through a closed, deterministic intent enum |
 | [`adaptive-guidance`](openspec/changes/adaptive-guidance/proposal.md) | A telemetry-free local struggle model that suggests the right hint tier — deterministic, dismissible, no AI required |
 | [`verified-puzzle-pipeline`](openspec/changes/verified-puzzle-pipeline/proposal.md) | Authoring-time generate-then-verify puzzle variants: a model proposes, a deterministic solver proves solvability, a human curates, only frozen static data ships |

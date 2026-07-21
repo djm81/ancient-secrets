@@ -14,7 +14,7 @@ The committed adversarial corpus SHALL contain prompt-injection entries targetin
 
 ### Requirement: AE-002 Deterministic adversarial replay runs in default CI without network access
 
-The full corpus SHALL replay through `validateGuidance`, the hallucination/spoiler validator, and `worker.fetch(Request)` using Node's built-in test runner as part of `npm test`, with no network access, no secrets, and no live model. A failing replay SHALL fail CI.
+The full corpus SHALL replay through `validateGuidance`, the canonical-identifier/spoiler validator, and `worker.fetch(Request)` using Node's built-in test runner as part of `npm test`, with no network access, no secrets, and no live model. A failing replay SHALL fail CI.
 
 #### Scenario: Offline replay is complete and gating
 
@@ -22,11 +22,11 @@ The full corpus SHALL replay through `validateGuidance`, the hallucination/spoil
 - **WHEN** `npm test` runs
 - **THEN** every corpus entry executes and any contract violation fails the run
 
-### Requirement: AE-003 Hallucination checks reject replies naming nonexistent game facts
+### Requirement: AE-003 Canonical-identifier checks reject unrecognised game identifiers
 
-A deterministic validator SHALL reject any model reply that references scenes, items, or actions outside the authored sets, and the reply path SHALL substitute the authored fallback when rejection occurs.
+A deterministic validator SHALL reject any model reply that uses a scene, item, or action in the controlled canonical-identifier grammar outside the authored sets, and the reply path SHALL substitute the authored fallback when rejection occurs. This requirement does not claim to prove semantic truthfulness of arbitrary free prose; that residual risk SHALL be recorded explicitly in the threat model.
 
-#### Scenario: Invented location is rejected
+#### Scenario: Invented canonical location is rejected
 
 - **GIVEN** a spoofed model reply directing the player to "the catacombs beneath the Ponte Vecchio"
 - **WHEN** the reply is validated

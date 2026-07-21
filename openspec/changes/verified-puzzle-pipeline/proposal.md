@@ -2,13 +2,13 @@
 
 ## Why
 
-Replay variety currently comes from seeded randomization over a fixed set of authored elements (gear route, clue location, code, bell order). Broadening variety by hand-authoring more variants is slow; letting a model generate variants at runtime would violate the project's integrity guarantees. The middle path is the classic generate-then-verify pattern: a language model **proposes** variant content at authoring time, a deterministic solver **proves** each candidate solvable and fair, a human curates the survivors, and only verified, frozen data ships. The shipped game stays 100% static and authored; the AI contribution is fully auditable through committed verification logs.
+Replay variety currently comes from seeded randomization over a fixed set of authored elements (gear route, clue location, code, bell order). Broadening variety by hand-authoring more variants is slow; letting a model generate variants at runtime would violate the project's integrity guarantees. The middle path is the classic generate-then-verify pattern: a language model **proposes** variant content at authoring time, a deterministic solver **proves structural properties** such as solvability and uniqueness, a human curator reviews semantic clarity and fairness, and only verified, frozen data ships. The shipped game stays 100% static and authored; the AI contribution is fully auditable through committed verification logs.
 
 ## What Changes
 
 - Add an **authoring-time pipeline** (repo-local scripts, excluded from the site payload): model proposes candidate variants — clue wording sets, note phrasings, Roman-numeral clue presentations, code-placement flavor — against a strict candidate schema.
-- Add a **deterministic solver/verifier** reusing `js/game-core.js` pure functions and `isValidRun`-style constraints: every candidate is checked for solvability, constraint conformance, solution uniqueness, and vocabulary bounds (no references outside authored scenes/items/actions).
-- Add a **curation record**: every shipped variant carries reviewer sign-off; every rejected candidate is logged with its rejection reason. The verification log is committed as evidence.
+- Add a **deterministic solver/verifier** reusing `js/game-core.js` pure functions and `isValidRun`-style constraints: every candidate is checked for structural solvability, constraint conformance, solution uniqueness, and vocabulary bounds (no references outside authored scenes/items/actions).
+- Add a **curation record**: every shipped variant carries reviewer sign-off against a semantic-clarity and fairness checklist; every rejected candidate is logged with its rejection reason. The verification log is committed as evidence.
 - Ship survivors as a **frozen static data module** under `js/`; runtime selection is seed-deterministic and stable across save/resume, extending the existing `createRun` pattern.
 
 ## Capabilities
@@ -20,6 +20,7 @@ Replay variety currently comes from seeded randomization over a fixed set of aut
 - New authoring scripts (for example under `tools/variants/`), a new static variant data module under `js/`, unit tests validating all shipped data, and the committed verification log.
 - **No `openspec/project.md` non-negotiable is touched**: zero runtime AI; shipped content is verifier-approved, human-curated authored data; the variant count is budgeted in the design so the compact experience and payload posture hold; static-first is unchanged.
 - README gains a short description of the generate-then-verify workflow beside the existing AI-assisted art workflow section.
+- Depends on `ai-case-study-docs` for the baseline threat model before implementation begins.
 
 ## Constraints
 

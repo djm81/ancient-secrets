@@ -8,7 +8,7 @@ A compact Renaissance point-and-click adventure set in Florence in 1503. You pla
 
 ## Highlights
 
-- One self-contained HTML game: illustrated SVG scenes, responsive layout, inventory, dialogue, sound effects, and generative lute music. A local first-chronicle assistant introduces scene inspection, the satchel, and travel; portrait phones retain the complete scene and offer touch-sized scene-action controls. The first music notes are scheduled inside a direct player action; the music control explicitly reports starting, playing, or muted and retries safely after a temporary suspension.
+- One self-contained HTML game: illustrated SVG scenes, responsive layout, inventory, dialogue, sound effects, and generative lute music. The Casebook presents up to three relevant scene actions plus an accessible **All observations** fallback; it switches between a portrait tray, landscape rail, desktop rail, and desktop/tablet portrait dock without resetting a chronicle. The first music notes are scheduled inside a direct player action; the music control explicitly reports starting, playing, or muted and retries safely after a temporary suspension.
 - Replayable mysteries: every new chronicle randomizes the strongbox code, its Roman-numeral clue location, the Piazza gear route, and the Duomo bell sequence.
 - A nested Il Duomo adventure: solve the vestibule's star-and-bell lock to reach the Whispering Gallery and its alternate clue path.
 - Five optional curiosities reward close observation without blocking completion.
@@ -79,6 +79,8 @@ Requires Node.js 22 or newer.
 
 Install browser-test dependencies once with `npm ci`, then install the Chromium test browser with `npx playwright install chromium`.
 
+GitHub Actions runs this same quality gate on every branch push and pull request. It is read-only and does not deploy; the existing Pages workflow remains responsible for publishing from `main`.
+
 ```bash
 npm run check
 npm test
@@ -87,7 +89,7 @@ npm run test:a11y
 openspec validate proof-of-excellence-pass --strict
 ```
 
-Manual QA: open the root page at desktop and narrow/mobile widths; at 390 × 844 start a fresh chronicle, dismiss the first-chronicle assistant with both its button and Escape, then use the portrait action controls to take the mirror, navigate, and open the baker dialogue. Confirm a resumed chronicle does not show the assistant again. At a short 844 × 390 landscape viewport, confirm dialogue image and action controls stay visible and usable. Complete the mirror-to-note sequence with only Tab, Enter, and Space; enable high contrast; confirm sound after an explicit start or music-button activation (including on physical iOS release QA); and request each guidance tier with and without the Worker enabled.
+Manual QA: open the root page at desktop and narrow/mobile widths; at 390 × 844 start a fresh chronicle, dismiss the first-chronicle assistant with both its button and Escape, then use the Casebook to take the mirror, navigate, and open the baker dialogue. Expand **All observations** to verify complete scene-action access. Rotate to 844 × 390 and confirm the selected inventory item, Casebook focus, and current scene persist; also verify the desktop landscape rail and desktop/tablet portrait dock. Complete the mirror-to-note sequence with only Tab, Enter, and Space; enable high contrast; confirm sound after an explicit start or music-button activation (including on physical iOS release QA); and request each guidance tier with and without the Worker enabled.
 
 ## Point-and-click design
 

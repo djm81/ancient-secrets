@@ -247,6 +247,75 @@ test.describe('portrait-phone gameplay', () => {
   });
 });
 
+test('RI-002 and RI-003: Casebook modes and item focus survive viewport changes', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/maestros-secret.html');
+  await page.getByRole('button', { name: 'Begin the Adventure' }).click();
+  await page.getByRole('button', { name: 'Begin Exploring' }).click();
+  await expect(page.locator('#stage')).toHaveAttribute('data-layout', 'phone-portrait');
+
+  await page.locator('#portrait-actions .casebook-context [data-interaction-id="mirror"]').click();
+  await page.getByRole('button', { name: 'Select Hand Mirror' }).click();
+  const note = page.locator('#portrait-actions .casebook-context [data-interaction-id="note"]');
+  await note.focus();
+
+  await page.setViewportSize({ width: 844, height: 390 });
+  await expect(page.locator('#stage')).toHaveAttribute('data-layout', 'phone-landscape');
+  await expect(page.getByRole('button', { name: 'Select Hand Mirror' })).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('#portrait-actions .casebook-context [data-interaction-id="note"]')).toBeFocused();
+
+  for (const [viewport, layout] of [
+    [{ width: 1024, height: 1365 }, 'desktop-portrait'],
+    [{ width: 1280, height: 800 }, 'desktop-landscape']
+  ]) {
+    await page.setViewportSize(viewport);
+    await expect(page.locator('#stage')).toHaveAttribute('data-layout', layout);
+    const primary = page.locator('#portrait-actions .portrait-action').first();
+    await expect(primary).toBeVisible();
+    expect((await primary.boundingBox()).height).toBeGreaterThanOrEqual(44);
+  }
+});
+
+test('RI-002: desktop portrait geometry follows the capped stage width', async ({ page }) => {
+  await page.setViewportSize({ width: 1024, height: 1365 });
+  await page.goto('/maestros-secret.html');
+  await page.getByRole('button', { name: 'Begin the Adventure' }).click();
+  await page.getByRole('button', { name: 'Begin Exploring' }).click();
+  const geometry = await page.evaluate(() => {
+    const stage = document.querySelector('#stage').getBoundingClientRect();
+    const scene = document.querySelector('#sc-workshop').getBoundingClientRect();
+    return { stageWidth: stage.width, sceneHeight: scene.height };
+  });
+  expect(geometry.sceneHeight).toBeCloseTo(geometry.stageWidth * 9 / 16, 1);
+});
+
+test('RI-003: a viewport change preserves external focus instead of restoring stale Casebook focus', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/maestros-secret.html');
+  await page.getByRole('button', { name: 'Begin the Adventure' }).click();
+  await page.getByRole('button', { name: 'Begin Exploring' }).click();
+  const inventory = page.getByRole('button', { name: 'Select Hand Mirror' });
+  await page.locator('#portrait-actions .casebook-context [data-interaction-id="mirror"]').click();
+  await page.locator('#portrait-actions .casebook-context [data-interaction-id="note"]').focus();
+  await inventory.focus();
+
+  await page.setViewportSize({ width: 844, height: 390 });
+  await expect(inventory).toBeFocused();
+});
+
+test('@a11y RI-004 and RI-005: Casebook actions support keyboard use and have no automated violations', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/maestros-secret.html');
+  await page.getByRole('button', { name: 'Begin the Adventure' }).click();
+  await page.getByRole('button', { name: 'Begin Exploring' }).click();
+  const mirror = page.locator('#portrait-actions .casebook-context [data-interaction-id="mirror"]');
+  await mirror.focus();
+  expect((await mirror.boundingBox()).height).toBeGreaterThanOrEqual(44);
+  await page.keyboard.press('Enter');
+  await expect(page.getByRole('button', { name: 'Select Hand Mirror' })).toBeVisible();
+  expect((await new AxeBuilder({ page }).include('#portrait-actions').analyze()).violations).toEqual([]);
+});
+
 test('FTA-001: a new chronicle gets a skippable first-time interaction assistant', async ({ page }) => {
   await page.goto('/maestros-secret.html');
   await page.getByRole('button', { name: 'Begin the Adventure' }).click();

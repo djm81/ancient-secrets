@@ -8,4 +8,4 @@
 ## Wave B — documentation and verification
 
 - [x] B1. Document the branch/PR quality gates in README.
-- [ ] B2. Run local gates, OpenSpec validation, and confirm the pushed workflow run on the current PR.
+- [x] B2. Run local gates, OpenSpec validation, and confirm the pushed workflow run on the current PR.

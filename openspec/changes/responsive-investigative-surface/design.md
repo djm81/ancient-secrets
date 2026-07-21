@@ -11,6 +11,10 @@ The game has four explicit presentation modes rather than a single 16:9 stage sc
 | Desktop landscape | Scene-forward | Persistent evidence rail |
 | Desktop/tablet portrait | Scene | Docked Casebook beneath scene |
 
+## Dialogue art treatment
+
+Desktop and tablet dialogue retains the existing 16:9 composite artwork, whose reserved parchment area supports an overlaid copy panel. Phone portrait uses a dedicated, placeholder-free compact artwork above the standalone copy panel. Phone landscape uses the same compact artwork as a left-side visual panel beside the copy, rather than cropping a desktop composite into a shallow banner. Changing viewport while a dialogue is open changes only the artwork/layout treatment; dialogue state and keyboard focus remain intact.
+
 ## Interaction model
 
 `deriveContextualActions(state, scene)` is a pure function returning up to three most relevant next actions. The complete list remains available through “All observations”; both surfaces dispatch the existing interaction identifiers, so they cannot diverge in gameplay behavior. Used or unavailable actions leave the contextual list automatically.

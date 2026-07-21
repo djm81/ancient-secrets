@@ -6,13 +6,13 @@
 
 ## Wave A — pure action and layout contracts
 
-- [ ] A1. Write failing unit tests for `deriveContextualActions`: relevance cap, complete-list fallback, and parity with desktop interaction IDs; record evidence.
-- [ ] A2. Implement the pure action derivation and Casebook data contract; record passing evidence.
-- [ ] A3. Write failing browser tests for state/focus preservation across viewport changes and rotation; implement responsive mode switching; record evidence.
+- [x] A1. Write failing unit tests for `deriveContextualActions`: relevance cap, complete-list fallback, and parity with desktop interaction IDs; record evidence.
+- [x] A2. Implement the pure action derivation and Casebook data contract; record passing evidence.
+- [x] A3. Write failing browser tests for state/focus preservation across viewport changes and rotation; implement responsive mode switching; record evidence.
 
 ## Wave B — surfaces and accessibility
 
-- [ ] B1. Build portrait tray, landscape rail, desktop rail, and portrait dock with safe-area spacing and 44px targets.
+- [x] B1. Build portrait tray, landscape rail, desktop rail, and portrait dock with safe-area spacing and 44px targets.
 - [ ] B2. Run keyboard, screen-reader announcement, reduced-motion, high-contrast, and touch parity checks at every viewport; record evidence.
 
 ## Wave C — device proof and docs

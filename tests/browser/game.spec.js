@@ -351,26 +351,83 @@ test('FTA-001: Escape completes the first-time assistant and returns focus to th
 test.describe('short mobile dialogue', () => {
   test.use({ viewport: { width: 844, height: 390 } });
 
-  test('MG-002: short portrait-or-landscape dialogue actions follow the image instead of overlaying it', async ({ page }) => {
+  test('MG-002: short landscape dialogue keeps actions beside the compact artwork', async ({ page }) => {
     await page.goto('/maestros-secret.html');
     await page.getByRole('button', { name: 'Begin the Adventure' }).click();
     await page.getByRole('button', { name: 'Begin Exploring' }).click();
     await page.getByRole('button', { name: 'Go right to Piazza della Signoria' }).click();
-    await page.locator('[data-hs="bread"]').click();
+    await page.locator('[data-hs="bread"]').press('Enter');
 
     const dialogue = page.getByRole('dialog', { name: 'The Baker’s Gift' });
     await expect(dialogue).toBeVisible();
-    const copy = dialogue.locator('.dialogue-copy');
-    await expect(copy).toHaveCSS('position', 'relative');
     const bounds = await dialogue.locator('.dialogue-scene').evaluate(scene => {
       const image = scene.querySelector('img').getBoundingClientRect();
+      const copy = scene.querySelector('.dialogue-copy').getBoundingClientRect();
       const choice = scene.querySelector('.dialogue-choices .btn').getBoundingClientRect();
       const root = scene.getBoundingClientRect();
-      return { imageBottom: image.bottom, choiceTop: choice.top, choiceLeft: choice.left, choiceRight: choice.right, rootLeft: root.left, rootRight: root.right };
+      return { imageRight: image.right, copyLeft: copy.left, choiceTop: choice.top, choiceLeft: choice.left, choiceRight: choice.right, rootLeft: root.left, rootRight: root.right };
     });
-    expect(bounds.choiceTop).toBeGreaterThanOrEqual(bounds.imageBottom);
+    expect(bounds.imageRight).toBeLessThanOrEqual(bounds.copyLeft);
     expect(bounds.choiceLeft).toBeGreaterThanOrEqual(bounds.rootLeft);
     expect(bounds.choiceRight).toBeLessThanOrEqual(bounds.rootRight);
+  });
+});
+
+test('RI-004: dialogue hides a stale hotspot label', async ({ page }) => {
+  await page.goto('/maestros-secret.html');
+  await page.getByRole('button', { name: 'Begin the Adventure' }).click();
+  await page.getByRole('button', { name: 'Begin Exploring' }).click();
+  await page.getByRole('button', { name: 'Go right to Piazza della Signoria' }).click();
+  await page.locator('#tag').evaluate(element => {
+    element.textContent = 'Baker’s Stall';
+    element.style.opacity = '1';
+  });
+  await page.locator('[data-hs="bread"]').evaluate(element => {
+    element.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+  });
+
+  await expect(page.getByRole('dialog', { name: 'The Baker’s Gift' })).toBeVisible();
+  expect(await page.locator('#tag').evaluate(element => element.style.opacity)).toBe('0');
+});
+
+test.describe('compact dialogue composition', () => {
+  test.describe('phone portrait', () => {
+    test.use({ viewport: { width: 390, height: 844 } });
+
+    test('RI-002: compact dialogue uses placeholder-free portrait art', async ({ page }) => {
+      await page.goto('/maestros-secret.html');
+      await page.getByRole('button', { name: 'Begin the Adventure' }).click();
+      await page.getByRole('button', { name: 'Begin Exploring' }).click();
+      await page.locator('#portrait-actions').getByRole('button', { name: 'Go right to Piazza della Signoria' }).click();
+      await page.locator('[data-hs="bread"]').press('Enter');
+
+      const scene = page.getByRole('dialog', { name: 'The Baker’s Gift' }).locator('.dialogue-scene');
+      await expect(scene).toHaveAttribute('data-dialogue-layout', 'compact-portrait');
+      expect(await scene.locator('img').getAttribute('src')).toContain('baker-piazza-compact.webp');
+    });
+  });
+
+  test.describe('phone landscape', () => {
+    test.use({ viewport: { width: 844, height: 390 } });
+
+    test('RI-002: compact dialogue keeps artwork beside copy instead of cropping it into a banner', async ({ page }) => {
+      await page.goto('/maestros-secret.html');
+      await page.getByRole('button', { name: 'Begin the Adventure' }).click();
+      await page.getByRole('button', { name: 'Begin Exploring' }).click();
+      await page.getByRole('button', { name: 'Go right to Piazza della Signoria' }).click();
+      await page.locator('[data-hs="bread"]').press('Enter');
+
+      const scene = page.getByRole('dialog', { name: 'The Baker’s Gift' }).locator('.dialogue-scene');
+      await expect(scene).toHaveAttribute('data-dialogue-layout', 'compact-landscape');
+      expect(await scene.locator('img').getAttribute('src')).toContain('baker-piazza-compact.webp');
+      const bounds = await scene.evaluate(element => {
+        const art = element.querySelector('img').getBoundingClientRect();
+        const copy = element.querySelector('.dialogue-copy').getBoundingClientRect();
+        return { artRight: art.right, copyLeft: copy.left, artTop: art.top, copyTop: copy.top };
+      });
+      expect(bounds.artRight).toBeLessThanOrEqual(bounds.copyLeft);
+      expect(bounds.artTop).toBeLessThanOrEqual(bounds.copyTop);
+    });
   });
 });
 

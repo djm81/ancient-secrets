@@ -11,7 +11,7 @@ Ordering follows the repository discipline. Evidence for this change is largely 
 
 - [ ] A1. Draft `docs/ai-threat-model.md`: surface inventory, per-surface STRIDE-lite analysis, cross-cutting mitigations, accepted risks (TM-001, TM-002).
 - [ ] A2. Traceability sweep: every threat maps to a requirement ID or accepted-risk entry; record the review as evidence (TM-002).
-- [ ] A3. Wire the TM-003 governance rule into the review checklist referenced by GR-006/AE-005.
+- [ ] A3. Wire the TM-003 governance rule into the review checklist referenced by GR-006/AE-005, including the baseline-first dependency and accepted-risk register.
 
 ## Wave B — case study
 

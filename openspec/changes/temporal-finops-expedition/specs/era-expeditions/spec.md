@@ -97,3 +97,13 @@ Each era SHALL ship three authored realistic images unique to its civilization �
 - **GIVEN** the complete set of committed era images
 - **WHEN** compressed sizes are measured in the automated check
 - **THEN** no image exceeds 200 KB and the total does not exceed 3.0 MB, and the base game's initial payload is unchanged
+
+### Requirement: EE-007 Every era is an investigation with an authored consequence
+
+Each era SHALL follow investigate → hypothesize → test → consequence: two to four authored clues establish the trial, the player chooses a bounded plan through click/tap controls, and a visible scene or mentor reaction occurs before the debrief. The default responsive surface SHALL show only contextual actions while preserving a complete accessible action list.
+
+#### Scenario: Babylon investigation produces an observable consequence
+
+- **GIVEN** the Babylon clues establish a suspicious ledger entry
+- **WHEN** the player chooses and tests a valid reconciliation plan
+- **THEN** the ledger/storehouse state visibly changes, the mentor reacts, and the debrief follows that consequence

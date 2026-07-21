@@ -53,3 +53,13 @@ An answer crafted to manipulate the judge — instruction override, demand to re
 - **GIVEN** any adversarial answer
 - **WHEN** the debrief resolves
 - **THEN** expedition progression, folio state, and base-game state are byte-identical to the equivalent multiple-choice outcome
+
+### Requirement: DJ-005 Privacy claims are truthful and deployment-verifiable
+
+The consent disclosure and documentation SHALL distinguish controls owned by the application and Worker from platform and model-provider retention. Before enabling the route, the project SHALL record a review of the named provider's retention posture and platform request-body logging configuration; the surface SHALL warn players not to enter personal data.
+
+#### Scenario: Consent describes the actual boundary
+
+- **GIVEN** a configured judge route and its consent disclosure
+- **WHEN** the disclosure and deployment review are inspected
+- **THEN** the provider is named, its documented retention posture is stated without overclaiming application control, platform logging controls are evidenced, and the personal-data warning is visible before submission

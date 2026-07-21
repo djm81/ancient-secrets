@@ -8,11 +8,17 @@ Solving the current game admits the player to the Maestro's workshop. Leonardo s
 
 Loop per era:
 
-1. **Choose** an era through fixed-choice dialogue with Leonardo (any order; Leonardo recommends chronological).
-2. **Explore** the era scene, meet the era mentor, collect three clue artifacts that teach the trial's rules diegetically.
-3. **Trial** — one deterministic financial puzzle using the era's real instruments. The player may **withdraw** at any point.
+1. **Choose** an era through fixed-choice dialogue with Leonardo from the currently unlocked act.
+2. **Investigate** the era scene, meet the era mentor, and collect two to four clue artifacts that establish a bounded plan.
+3. **Hypothesize and test** — choose and execute a deterministic plan using the era's real instruments; the scene and mentor visibly react. The player may **withdraw** at any point.
 4. **Return & debrief** — Leonardo reviews the attempt, asks three fixed multiple-choice questions, and explains every answer, naming the timeless discipline behind the era's practice.
-5. **Reveal** — a passed trial returns a folio; Leonardo uncovers one hidden invention in the workshop; the Ledger of Mastery updates.
+5. **Reveal** — a passed trial returns a folio; Leonardo uncovers one hidden invention in the workshop; the Ledger of Mastery updates and may unlock the next act.
+
+### Three-act pacing
+
+- **Act I — Seeing the ledger:** Babylon, Egypt, and Athens are available after the base-game victory. Completing any two opens Act II; the third remains available.
+- **Act II — Bearing the cost:** Rome, Champagne Fairs, and Florence are available after Act I. Completing any two opens the final act; the remaining folios stay available.
+- **Act III — Choosing the future:** The Age to Come becomes available after Act II. The final Codex dialogue requires all seven folios and reflects the apprentice's authored values (insight, compassion, ambition) plus the evidence they recovered.
 
 Completing all seven folios reconstructs the Codex and unlocks a closing dialogue in which Leonardo reads the Codex forward — the explicit bridge to the modern FinOps Framework, credited to finops.org.
 
@@ -49,7 +55,7 @@ Withdrawing from a trial is always available, never punished with lost progress:
 
 - `js/expedition-core.js` — expedition state machine: era status (`locked`/`available`/`in-progress`/`withdrawn`/`complete`), trial evaluation, mastery scoring, rank derivation, invention reveal set. Pure functions, seed-injectable randomness (`random = Math.random` parameter pattern already used by `createRun`).
 - `js/era-content.js` — frozen authored data: era definitions, scene node graphs, clue texts, trial parameter tables, debrief question banks, failure-category explanations, invention descriptions. No logic.
-- `js/game-core.js` — `SAVE_VERSION` bumped to 3; `createSave` embeds an `expedition` block; `parseSave` accepts v3 and migrates valid v1 and v2 saves (`expedition: createInitialExpedition()`), chaining the existing v1→v2 dialogue/notes migration.
+- `js/game-core.js` — this first planned additive save change introduces the ordered migration registry; `createSave` embeds an `expedition` block; `parseSave` runs valid v1 and v2 saves through every migration step (`expedition: createInitialExpedition()`). Later additive changes register their own ordered steps and preserve the expedition block.
 - `maestros-secret.html` — hub scene, era scenes, trial and debrief UI as additional inline-SVG scenes and dialogue panels in the existing house style.
 
 ### State & data flow
@@ -70,7 +76,7 @@ Trials are parameterized from `era-content.js` tables plus a per-attempt seed, s
 
 ### Persistence & rollback
 
-- Save v3 = v2 shape + `expedition: { eras: {...}, mastery: {...}, inventions: [...], codexComplete: bool }`. Migration from valid v1 and v2 saves is total and lossless, reusing the existing v1→v2 dialogue/notes migration. Rolled-back code rejects v3 saves via the existing `version !== SAVE_VERSION` check (safe discard, already the documented recovery behavior).
+- The expedition migration adds `expedition: { eras: {...}, mastery: {...}, inventions: [...], codexComplete: bool }`. Migration from valid v1 and v2 saves is total and lossless, reusing the existing v1→v2 dialogue/notes migration. Later migrations preserve this block; rolled-back code rejects an unrecognised later schema safely rather than partially restoring it.
 - Corrupted expedition blocks degrade to a fresh expedition without touching base-game progress.
 
 ### Accessibility
@@ -100,7 +106,7 @@ No framework, no router, no build step is added. The expedition reuses the exist
 
 ## 6. Delivery staging (mirrors tasks.md)
 
-- **Wave A — vertical slice:** save v3 + hub + engine + Babylon end-to-end (explore, trial, withdraw, debrief, mastery, reveal). Proves every mechanic once.
+- **Wave A — vertical slice:** ordered save migration + hub + engine + Babylon end-to-end (investigate, plan, consequence, withdraw, debrief, mastery, reveal). Proves every mechanic once.
 - **Wave B — antiquity:** Egypt, Athens, Rome.
 - **Wave C — toward the Codex:** Champagne, Florence, The Age to Come, closing dialogue.
 - **Wave D — polish & proof:** Ledger of Mastery surface polish, invention gallery states, README/attribution, full validation matrix.

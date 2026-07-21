@@ -8,7 +8,7 @@ A compact Renaissance point-and-click adventure set in Florence in 1503. You pla
 
 ## Highlights
 
-- One self-contained HTML game: illustrated SVG scenes, responsive layout, inventory, dialogue, sound effects, and generative lute music. A local first-chronicle assistant introduces scene inspection, the satchel, and travel; portrait phones retain the complete scene and offer touch-sized scene-action controls. The first music notes are scheduled inside a direct player action; the music control explicitly reports starting, playing, or muted and retries safely after a temporary suspension.
+- One self-contained HTML game: illustrated SVG scenes, responsive layout, inventory, dialogue, sound effects, and generative lute music. The Casebook presents up to three relevant scene actions plus an accessible **All observations** fallback; it switches between a portrait tray, landscape rail, desktop rail, and desktop/tablet portrait dock without resetting a chronicle. The first music notes are scheduled inside a direct player action; the music control explicitly reports starting, playing, or muted and retries safely after a temporary suspension.
 - Replayable mysteries: every new chronicle randomizes the strongbox code, its Roman-numeral clue location, the Piazza gear route, and the Duomo bell sequence.
 - A nested Il Duomo adventure: solve the vestibule's star-and-bell lock to reach the Whispering Gallery and its alternate clue path.
 - Five optional curiosities reward close observation without blocking completion.
@@ -26,9 +26,11 @@ A compact Renaissance point-and-click adventure set in Florence in 1503. You pla
 
 ## Planned extension: The Codex Rationum
 
+Implementation follows the proposal-stage [implementation order](openspec/IMPLEMENTATION_ORDER.md): responsive play surface, installable offline shell, Babylon vertical slice, then further story and optional AI work.
+
 A proposed second act, specified in [`openspec/changes/temporal-finops-expedition/`](openspec/changes/temporal-finops-expedition/) and not yet implemented. After finding the Maestro, the player discovers the **Codex Rationum** — a ledger-codex Leonardo assembled with Fra Luca Pacioli, the father of double-entry bookkeeping (their collaboration is historical). Seven folios are missing, each bound to how one civilization ran its finances. Leonardo's **Occhio del Tempo** projects the player into each era to earn the folio back.
 
-Each era is a self-contained expedition grounded in documented instruments of its time:
+The seven eras form a paced three-act mystery: players choose within an act, inventions and Codex evidence unlock the next act, and the final folio resolves what the apprentice will build with that knowledge. Each era is a self-contained investigation grounded in documented instruments of its time:
 
 | Era | Trial | Timeless discipline |
 |---|---|---|
@@ -40,7 +42,7 @@ Each era is a self-contained expedition grounded in documented instruments of it
 | Florence, 1494 | Balance Medici books with Pacioli; expose the fraud the totals conceal | Reporting, the full Inform loop |
 | The Age to Come | Operate Leonardo's metered water-works on rented capacity | The variable cost model, end to end |
 
-Mechanics: explore each era's realistically illustrated scenes, learn from an era mentor, pass (or withdraw from and retry) a deterministic trial, then debrief with Leonardo through fixed multiple-choice dialogue that names what you understood and what you missed. Every recovered folio uncovers one of Leonardo's hidden inventions in the workshop, and a local **Ledger of Mastery** tracks understanding across the four FinOps domains toward a rank of Garzone, Discepolo, or Maestro dei Conti (mirroring the Crawl/Walk/Run maturity model).
+Mechanics: investigate clues, choose and test a bounded plan, see an authored scene/mentor consequence, then pass (or withdraw from and retry) a deterministic trial and debrief with Leonardo through fixed multiple-choice dialogue. Every recovered folio uncovers one of Leonardo's hidden inventions in the workshop, and a local **Ledger of Mastery** tracks understanding across the four FinOps domains toward a rank of Garzone, Discepolo, or Maestro dei Conti (mirroring the Crawl/Walk/Run maturity model).
 
 The concept translates the [FinOps Framework](https://www.finops.org/framework/) (FinOps Foundation) into pre-cloud financial operations; it teaches the discipline's ideas and claims no certification. All content stays authored and static-first: era imagery is produced at authoring time under a strict payload budget, dialogue remains fixed-choice, and the expedition is fully playable without any AI service.
 
@@ -51,7 +53,7 @@ Seven further proposal-stage changes, specified under [`openspec/changes/`](open
 | Change | What it adds |
 |---|---|
 | [`ai-guardrail-evals`](openspec/changes/ai-guardrail-evals/proposal.md) | The guardrail contract as reusable requirements, an adversarial red-team corpus replayed in CI, and a live-model evaluation gate for model swaps |
-| [`on-device-guidance`](openspec/changes/on-device-guidance/proposal.md) | An opt-in local LLM backend (Chrome Prompt API → WebLLM → transformers.js) for the Maestro's Guidance — same validated boundary, nothing leaves the device |
+| [`on-device-guidance`](openspec/changes/on-device-guidance/proposal.md) | An opt-in browser-native Prompt API backend for the Maestro's Guidance — same validated boundary, no application-initiated guidance request |
 | [`local-npc-conversation`](openspec/changes/local-npc-conversation/proposal.md) | Bounded free-text conversation with NPCs, processed entirely on device; game state changes only through a closed, deterministic intent enum |
 | [`adaptive-guidance`](openspec/changes/adaptive-guidance/proposal.md) | A telemetry-free local struggle model that suggests the right hint tier — deterministic, dismissible, no AI required |
 | [`verified-puzzle-pipeline`](openspec/changes/verified-puzzle-pipeline/proposal.md) | Authoring-time generate-then-verify puzzle variants: a model proposes, a deterministic solver proves solvability, a human curates, only frozen static data ships |
@@ -77,6 +79,8 @@ Requires Node.js 22 or newer.
 
 Install browser-test dependencies once with `npm ci`, then install the Chromium test browser with `npx playwright install chromium`.
 
+GitHub Actions runs this same quality gate on every branch push and pull request. It is read-only and does not deploy; the existing Pages workflow remains responsible for publishing from `main`.
+
 ```bash
 npm run check
 npm test
@@ -85,7 +89,7 @@ npm run test:a11y
 openspec validate proof-of-excellence-pass --strict
 ```
 
-Manual QA: open the root page at desktop and narrow/mobile widths; at 390 × 844 start a fresh chronicle, dismiss the first-chronicle assistant with both its button and Escape, then use the portrait action controls to take the mirror, navigate, and open the baker dialogue. Confirm a resumed chronicle does not show the assistant again. At a short 844 × 390 landscape viewport, confirm dialogue image and action controls stay visible and usable. Complete the mirror-to-note sequence with only Tab, Enter, and Space; enable high contrast; confirm sound after an explicit start or music-button activation (including on physical iOS release QA); and request each guidance tier with and without the Worker enabled.
+Manual QA: open the root page at desktop and narrow/mobile widths; at 390 × 844 start a fresh chronicle, dismiss the first-chronicle assistant with both its button and Escape, then use the Casebook to take the mirror, navigate, and open the baker dialogue. Confirm that phone portrait uses the compact character artwork above a standalone copy card, without a duplicate desktop parchment placeholder. Expand **All observations** to verify complete scene-action access. Rotate to 844 × 390 and confirm the selected inventory item, Casebook focus, and current scene persist; while the dialogue is open, confirm its compact art is a left-side panel beside the copy and the character is not cropped into a shallow banner. Also verify the desktop landscape rail and desktop/tablet portrait dock. Complete the mirror-to-note sequence with only Tab, Enter, and Space; enable high contrast; confirm sound after an explicit start or music-button activation (including on physical iOS release QA); and request each guidance tier with and without the Worker enabled.
 
 ## Point-and-click design
 

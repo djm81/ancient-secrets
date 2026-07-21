@@ -12,7 +12,7 @@ Status: **pending** — populated per wave as evidence lands (see tasks.md). No 
 | GR-006 adversarial scenarios per AI capability | process (matrix review) + AE-005 harness rule | — | pending |
 | AE-001 corpus covers every model-visible field | unit (corpus completeness sweep) | — | pending |
 | AE-002 offline replay gating in default CI | CI run without network/secrets | — | pending |
-| AE-003 hallucination rejection | unit | — | pending |
+| AE-003 unrecognised canonical identifier rejection | unit | — | pending |
 | AE-004 spoiler/tier-appropriateness checks | unit (seeded runs) | — | pending |
 | AE-005 surface registration with non-empty corpus | unit (harness failure case) | — | pending |
 | LM-001 manual dispatch, secret-free transcripts | workflow run + transcript inspection | — | pending |

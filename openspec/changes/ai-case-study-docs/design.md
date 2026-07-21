@@ -12,8 +12,8 @@ Every claim carries an inline reference: a requirement ID resolvable in `openspe
 
 ## 3. Threat-model method
 
-STRIDE-lite per boundary: for each surface (guidance worker, local inference runtime, NPC conversation, debrief judge, authoring pipelines) enumerate attacker positions (hostile player input, compromised model output, hostile network origin, malicious save file), list threats, and map each to its mitigating requirement or an explicit accepted-risk entry with rationale. Surfaces at proposal stage are analyzed against their specs and marked proposed.
+STRIDE-lite per boundary: for each surface (guidance worker, browser-native inference runtime, NPC conversation, debrief judge, authoring pipelines) enumerate attacker positions (hostile player input, compromised model output, hostile network origin, malicious save file), list threats, and map each to its mitigating requirement or an explicit accepted-risk entry with rationale. The register explicitly records that canonical-identifier validation is not a general semantic-fact checker. Surfaces at proposal stage are analyzed against their specs and marked proposed.
 
 ## 4. Maintenance hook
 
-TM-003 makes threat-model updates a merge condition for AI-surface changes — the same governance pattern as GR-006/AE-005, referenced from those requirements' review checklists.
+TM-003 makes the baseline threat model a prerequisite for AI-surface implementation and makes subsequent threat-model updates a merge condition — the same governance pattern as GR-006/AE-005, referenced from those requirements' review checklists.

@@ -18,7 +18,7 @@ The three-tier hint system is entirely player-initiated. Players who are stuck b
 
 ## Impact
 
-- Affected runtime: `js/game-core.js` (signal accumulation, `suggestTier`, save-schema field in the next save schema version — coordinated symbolically since sibling proposals also pend a bump), suggestion surface in `maestros-secret.html`.
+- Affected runtime: `js/game-core.js` (signal accumulation, `suggestTier`, and an ordered save-migration step for the `struggle` block), plus the suggestion surface in `maestros-secret.html`. The step extends the registry introduced by `temporal-finops-expedition`, preserving both expedition state and the backend preference proposed by `on-device-guidance`; no change may assume it owns “the next” save version.
 - **No `openspec/project.md` non-negotiable is touched**: signals are anonymous gameplay counters stored only in the existing local save, with zero egress; the AI-optional and static-first postures are unchanged; no new scene is added.
 - README manual-QA checklist gains the suggestion and opt-out checks.
 
@@ -28,6 +28,7 @@ The three-tier hint system is entirely player-initiated. Players who are stuck b
 - Signals never leave the browser: excluded from `summarizeForGuidance` and every network path.
 - The suggestion is dismissible, rate-limited (no re-prompt for the same objective after dismissal), and never renders hint text itself.
 - The AI-free path is the complete path (GR-003); reduced motion and announcement rules apply to the surface.
+- Elapsed time counts only active, foreground play. Backgrounding, suspension, and the interval between save and resume do not advance struggle signals.
 
 ## Rollback
 

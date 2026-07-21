@@ -4,7 +4,7 @@ Ordering follows the repository discipline: spec → tests → failing evidence 
 
 ## Wave 0 — proposal stage (the only work performed now)
 
-- [ ] 0a. Confirm specs in this change are accepted; record any scope adjustments back into proposal/design before coding.
+- [ ] 0a. Confirm specs in this change are accepted and the `ai-case-study-docs` baseline threat model (including the accepted semantic-prose risk) is merged; record any scope adjustments back into proposal/design before coding.
 - [ ] 0b. `openspec validate ai-guardrail-evals --strict` passes; harvest specs with `specfact requirements import --from-openspec --bundle .specfact/projects/ancient-secrets openspec/changes/ai-guardrail-evals`, then `specfact requirements validate --bundle .specfact/projects/ancient-secrets`.
 
 ## Wave A — contract codification and replay skeleton
@@ -13,9 +13,9 @@ Ordering follows the repository discipline: spec → tests → failing evidence 
 - [ ] A2. Implement the corpus loader and `tests/fixtures/adversarial/` structure with per-entry requirement tags; record passing evidence.
 - [ ] A3. Add contract conformance tests asserting GR-001..GR-005 against the current guidance path (state immutability, tamper rejection, fallback completeness, fail-closed worker, allowlist rejection); record evidence.
 
-## Wave B — hallucination and spoiler validation
+## Wave B — canonical-identifier and spoiler validation
 
-- [ ] B1. Write failing unit tests for the hallucination validator (nonexistent scenes/items/actions rejected, ordinary prose accepted) (AE-003).
+- [ ] B1. Write failing unit tests for the canonical-identifier validator (unrecognised canonical scenes/items/actions rejected, ordinary prose accepted) (AE-003).
 - [ ] B2. Implement the validator as a pure exported function beside `validateGuidance`; wire it into the client reply path; record passing evidence.
 - [ ] B3. Write failing tests for per-tier spoiler checks against seeded runs (code digits, bell order, gear route) (AE-004); implement; record passing evidence.
 - [ ] B4. Extend the corpus with encoding variants, spoofed replies, and malformed-structure families; replay green (AE-001).

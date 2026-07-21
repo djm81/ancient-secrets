@@ -247,6 +247,91 @@ test.describe('portrait-phone gameplay', () => {
   });
 });
 
+test('RI-002 and RI-003: Casebook modes and item focus survive viewport changes', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/maestros-secret.html');
+  await page.getByRole('button', { name: 'Begin the Adventure' }).click();
+  await page.getByRole('button', { name: 'Begin Exploring' }).click();
+  await expect(page.locator('#stage')).toHaveAttribute('data-layout', 'phone-portrait');
+
+  await page.locator('#portrait-actions .casebook-context [data-interaction-id="mirror"]').click();
+  await page.getByRole('button', { name: 'Select Hand Mirror' }).click();
+  const note = page.locator('#portrait-actions .casebook-context [data-interaction-id="note"]');
+  await note.focus();
+
+  await page.setViewportSize({ width: 844, height: 390 });
+  await expect(page.locator('#stage')).toHaveAttribute('data-layout', 'phone-landscape');
+  await expect(page.getByRole('button', { name: 'Select Hand Mirror' })).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('#portrait-actions .casebook-context [data-interaction-id="note"]')).toBeFocused();
+
+  for (const [viewport, layout] of [
+    [{ width: 1024, height: 1365 }, 'desktop-portrait'],
+    [{ width: 1280, height: 800 }, 'desktop-landscape']
+  ]) {
+    await page.setViewportSize(viewport);
+    await expect(page.locator('#stage')).toHaveAttribute('data-layout', layout);
+    const primary = page.locator('#portrait-actions .portrait-action').first();
+    await expect(primary).toBeVisible();
+    expect((await primary.boundingBox()).height).toBeGreaterThanOrEqual(44);
+  }
+});
+
+test('RI-002: desktop portrait geometry follows the capped stage width', async ({ page }) => {
+  await page.setViewportSize({ width: 1024, height: 1365 });
+  await page.goto('/maestros-secret.html');
+  await page.getByRole('button', { name: 'Begin the Adventure' }).click();
+  await page.getByRole('button', { name: 'Begin Exploring' }).click();
+  const geometry = await page.evaluate(() => {
+    const stage = document.querySelector('#stage').getBoundingClientRect();
+    const scene = document.querySelector('#sc-workshop').getBoundingClientRect();
+    return { stageWidth: stage.width, sceneHeight: scene.height };
+  });
+  expect(geometry.sceneHeight).toBeCloseTo(geometry.stageWidth * 9 / 16, 1);
+});
+
+test('RI-003: a viewport change preserves external focus instead of restoring stale Casebook focus', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/maestros-secret.html');
+  await page.getByRole('button', { name: 'Begin the Adventure' }).click();
+  await page.getByRole('button', { name: 'Begin Exploring' }).click();
+  const inventory = page.getByRole('button', { name: 'Select Hand Mirror' });
+  await page.locator('#portrait-actions .casebook-context [data-interaction-id="mirror"]').click();
+  await page.locator('#portrait-actions .casebook-context [data-interaction-id="note"]').focus();
+  await inventory.focus();
+
+  await page.setViewportSize({ width: 844, height: 390 });
+  await expect(inventory).toBeFocused();
+});
+
+test('RI-003 and RI-004: a Casebook action restores focus after closing its modal', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/maestros-secret.html');
+  await page.getByRole('button', { name: 'Begin the Adventure' }).click();
+  await page.getByRole('button', { name: 'Begin Exploring' }).click();
+  await page.locator('#portrait-actions').getByRole('button', { name: 'Go right to Piazza della Signoria' }).click();
+
+  const baker = page.locator('#portrait-actions .casebook-context [data-interaction-id="bread"]');
+  await baker.focus();
+  await page.keyboard.press('Enter');
+  await expect(page.getByRole('dialog', { name: 'The Baker’s Gift' })).toBeVisible();
+  await page.getByRole('button', { name: 'Step Back' }).click();
+
+  await expect(page.locator('#portrait-actions .casebook-context [data-interaction-id="bread"]')).toBeFocused();
+});
+
+test('@a11y RI-004 and RI-005: Casebook actions support keyboard use and have no automated violations', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/maestros-secret.html');
+  await page.getByRole('button', { name: 'Begin the Adventure' }).click();
+  await page.getByRole('button', { name: 'Begin Exploring' }).click();
+  const mirror = page.locator('#portrait-actions .casebook-context [data-interaction-id="mirror"]');
+  await mirror.focus();
+  expect((await mirror.boundingBox()).height).toBeGreaterThanOrEqual(44);
+  await page.keyboard.press('Enter');
+  await expect(page.getByRole('button', { name: 'Select Hand Mirror' })).toBeVisible();
+  expect((await new AxeBuilder({ page }).include('#portrait-actions').analyze()).violations).toEqual([]);
+});
+
 test('FTA-001: a new chronicle gets a skippable first-time interaction assistant', async ({ page }) => {
   await page.goto('/maestros-secret.html');
   await page.getByRole('button', { name: 'Begin the Adventure' }).click();
@@ -282,26 +367,83 @@ test('FTA-001: Escape completes the first-time assistant and returns focus to th
 test.describe('short mobile dialogue', () => {
   test.use({ viewport: { width: 844, height: 390 } });
 
-  test('MG-002: short portrait-or-landscape dialogue actions follow the image instead of overlaying it', async ({ page }) => {
+  test('MG-002: short landscape dialogue keeps actions beside the compact artwork', async ({ page }) => {
     await page.goto('/maestros-secret.html');
     await page.getByRole('button', { name: 'Begin the Adventure' }).click();
     await page.getByRole('button', { name: 'Begin Exploring' }).click();
     await page.getByRole('button', { name: 'Go right to Piazza della Signoria' }).click();
-    await page.locator('[data-hs="bread"]').click();
+    await page.locator('[data-hs="bread"]').press('Enter');
 
     const dialogue = page.getByRole('dialog', { name: 'The Baker’s Gift' });
     await expect(dialogue).toBeVisible();
-    const copy = dialogue.locator('.dialogue-copy');
-    await expect(copy).toHaveCSS('position', 'relative');
     const bounds = await dialogue.locator('.dialogue-scene').evaluate(scene => {
       const image = scene.querySelector('img').getBoundingClientRect();
+      const copy = scene.querySelector('.dialogue-copy').getBoundingClientRect();
       const choice = scene.querySelector('.dialogue-choices .btn').getBoundingClientRect();
       const root = scene.getBoundingClientRect();
-      return { imageBottom: image.bottom, choiceTop: choice.top, choiceLeft: choice.left, choiceRight: choice.right, rootLeft: root.left, rootRight: root.right };
+      return { imageRight: image.right, copyLeft: copy.left, choiceTop: choice.top, choiceLeft: choice.left, choiceRight: choice.right, rootLeft: root.left, rootRight: root.right };
     });
-    expect(bounds.choiceTop).toBeGreaterThanOrEqual(bounds.imageBottom);
+    expect(bounds.imageRight).toBeLessThanOrEqual(bounds.copyLeft);
     expect(bounds.choiceLeft).toBeGreaterThanOrEqual(bounds.rootLeft);
     expect(bounds.choiceRight).toBeLessThanOrEqual(bounds.rootRight);
+  });
+});
+
+test('RI-004: dialogue hides a stale hotspot label', async ({ page }) => {
+  await page.goto('/maestros-secret.html');
+  await page.getByRole('button', { name: 'Begin the Adventure' }).click();
+  await page.getByRole('button', { name: 'Begin Exploring' }).click();
+  await page.getByRole('button', { name: 'Go right to Piazza della Signoria' }).click();
+  await page.locator('#tag').evaluate(element => {
+    element.textContent = 'Baker’s Stall';
+    element.style.opacity = '1';
+  });
+  await page.locator('[data-hs="bread"]').evaluate(element => {
+    element.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+  });
+
+  await expect(page.getByRole('dialog', { name: 'The Baker’s Gift' })).toBeVisible();
+  expect(await page.locator('#tag').evaluate(element => element.style.opacity)).toBe('0');
+});
+
+test.describe('compact dialogue composition', () => {
+  test.describe('phone portrait', () => {
+    test.use({ viewport: { width: 390, height: 844 } });
+
+    test('RI-002: compact dialogue uses placeholder-free portrait art', async ({ page }) => {
+      await page.goto('/maestros-secret.html');
+      await page.getByRole('button', { name: 'Begin the Adventure' }).click();
+      await page.getByRole('button', { name: 'Begin Exploring' }).click();
+      await page.locator('#portrait-actions').getByRole('button', { name: 'Go right to Piazza della Signoria' }).click();
+      await page.locator('[data-hs="bread"]').press('Enter');
+
+      const scene = page.getByRole('dialog', { name: 'The Baker’s Gift' }).locator('.dialogue-scene');
+      await expect(scene).toHaveAttribute('data-dialogue-layout', 'compact-portrait');
+      expect(await scene.locator('img').getAttribute('src')).toContain('baker-piazza-compact.webp');
+    });
+  });
+
+  test.describe('phone landscape', () => {
+    test.use({ viewport: { width: 844, height: 390 } });
+
+    test('RI-002: compact dialogue keeps artwork beside copy instead of cropping it into a banner', async ({ page }) => {
+      await page.goto('/maestros-secret.html');
+      await page.getByRole('button', { name: 'Begin the Adventure' }).click();
+      await page.getByRole('button', { name: 'Begin Exploring' }).click();
+      await page.getByRole('button', { name: 'Go right to Piazza della Signoria' }).click();
+      await page.locator('[data-hs="bread"]').press('Enter');
+
+      const scene = page.getByRole('dialog', { name: 'The Baker’s Gift' }).locator('.dialogue-scene');
+      await expect(scene).toHaveAttribute('data-dialogue-layout', 'compact-landscape');
+      expect(await scene.locator('img').getAttribute('src')).toContain('baker-piazza-compact.webp');
+      const bounds = await scene.evaluate(element => {
+        const art = element.querySelector('img').getBoundingClientRect();
+        const copy = element.querySelector('.dialogue-copy').getBoundingClientRect();
+        return { artRight: art.right, copyLeft: copy.left, artTop: art.top, copyTop: copy.top };
+      });
+      expect(bounds.artRight).toBeLessThanOrEqual(bounds.copyLeft);
+      expect(bounds.artTop).toBeLessThanOrEqual(bounds.copyTop);
+    });
   });
 });
 

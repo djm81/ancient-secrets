@@ -22,7 +22,7 @@ This is acceptable only because it builds on `on-device-guidance`: all free text
 ## Impact
 
 - Affected runtime: NPC dialogue panels in `maestros-secret.html`, new `js/npc-conversation.js`, an intent gate in `js/game-core.js` reusing the existing dialogue-choice validation.
-- Depends on `ai-guardrail-evals` (contract, harness) and `on-device-guidance` (local inference, opt-in).
+- Depends on `ai-case-study-docs` (baseline threat model), `ai-guardrail-evals` (contract, harness), and `on-device-guidance` (browser-native inference, opt-in).
 - `openspec/project.md`:
   - The third non-negotiable ("no player-entered free text in the browser payload") is **preserved, not amended** — free text is processed exclusively on device, never transmitted, never persisted to the save, and never enters the payload.
   - The fourth non-negotiable is **amended with scoped language**. Proposed wording: *"do not add … a generic chatbot" is refined to "do not add a generic, open-domain chatbot; bounded in-character NPC conversation is permitted only where (a) it runs entirely on device, (b) it can affect game state solely through the deterministic dialogue-intent enum, and (c) fixed-choice dialogue remains a complete path." The free-text non-negotiable is unchanged and binding: no player text leaves the device or enters the payload.* The amendment lands in `openspec/project.md` only when this change is accepted for implementation.

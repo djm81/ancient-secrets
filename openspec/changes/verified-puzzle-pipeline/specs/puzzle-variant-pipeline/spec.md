@@ -14,7 +14,7 @@ Variant content in the deployed site SHALL be frozen static data; the game SHALL
 
 ### Requirement: VP-002 Every shipped variant passes the deterministic solver
 
-No variant SHALL ship unless the solver has verified, across the tested seed range, that the game remains completable with the variant applied, run constraints hold, and the strongbox solution remains unique.
+No variant SHALL ship unless the solver has verified, across the tested seed range, that the game remains completable with the variant applied, run constraints hold, and the strongbox solution remains unique. This requirement covers structural properties only; prose clarity and fairness are reviewed under VP-006.
 
 #### Scenario: Unsolvable candidate is rejected
 
@@ -51,3 +51,13 @@ Variant selection SHALL be a pure function of the chronicle's run data, fixed at
 - **GIVEN** a chronicle created with a specific variant selected
 - **WHEN** the game is saved, reloaded, and resumed
 - **THEN** the same variant is active and all clue text matches the pre-save session
+
+### Requirement: VP-006 Semantic clarity and fairness are explicitly human-curated
+
+Every shipped prose variant SHALL carry a curation record naming a reviewer and recording a checklist review of factual consistency with its route/code, clue clarity, vocabulary appropriateness, and spoiler/tier appropriateness. The deterministic verifier SHALL NOT be represented as proof of these semantic judgments.
+
+#### Scenario: Semantically unclear candidate cannot ship
+
+- **GIVEN** a structurally valid candidate whose clue wording is ambiguous or contradicts its route/code
+- **WHEN** the curation checklist is reviewed
+- **THEN** it is rejected with the checklist reason and cannot enter the shipped data module

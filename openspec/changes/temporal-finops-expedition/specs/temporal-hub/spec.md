@@ -18,21 +18,31 @@ The workshop hub SHALL become reachable when the base game's victory state is re
 - **WHEN** the save is resumed under the new schema
 - **THEN** the player can enter the workshop hub with a fresh, empty expedition
 
-### Requirement: TH-002 Eras are chosen through fixed-choice dialogue with Leonardo
+### Requirement: TH-002 Eras are chosen through fixed-choice dialogue with paced acts
 
-The hub SHALL present era selection exclusively through authored fixed-choice dialogue at the Occhio del Tempo. All seven eras SHALL be selectable in any order from the start. Each era option SHALL show its status (never attempted, withdrawn, complete) and Leonardo SHALL recommend, but never enforce, chronological order. No free-text input SHALL exist.
+The hub SHALL present era selection exclusively through authored fixed-choice dialogue at the Occhio del Tempo. Act I exposes Babylon, Egypt, and Athens after base-game victory; completing any two opens Act II (Rome, Champagne Fairs, Florence); completing any two Act II eras opens The Age to Come. Each available option SHALL show its status (never attempted, withdrawn, complete), remaining earlier-act eras remain selectable, and no free-text input SHALL exist.
 
 #### Scenario: Player selects an era
 
-- **GIVEN** the player activates the Occhio del Tempo
+- **GIVEN** the player activates the Occhio del Tempo during Act I
 - **WHEN** they choose Babylon from the era dialogue
 - **THEN** the Babylon era scene loads and the hub state records Babylon as in progress
 
 #### Scenario: Era statuses are visible
 
-- **GIVEN** the player has completed Babylon and withdrawn from Rome
+- **GIVEN** the player has completed Babylon and Egypt, unlocked Act II, and withdrawn from Rome
 - **WHEN** the era dialogue is opened
 - **THEN** Babylon is marked complete, Rome is marked withdrawn with a retry option, and the remaining eras are marked unattempted
+
+### Requirement: TH-005 The Codex provides a three-act mystery and value-aware resolution
+
+The folios SHALL reveal evidence about whether systems of value serve people or enable exploitation. Act unlocks, invention reveals, and the final Codex dialogue SHALL make that question legible; the final dialogue SHALL reflect the apprentice's authored dialogue values without making any value path unavailable.
+
+#### Scenario: Final Codex reflects accumulated choices
+
+- **GIVEN** a player has recovered all seven folios and earned an authored dialogue value
+- **WHEN** they open the closing Codex dialogue
+- **THEN** the resolution references the completed evidence and presents a value-consistent ending without changing puzzle completion
 
 ### Requirement: TH-003 Completed eras permanently reveal inventions in the workshop
 

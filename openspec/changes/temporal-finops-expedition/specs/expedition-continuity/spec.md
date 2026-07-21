@@ -2,9 +2,9 @@
 
 ## ADDED Requirements
 
-### Requirement: EC-001 Save schema version 3 extends the chronicle with expedition state
+### Requirement: EC-001 Ordered save migration extends the chronicle with expedition state
 
-The save schema SHALL move to version 3, embedding an expedition block (per-era status and best credit, mastery scores, revealed inventions, codex completion) alongside the existing state and run. All existing game-continuity guarantees (GC-001, GC-002) and the dialogue/notes data introduced with version 2 SHALL continue to hold for version 3 saves.
+The expedition implementation SHALL introduce an ordered save-migration registry and embed an expedition block (per-era status and best credit, mastery scores, revealed inventions, codex completion) alongside the existing state and run. All existing game-continuity guarantees (GC-001, GC-002) and the dialogue/notes data introduced with version 2 SHALL continue to hold. Later additive migrations SHALL preserve the expedition block.
 
 #### Scenario: Mid-expedition refresh
 
@@ -20,18 +20,18 @@ The save schema SHALL move to version 3, embedding an expedition block (per-era 
 
 ### Requirement: EC-002 Older saves migrate losslessly
 
-A valid version 1 or version 2 save SHALL load under version 3 with all base-game state preserved exactly and a fresh initial expedition attached; version 1 saves additionally receive the existing v1→v2 dialogue/notes migration. Migration SHALL be pure, total for all valid older saves, and covered by unit tests.
+A valid version 1 or version 2 save SHALL load through every ordered migration with all base-game state preserved exactly and a fresh initial expedition attached; version 1 saves additionally receive the existing v1→v2 dialogue/notes migration. Migration SHALL be pure, total for all valid older saves, and covered by unit tests.
 
 #### Scenario: v2 mid-game save
 
 - **GIVEN** a valid v2 save from before victory
-- **WHEN** it is loaded under the new schema
+- **WHEN** it is loaded through the expedition migration
 - **THEN** play resumes exactly as v2 behavior dictated, with the expedition initialized but unreachable until victory
 
 #### Scenario: v1 save migrates through the chain
 
 - **GIVEN** a valid v1 save
-- **WHEN** it is loaded under the new schema
+- **WHEN** it is loaded through the migration chain
 - **THEN** dialogue and note data initialize per the existing v1→v2 migration and a fresh expedition is attached
 
 ### Requirement: EC-003 Corrupted expedition data degrades without losing the base game
@@ -40,6 +40,6 @@ If the expedition block of an otherwise valid save is malformed, the game SHALL 
 
 #### Scenario: Malformed expedition block only
 
-- **GIVEN** a v3 save with valid state and run but a truncated expedition block
+- **GIVEN** a current-schema save with valid state and run but a truncated expedition block
 - **WHEN** the save is parsed
 - **THEN** the base game resumes normally and the expedition restarts empty, with no exception thrown

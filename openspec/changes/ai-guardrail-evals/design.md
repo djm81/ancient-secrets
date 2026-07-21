@@ -28,14 +28,14 @@ Committed under `tests/fixtures/adversarial/` as JSON files, one file per attack
 
 Two layers with different trust roles:
 
-- **Replay (gating, default CI)**: corpus entries drive `validateGuidance`, the new hallucination/spoiler validator, and `worker.fetch(Request)` with no `OPENAI_API_KEY` set (worker exercises validation and fallback paths deterministically). These run in `npm test` and must pass before merge.
+- **Replay (gating, default CI)**: corpus entries drive `validateGuidance`, the new canonical-identifier/spoiler validator, and `worker.fetch(Request)` with no `OPENAI_API_KEY` set (worker exercises validation and fallback paths deterministically). These run in `npm test` and must pass before merge.
 - **Live (advisory + swap-gating)**: a manually dispatched GitHub Actions workflow sends corpus prompts through the deployed worker with a real model, records request/response transcripts, and asserts the same invariants. Required before changing `OPENAI_MODEL` or the provider; never a required check for Pages deployment, so an outage of the model provider cannot block the static site.
 
 ## 4. Hallucination and spoiler validation
 
 A new pure function (exported beside `validateGuidance` in `js/game-core.js`) checks a candidate message against authored vocabularies:
 
-- **Hallucination**: reject replies naming scenes, items, or actions outside the authored sets (`SCENE_GRAPH` keys, item set, `ACTIONS` keys/labels). Matching is conservative (token allowlist of proper nouns) to avoid false positives on ordinary prose.
+- **Canonical identifiers**: reject replies naming a scene, item, or action in the controlled game-identifier grammar unless it belongs to the authored sets (`SCENE_GRAPH` keys, item set, `ACTIONS` keys/labels). The validator is deliberately not presented as a general semantic-fact checker: arbitrary natural-language inventions outside that grammar are an accepted risk recorded in the threat model.
 - **Spoiler/tier appropriateness**: per-tier forbidden-token lists derived from the current run (strongbox code digits, bell order, gear route) — a nudge or hint must never contain them; only reveal may state the authored action sentence.
 
 The worker reuses the same logic conceptually via its schema and re-validation; the client-side function is the enforcement point for all backends (worker today, local inference in a sibling change).

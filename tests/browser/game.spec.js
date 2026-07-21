@@ -303,6 +303,22 @@ test('RI-003: a viewport change preserves external focus instead of restoring st
   await expect(inventory).toBeFocused();
 });
 
+test('RI-003 and RI-004: a Casebook action restores focus after closing its modal', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/maestros-secret.html');
+  await page.getByRole('button', { name: 'Begin the Adventure' }).click();
+  await page.getByRole('button', { name: 'Begin Exploring' }).click();
+  await page.locator('#portrait-actions').getByRole('button', { name: 'Go right to Piazza della Signoria' }).click();
+
+  const baker = page.locator('#portrait-actions .casebook-context [data-interaction-id="bread"]');
+  await baker.focus();
+  await page.keyboard.press('Enter');
+  await expect(page.getByRole('dialog', { name: 'The Baker’s Gift' })).toBeVisible();
+  await page.getByRole('button', { name: 'Step Back' }).click();
+
+  await expect(page.locator('#portrait-actions .casebook-context [data-interaction-id="bread"]')).toBeFocused();
+});
+
 test('@a11y RI-004 and RI-005: Casebook actions support keyboard use and have no automated violations', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/maestros-secret.html');

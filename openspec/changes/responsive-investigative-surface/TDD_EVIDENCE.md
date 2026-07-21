@@ -58,3 +58,12 @@ For each task record: requirement IDs, test and command, dated failing evidence,
 - Implementation: `openModal` clears the hotspot label state; `#tag` sits below modal layers as a defensive fallback.
 - Passing evidence (2026-07-21, Europe/Berlin): `npm run test:browser -- --grep "dialogue hides a stale hotspot label"` — 1 passed.
 - Physical iPhone Safari confirmation (2026-07-21, Europe/Berlin): the user verified that the label no longer appears above the dialogue.
+
+## Review remediation — PR #14 Casebook modal return focus
+
+- Requirement: RI-003, RI-004.
+- Test: `RI-003 and RI-004: a Casebook action restores focus after closing its modal` in `tests/browser/game.spec.js` opens and closes the Baker dialogue from its Casebook action, then requires focus on its replacement action.
+- Failing command (2026-07-22, Europe/Berlin): `npm run test:browser -- --grep "Casebook action restores focus"`.
+- Failing result: focus restoration was skipped because the clicked Casebook button was disconnected by `renderPortraitActions` before the dialogue closed.
+- Implementation: `openModal` records the Casebook interaction ID; `closeModal` restores focus to the replacement action when the original trigger no longer exists.
+- Passing evidence (2026-07-22, Europe/Berlin): `npm run test:browser -- --grep "Casebook action restores focus"` — 1 passed.

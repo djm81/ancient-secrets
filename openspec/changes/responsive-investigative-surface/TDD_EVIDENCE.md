@@ -63,6 +63,18 @@ For each task record: requirement IDs, test and command, dated failing evidence,
 - Implementation: manual dispatches now use `${{ github.sha }}^` as the submitted-diff base; the Casebook records disclosure state and scroll position as they change, then restores that recorded view state after responsive re-rendering. The regression waits for its programmatic scroll event to reach the Casebook state recorder before simulating rotation, matching a completed user scroll rather than racing a synthetic assignment.
 - Passing evidence (2026-07-26, Europe/Berlin): `npm test` — 28/28 passed; `npm run test:browser -- --grep "Casebook disclosure and scroll position survive rotation"` — 1/1 passed; full `npm run test:browser` — 34/34 passed; `npm run test:a11y` — 3/3 passed.
 
+## Release PR #16 CodeRabbit review remediation — evidence precision
+
+- Review threads: `PRRT_kwDOTW1Bac6T46G9`, `PRRT_kwDOTW1Bac6T49hv`, and `PRRT_kwDOTW1Bac6T49hw` (unresolved; 2026-07-26).
+- Requirements: RI-005 target-size evidence; archived CQ-001 workflow-dispatch contract; release evidence traceability.
+- Tests to strengthen: the viewport matrix will assert the **All observations** summary directly before skipping zero-geometry controls inside collapsed content; the workflow contract will capture the `on` trigger block and the submitted-diff-base step before asserting the dispatch fallback.
+- Failing-baseline exception (2026-07-26, Europe/Berlin): these findings identify missing assertion precision, not a demonstrated product failure. The existing UI and workflow already satisfy the requested behavior, so a red product test is neither expected nor manufactured; the previous tests were insufficiently specific.
+- Validation commands: `npm test`; `npm run test:browser -- --grep "viewport accessibility matrix"`; full required gates after implementation.
+- Implementation: the matrix now proves the disclosure's own visibility and 44px geometry before retaining the collapsed-action skip; the workflow test scopes `workflow_dispatch` to the trigger block and its SHA fallback to the submitted-diff-base step. The release record now explains the count change.
+- Passing evidence (2026-07-26, Europe/Berlin): `npm test` — 28/28 passed; `npm run test:browser -- --grep "viewport accessibility matrix"` — 1/1 passed.
+- Browser-count clarification: the PR description's 33-test figure predates commit `da36f41`, which added the RI-003 Casebook-rotation regression. The current full Chromium suite contains that additional test and therefore correctly reports 34/34.
+- Required-gate evidence (2026-07-26, Europe/Berlin): `npm run check`; `npm test` — 28/28; `npm run test:browser` — 34/34; `npm run test:a11y` — 3/3; `openspec validate responsive-investigative-surface --strict`; and `git diff --check` all passed.
+
 ## GC-001 — gear-to-trapdoor player flow verification
 
 - Regression reported on the deployed game: after earning the Bronze Gear, the player could not reliably install it in the Flying Machine and reveal the trapdoor.

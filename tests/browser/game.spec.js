@@ -402,6 +402,12 @@ test('@a11y RI-002, RI-004 and RI-005: declared viewport accessibility matrix pr
     await page.getByRole('button', { name: 'Begin Exploring' }).click();
 
     await expect(page.locator('#stage')).toHaveAttribute('data-layout', layout);
+    const disclosure = page.locator('#portrait-actions .casebook-all > summary');
+    await expect(disclosure).toBeVisible();
+    const disclosureBounds = await disclosure.boundingBox();
+    expect(disclosureBounds).not.toBeNull();
+    expect(disclosureBounds?.width).toBeGreaterThanOrEqual(44);
+    expect(disclosureBounds?.height).toBeGreaterThanOrEqual(44);
     const primaryControls = page.locator('#portrait-actions .portrait-action, #portrait-actions .casebook-all > summary');
     const controlCount = await primaryControls.count();
     expect(controlCount).toBeGreaterThan(0);

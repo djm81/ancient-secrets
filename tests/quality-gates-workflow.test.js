@@ -11,6 +11,8 @@ test('CQ-001, CQ-002, and CQ-003: branch and PR quality workflow is read-only an
   assert.match(workflow, /npm ci/);
   assert.match(workflow, /npx playwright install --with-deps chromium/);
   assert.match(workflow, /fetch-depth:\s*0/);
+  assert.match(workflow, /github\.event_name.*workflow_dispatch/);
+  assert.match(workflow, /git rev-parse "\$\{\{ github\.sha \}\}\^"/);
   assert.match(workflow, /git diff --check\s+"\$\{\{ steps\.whitespace-base\.outputs\.base \}\}"\s+"\$\{\{ github\.sha \}\}"/);
   for (const command of ['npm run check', 'npm test', 'npm run test:browser', 'npm run test:a11y', 'git diff --check']) {
     assert.match(workflow, new RegExp(command.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));

@@ -305,6 +305,24 @@ test('RI-002 and RI-003: Casebook modes and item focus survive viewport changes'
   }
 });
 
+test('RI-003: Casebook disclosure and scroll position survive rotation', async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 568 });
+  await page.goto('/maestros-secret.html');
+  await page.getByRole('button', { name: 'Begin the Adventure' }).click();
+  await page.getByRole('button', { name: 'Begin Exploring' }).click();
+
+  const surface = page.locator('#portrait-actions');
+  await surface.locator('.casebook-all > summary').click();
+  await surface.evaluate(element => { element.scrollTop = 96; });
+  await expect.poll(() => surface.evaluate(element => element.scrollTop)).toBe(96);
+  await surface.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+
+  await page.setViewportSize({ width: 667, height: 375 });
+  await expect(page.locator('#stage')).toHaveAttribute('data-layout', 'phone-landscape');
+  await expect(surface.locator('.casebook-all')).toHaveAttribute('open', '');
+  await expect.poll(() => surface.evaluate(element => element.scrollTop)).toBe(96);
+});
+
 test('RI-002: desktop portrait geometry follows the capped stage width', async ({ page }) => {
   await page.setViewportSize({ width: 1024, height: 1365 });
   await page.goto('/maestros-secret.html');

@@ -52,6 +52,17 @@ For each task record: requirement IDs, test and command, dated failing evidence,
 - Implementation: `.casebook-all summary` is now a flex control with `min-height:44px`; the matrix measures every visible `.portrait-action` and the disclosure while excluding collapsed controls with zero geometry.
 - Passing evidence (2026-07-26, Europe/Berlin): `npm run test:browser -- --grep "viewport accessibility matrix"` — 1/1 passed across all eight declared viewports.
 
+## Release PR #16 review remediation — manual dispatch and Casebook continuity
+
+- Review feedback: PR #16 comment `IC_kwDOTW1Bac8AAAABLxoFxQ` (unresolved; 2026-07-26).
+- Requirements: archived CQ-001 workflow dispatch contract; RI-003 reachable-scroll continuity.
+- Failing tests to add: the workflow contract will require `workflow_dispatch` to use a non-empty first-parent base SHA; a browser rotation test will expand **All observations**, scroll its Casebook surface, rotate to phone landscape, and require both the disclosure and scroll position to survive.
+- Commands: `npm test`; `npm run test:browser -- --grep "disclosure and scroll"`.
+- Expected failures before implementation: workflow contract has no manual-dispatch fallback; the rotation test replaces the `<details>` control and resets it closed with scroll position 0.
+- Failing results (2026-07-26, Europe/Berlin): `npm test` failed the CQ-001 contract because no `workflow_dispatch` fallback existed; the focused browser test observed a replaced disclosure without `open` after 320×568 → 667×375 rotation.
+- Implementation: manual dispatches now use `${{ github.sha }}^` as the submitted-diff base; the Casebook records disclosure state and scroll position as they change, then restores that recorded view state after responsive re-rendering. The regression waits for its programmatic scroll event to reach the Casebook state recorder before simulating rotation, matching a completed user scroll rather than racing a synthetic assignment.
+- Passing evidence (2026-07-26, Europe/Berlin): `npm test` — 28/28 passed; `npm run test:browser -- --grep "Casebook disclosure and scroll position survive rotation"` — 1/1 passed; full `npm run test:browser` — 34/34 passed; `npm run test:a11y` — 3/3 passed.
+
 ## GC-001 — gear-to-trapdoor player flow verification
 
 - Regression reported on the deployed game: after earning the Bronze Gear, the player could not reliably install it in the Flying Machine and reveal the trapdoor.

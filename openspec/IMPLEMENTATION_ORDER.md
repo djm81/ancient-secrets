@@ -1,10 +1,10 @@
 # Planned implementation order
 
-Status: proposal-stage roadmap. This note orders accepted work; it does not mark any change implemented or relax a change's own validation gates.
+Status: active roadmap. `responsive-investigative-surface` remains the current change: its executable viewport matrix passed on 2026-07-26, but physical-device and assistive-technology evidence is still required before it can unlock the offline shell. This note orders accepted work; it does not mark any change implemented or relax a change's own validation gates.
 
 ## 1. Playability foundations
 
-1. `responsive-investigative-surface` — establish the complete phone, tablet, desktop, orientation, keyboard, and touch contract before adding content.
+1. `responsive-investigative-surface` — current: establish the complete phone, tablet, desktop, orientation, keyboard, and touch contract before adding content. Automated matrix complete; physical iOS Safari, Android Chrome, touch, safe-area, and screen-reader evidence pending.
 2. `installable-offline-web-app` — add the installable, offline app shell after the responsive surface is stable. It must never cache AI requests or model assets.
 
 ## 2. Story and game vertical slice

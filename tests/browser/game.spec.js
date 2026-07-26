@@ -384,11 +384,17 @@ test('@a11y RI-002, RI-004 and RI-005: declared viewport accessibility matrix pr
     await page.getByRole('button', { name: 'Begin Exploring' }).click();
 
     await expect(page.locator('#stage')).toHaveAttribute('data-layout', layout);
+    const primaryControls = page.locator('#portrait-actions .portrait-action, #portrait-actions .casebook-all > summary');
+    const controlCount = await primaryControls.count();
+    expect(controlCount).toBeGreaterThan(0);
+    for (let index = 0; index < controlCount; index++) {
+      const bounds = await primaryControls.nth(index).boundingBox();
+      if (!bounds?.width || !bounds.height) continue;
+      expect(bounds?.width).toBeGreaterThanOrEqual(44);
+      expect(bounds?.height).toBeGreaterThanOrEqual(44);
+    }
     const mirror = page.locator('#portrait-actions .casebook-context [data-interaction-id="mirror"]');
     await mirror.focus();
-    const bounds = await mirror.boundingBox();
-    expect(bounds?.width).toBeGreaterThanOrEqual(44);
-    expect(bounds?.height).toBeGreaterThanOrEqual(44);
     await page.keyboard.press('Enter');
     await expect(page.getByRole('button', { name: 'Select Hand Mirror' })).toBeVisible();
     await page.getByRole('button', { name: 'CONTRAST' }).click();

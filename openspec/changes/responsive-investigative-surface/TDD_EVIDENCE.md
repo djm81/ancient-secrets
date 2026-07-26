@@ -40,6 +40,18 @@ For each task record: requirement IDs, test and command, dated failing evidence,
 - Passing evidence (2026-07-26, Europe/Berlin): `npm run test:browser -- --grep "viewport accessibility matrix"` — 1/1 passed across all eight declared viewports; it verifies the expected layout, keyboard mirror selection, ≥44×44 CSS-pixel control geometry, high contrast, reduced motion, and scoped Axe results.
 - Manual-device exception: browser emulation cannot establish iOS/Android safe-area behavior, physical touch behavior, or screen-reader announcements. Those rows remain pending in `validation.md`.
 
+## B2 review remediation — complete-action disclosure target size
+
+- Review thread: PR #15 `PRRT_kwDOTW1Bac6T4xyy` (unresolved; 2026-07-26).
+- Requirements: RI-005.
+- Failing test to add: the declared viewport matrix will measure every visible Casebook primary control, including the **All observations** disclosure, and require each to be at least 44×44 CSS px.
+- Failing baseline (2026-07-26, Europe/Berlin): the existing matrix measured only the contextual Hand Mirror control. The disclosure had an 11px font and no minimum height, so it was not proven to meet the touch-target contract.
+- Command: `npm run test:browser -- --grep "viewport accessibility matrix"`.
+- Expected failure before implementation: the disclosure height is below 44 CSS px at the tested viewports.
+- Failing result (2026-07-26, Europe/Berlin): the new matrix measured the disclosure at 15 CSS px high.
+- Implementation: `.casebook-all summary` is now a flex control with `min-height:44px`; the matrix measures every visible `.portrait-action` and the disclosure while excluding collapsed controls with zero geometry.
+- Passing evidence (2026-07-26, Europe/Berlin): `npm run test:browser -- --grep "viewport accessibility matrix"` — 1/1 passed across all eight declared viewports.
+
 ## GC-001 — gear-to-trapdoor player flow verification
 
 - Regression reported on the deployed game: after earning the Bronze Gear, the player could not reliably install it in the Flying Machine and reveal the trapdoor.

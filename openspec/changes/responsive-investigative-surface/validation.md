@@ -8,7 +8,7 @@ Status: **in progress** — automated implementation evidence is recorded; the p
 | RI-002 four explicit responsive modes | browser matrix + manual | Casebook mode/continuity matrix, capped desktop-portrait geometry, compact dialogue composition, and dialogue-overlay regression passed on 2026-07-22: 31 Chromium browser tests; scoped compact-dialogue checks 3/3 in Playwright WebKit and 3/3 in Firefox. The declared 8-viewport matrix passed in Chromium on 2026-07-26. | automated pass; device matrix pending |
 | RI-003 rotation and resize preserve play state and focus | browser + manual device | Selected mirror and Casebook focus survive portrait → landscape; external focus is preserved and a Casebook-launched dialogue returns keyboard focus to its replacement action (PR #14 remediation, 2026-07-22) | automated pass; device matrix pending |
 | RI-004 input parity and no precision/hover dependency | browser + manual keyboard/touch | `@a11y RI-004 and RI-005` keyboard action and scoped Axe; stale hotspot labels are cleared before any modal opens; `npm run test:a11y` 2/2 and `RI-004: dialogue hides a stale hotspot label` passed on 2026-07-21. On 2026-07-26, the 8-viewport matrix keyboard-selected the mirror and reported no scoped Casebook Axe violations at every declared size. | automated pass; manual input checks pending |
-| RI-005 safe-area and target-size contract | browser geometry + manual device | Casebook controls measured ≥44×44 CSS px at every declared viewport in the 2026-07-26 Chromium matrix; portrait CSS uses `env(safe-area-inset-*)`. | automated pass; physical safe-area check pending |
+| RI-005 safe-area and target-size contract | browser geometry + manual device | Every visible Casebook primary control, including the **All observations** disclosure, measured ≥44×44 CSS px at every declared viewport in the 2026-07-26 Chromium matrix; portrait CSS uses `env(safe-area-inset-*)`. | automated pass; physical safe-area check pending |
 
 ## Physical iPhone Safari evidence — 2026-07-21
 
@@ -19,7 +19,7 @@ Status: **in progress** — automated implementation evidence is recorded; the p
 
 ## Visual browser inspection — 2026-07-26
 
-- In a local Chromium browser, the 390 × 844 portrait tray showed the scene above the Casebook with labelled **Relevant actions** and **Travel** groups; the 1280 × 800 desktop rail remained beside a scene-forward layout with the same groups visible.
+- In a local Chromium browser, the 390 × 844 portrait tray showed the scene above the Casebook with labelled **Relevant actions** and **Travel** groups; the 1280 × 800 desktop rail remained beside a scene-forward layout with the same groups visible. On 2026-07-26, the visible **All observations** disclosure measured 366 × 44 CSS px at 390 × 844 and 268 × 44 CSS px at 1280 × 800.
 - This visual check supplements the executable matrix. It is not physical-device, touch, safe-area, or screen-reader evidence.
 
 Required commands: `npm run check`, `npm test`, `npm run test:browser`, `npm run test:a11y`, `git diff --check`, and `openspec validate responsive-investigative-surface --strict`.

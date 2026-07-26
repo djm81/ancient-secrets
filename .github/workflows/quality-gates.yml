@@ -37,7 +37,7 @@ jobs:
         run: |
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
             echo "base=${{ github.event.pull_request.base.sha }}" >> "$GITHUB_OUTPUT"
-          elif [[ "${{ github.event.before }}" =~ ^0+$ ]]; then
+          elif [[ "${{ github.event_name }}" == "workflow_dispatch" || "${{ github.event.before }}" =~ ^0+$ ]]; then
             echo "base=$(git rev-parse "${{ github.sha }}^")" >> "$GITHUB_OUTPUT"
           else
             echo "base=${{ github.event.before }}" >> "$GITHUB_OUTPUT"

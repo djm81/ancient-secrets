@@ -86,10 +86,10 @@ npm run check
 npm test
 npm run test:browser
 npm run test:a11y
-openspec validate proof-of-excellence-pass --strict
+openspec validate responsive-investigative-surface --strict
 ```
 
-Manual QA: open the root page at desktop and narrow/mobile widths; at 390 × 844 start a fresh chronicle, dismiss the first-chronicle assistant with both its button and Escape, then use the Casebook to take the mirror, navigate, and open the baker dialogue. Confirm that phone portrait uses the compact character artwork above a standalone copy card, without a duplicate desktop parchment placeholder. Expand **All observations** to verify complete scene-action access. Rotate to 844 × 390 and confirm the selected inventory item, Casebook focus, and current scene persist; while the dialogue is open, confirm its compact art is a left-side panel beside the copy and the character is not cropped into a shallow banner. Also verify the desktop landscape rail and desktop/tablet portrait dock. Complete the mirror-to-note sequence with only Tab, Enter, and Space; enable high contrast; confirm sound after an explicit start or music-button activation (including on physical iOS release QA); and request each guidance tier with and without the Worker enabled.
+Manual QA: exercise the responsive matrix at 320 × 568, 390 × 844, 430 × 932, 667 × 375, 844 × 390, 1024 × 1365, 1280 × 800, and 1440 × 900. At each size, start a fresh chronicle; use the Casebook to take the mirror; verify each primary control remains at least 44 CSS px; complete the mirror-to-note sequence with only Tab, Enter, and Space; and enable high contrast plus reduced motion. Confirm phone portrait uses the compact character artwork above a standalone copy card, without a duplicate desktop parchment placeholder. Expand **All observations** to verify complete scene-action access. Rotate from 390 × 844 to 844 × 390 and confirm the selected inventory item, Casebook focus, and current scene persist; while the dialogue is open, confirm its compact art is a left-side panel beside the copy and the character is not cropped into a shallow banner. On physical current iOS Safari and Android Chrome, additionally check safe-area clearance, touch activation, rotation, and screen-reader announcements before treating the responsive change as complete. Confirm sound after an explicit start or music-button activation (including on physical iOS release QA); and request each guidance tier with and without the Worker enabled.
 
 ## Point-and-click design
 

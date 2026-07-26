@@ -28,6 +28,28 @@ For each task record: requirement IDs, test and command, dated failing evidence,
 - Automated evidence (2026-07-21, Europe/Berlin): `npm run test:a11y` — 2 passed; Casebook keyboard activation, 44px target geometry, and scoped Axe checks are covered by `@a11y RI-004 and RI-005`.
 - Manual device exception: current iOS Safari and Android Chrome safe-area, touch, screen-reader, and contrast checks remain pending in `validation.md`; they require physical devices and are not represented as complete.
 
+## B2 — declared viewport accessibility matrix
+
+- Requirements: RI-002, RI-004, RI-005.
+- Test to add: an eight-viewport Playwright matrix covering the declared 320×568, 390×844, 430×932, 667×375, 844×390, 1024×1365, 1280×800, and 1440×900 sizes. It will require the expected layout mode, keyboard activation of a contextual Casebook action, a 44×44 CSS-pixel minimum target, visible high-contrast state, reduced-motion media support, and no scoped Casebook Axe violations.
+- Failing baseline (2026-07-26, Europe/Berlin): the test did not exist; the existing RI accessibility contract covered only 390×844, so the full declared matrix had no executable evidence.
+- Command: `npm run test:browser -- --grep "viewport accessibility matrix"`.
+- Expected result before implementation: no matching tests, which establishes the missing matrix coverage rather than a product failure.
+- Failing result (2026-07-26, Europe/Berlin): after the matrix test was added, it failed at the short landscape viewport with Axe `aria-prohibited-attr` (serious): the empty `.casebook-navigation` `div` had `aria-label="Travel"` but no semantic role.
+- Implementation: each labelled Casebook section in `renderPortraitActions` now has the semantic `group` role, so its accessible name is permitted in both populated and empty states.
+- Passing evidence (2026-07-26, Europe/Berlin): `npm run test:browser -- --grep "viewport accessibility matrix"` — 1/1 passed across all eight declared viewports; it verifies the expected layout, keyboard mirror selection, ≥44×44 CSS-pixel control geometry, high contrast, reduced motion, and scoped Axe results.
+- Manual-device exception: browser emulation cannot establish iOS/Android safe-area behavior, physical touch behavior, or screen-reader announcements. Those rows remain pending in `validation.md`.
+
+## GC-001 — gear-to-trapdoor player flow verification
+
+- Regression reported on the deployed game: after earning the Bronze Gear, the player could not reliably install it in the Flying Machine and reveal the trapdoor.
+- Test to add: a Playwright flow for each authored gear route (well and lion): earn the gear with selected bread, select the rendered Bronze Gear in the satchel, travel to the workshop, activate the Flying Machine, immediately refresh, resume, and require the trapdoor to be visible.
+- Failing baseline (2026-07-26, Europe/Berlin): no end-to-end test exercised the complete reward → select → travel → install → refresh flow. Existing tests covered reward persistence and an already-selected gear repair independently.
+- Command: `npm run test:browser -- --grep "gear-to-trapdoor"`.
+- Expected result before implementation: no matching test, which establishes the missing integration coverage. No code change is presumed until the test provides contrary evidence.
+- Test refinement: the first version seeded an incomplete version-2 save, which the save validator correctly rejected; the second attempted a pointer click on the continuously swaying decorative machine, which Playwright correctly treats as unstable. The final test uses a valid migrated version-1 save and activates the same focusable machine control with Enter.
+- Passing evidence (2026-07-26, Europe/Berlin): `npm run test:browser -- --grep "gear-to-trapdoor"` — 1/1 passed. Both well and lion reward routes retained the selected gear through travel, installed it in the Flying Machine, persisted the state immediately, and restored a visible trapdoor after refresh.
+
 ## Review remediation — PR #13
 
 - Requirements: RI-001, RI-002, RI-003.

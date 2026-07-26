@@ -2,7 +2,7 @@
 
 ## Wave 0 — proposal stage
 
-- [ ] 0a. Confirm the viewport matrix and browser/device baseline; run `openspec validate responsive-investigative-surface --strict`.
+- [x] 0a. Confirm the viewport matrix and browser/device baseline; run `openspec validate responsive-investigative-surface --strict`.
 
 ## Wave A — pure action and layout contracts
 

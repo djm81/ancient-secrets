@@ -36,6 +36,35 @@ test('GC-001: refresh during a bread-for-gear reward keeps the gear', async ({ p
   await expect(page.getByRole('button', { name: 'Select Bronze Gear' })).toBeVisible();
 });
 
+test('GC-001: gear-to-trapdoor flow survives selection, travel, and refresh for every authored reward route', async ({ page }) => {
+  for (const [gearRoute, rewardTarget] of [
+    ['well', '[data-hs="well"]'],
+    ['lion', '[data-hs="lion"]']
+  ]) {
+    await setChronicle(page, {
+      scene: 'piazza',
+      inv: ['bread'],
+      selected: 'bread',
+      flags: { ...baseFlags, mirrorTaken: true, noteRead: true, breadTaken: true },
+      secrets
+    }, 1, { ...run, gearRoute });
+    await continueChronicle(page);
+    await page.locator(rewardTarget).click();
+
+    const gear = page.getByRole('button', { name: 'Select Bronze Gear' });
+    await expect(gear).toBeVisible();
+    await gear.click();
+    await expect(gear).toHaveAttribute('aria-pressed', 'true');
+    await page.locator('#nav-left').click();
+    await expect(page.locator('#sc-workshop')).toHaveClass(/active/);
+    await page.locator('[data-hs="machine"]').focus();
+    await page.keyboard.press('Enter');
+    await page.reload();
+    await continueChronicle(page);
+    await expect(page.locator('#trapdoor')).not.toHaveClass(/hidden/);
+  }
+});
+
 test('EQ-001: keyboard-only opening sequence reads the note', async ({ page }) => {
   await page.goto('/maestros-secret.html');
   await page.getByRole('button', { name: 'Begin the Adventure' }).focus();
@@ -330,6 +359,43 @@ test('@a11y RI-004 and RI-005: Casebook actions support keyboard use and have no
   await page.keyboard.press('Enter');
   await expect(page.getByRole('button', { name: 'Select Hand Mirror' })).toBeVisible();
   expect((await new AxeBuilder({ page }).include('#portrait-actions').analyze()).violations).toEqual([]);
+});
+
+test('@a11y RI-002, RI-004 and RI-005: declared viewport accessibility matrix preserves the Casebook contract', async ({ page }) => {
+  test.slow();
+  const matrix = [
+    [{ width: 320, height: 568 }, 'phone-portrait'],
+    [{ width: 390, height: 844 }, 'phone-portrait'],
+    [{ width: 430, height: 932 }, 'phone-portrait'],
+    [{ width: 667, height: 375 }, 'phone-landscape'],
+    [{ width: 844, height: 390 }, 'phone-landscape'],
+    [{ width: 1024, height: 1365 }, 'desktop-portrait'],
+    [{ width: 1280, height: 800 }, 'desktop-landscape'],
+    [{ width: 1440, height: 900 }, 'desktop-landscape']
+  ];
+
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  for (const [viewport, layout] of matrix) {
+    await page.setViewportSize(viewport);
+    await page.goto('/maestros-secret.html');
+    await page.evaluate(() => localStorage.clear());
+    await page.reload();
+    await page.getByRole('button', { name: 'Begin the Adventure' }).click();
+    await page.getByRole('button', { name: 'Begin Exploring' }).click();
+
+    await expect(page.locator('#stage')).toHaveAttribute('data-layout', layout);
+    const mirror = page.locator('#portrait-actions .casebook-context [data-interaction-id="mirror"]');
+    await mirror.focus();
+    const bounds = await mirror.boundingBox();
+    expect(bounds?.width).toBeGreaterThanOrEqual(44);
+    expect(bounds?.height).toBeGreaterThanOrEqual(44);
+    await page.keyboard.press('Enter');
+    await expect(page.getByRole('button', { name: 'Select Hand Mirror' })).toBeVisible();
+    await page.getByRole('button', { name: 'CONTRAST' }).click();
+    await expect(page.locator('body')).toHaveClass(/high-contrast/);
+    await expect(page.locator('#titlescreen .vitr')).toHaveCSS('animation-name', 'none');
+    expect((await new AxeBuilder({ page }).include('#portrait-actions').analyze()).violations).toEqual([]);
+  }
 });
 
 test('FTA-001: a new chronicle gets a skippable first-time interaction assistant', async ({ page }) => {

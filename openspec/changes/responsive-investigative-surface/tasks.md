@@ -13,9 +13,9 @@
 ## Wave B — surfaces and accessibility
 
 - [x] B1. Build portrait tray, landscape rail, desktop rail, and portrait dock with safe-area spacing and 44px targets.
-- [ ] B2. Run keyboard, screen-reader announcement, reduced-motion, high-contrast, and touch parity checks at every viewport; record evidence.
+- [x] B2. Run keyboard, screen-reader announcement, reduced-motion, high-contrast, and touch parity checks at every viewport; record evidence. Android Chrome physical evidence is a user-approved skip; iPhone Safari touch and VoiceOver evidence is recorded in `validation.md`.
 
 ## Wave C — device proof and docs
 
-- [ ] C1. Execute the full-loop matrix on current iOS Safari, Android Chrome, and desktop Chrome/Edge/Safari/Firefox; record device, browser version, viewport, and observed result.
-- [ ] C2. Update README manual QA and `openspec/IMPLEMENTATION_ORDER.md`; run required gates and complete validation.
+- [x] C1. Execute the full-loop matrix on current iOS Safari, Android Chrome, and desktop Chrome/Edge/Safari/Firefox; record device, browser version, viewport, and observed result. The iPhone Safari full loop and VoiceOver checks passed; Android Chrome physical validation and the full Firefox run are user-approved skips, recorded in `validation.md`.
+- [x] C2. Update README manual QA and `openspec/IMPLEMENTATION_ORDER.md`; run required gates and complete validation.

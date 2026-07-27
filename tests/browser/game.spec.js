@@ -392,13 +392,15 @@ test('RI-004: mobile Casebook exposes a touch scroll surface', async ({ page }) 
     return {
       canScroll: element.scrollHeight > element.clientHeight,
       pointerEvents: style.pointerEvents,
-      touchAction: style.touchAction
+      touchAction: style.touchAction,
+      overscrollBehaviorY: style.overscrollBehaviorY
     };
   });
 
   expect(mobileSurface.canScroll).toBe(true);
   expect(mobileSurface.pointerEvents).toBe('auto');
   expect(mobileSurface.touchAction).toBe('pan-y');
+  expect(mobileSurface.overscrollBehaviorY).toBe('contain');
 
   await page.setViewportSize({ width: 1280, height: 800 });
   await expect(page.locator('#stage')).toHaveAttribute('data-layout', 'desktop-landscape');
@@ -455,6 +457,47 @@ test('RI-003 and RI-004: landscape Casebook focus scrolls the panel, not the pag
 
   await expect.poll(() => surface.evaluate(element => element.scrollTop)).toBeGreaterThan(0);
   expect(await page.evaluate(() => window.scrollY)).toBe(0);
+});
+
+test('RI-003 and RI-004: stale Casebook focus callbacks cannot displace the current control', async ({ page }) => {
+  await page.setViewportSize({ width: 667, height: 375 });
+  await page.goto('/maestros-secret.html');
+  await page.getByRole('button', { name: 'Begin the Adventure' }).click();
+  await page.getByRole('button', { name: 'Begin Exploring' }).click();
+
+  const surface = page.locator('#portrait-actions');
+  const disclosure = surface.locator('.casebook-all > summary');
+  await disclosure.click();
+  const contextualAction = surface.locator('.casebook-context .portrait-action').first();
+  const observations = surface.locator('.casebook-all-actions .portrait-action');
+  const finalObservation = observations.last();
+  await page.evaluate(() => {
+    window.casebookRevealFrames = [];
+    window.casebookRevealTimers = [];
+    window.requestAnimationFrame = callback => {
+      window.casebookRevealFrames.push(callback);
+      return window.casebookRevealFrames.length;
+    };
+    window.setTimeout = callback => {
+      window.casebookRevealTimers.push(callback);
+      return window.casebookRevealTimers.length;
+    };
+  });
+
+  await finalObservation.evaluate(element => element.focus({ preventScroll: true }));
+  await page.evaluate(() => {
+    while (window.casebookRevealFrames.length) window.casebookRevealFrames.shift()();
+    window.staleCasebookReveal = window.casebookRevealTimers.pop();
+    window.casebookRevealTimers = [];
+  });
+  await contextualAction.evaluate(element => element.focus({ preventScroll: true }));
+  await page.evaluate(() => {
+    while (window.casebookRevealFrames.length) window.casebookRevealFrames.shift()();
+  });
+  const scrollTopForCurrentControl = await surface.evaluate(element => element.scrollTop);
+
+  await page.evaluate(() => window.staleCasebookReveal());
+  expect(await surface.evaluate(element => element.scrollTop)).toBe(scrollTopForCurrentControl);
 });
 
 test('RI-005: landscape Casebook clears the system gesture edge', async ({ page }) => {

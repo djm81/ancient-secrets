@@ -1,6 +1,6 @@
 # TDD evidence: responsive-investigative-surface
 
-Status: **in progress** — Wave A has started.
+Status: **in progress** — automated contracts and iPhone Safari interaction evidence are recorded; the remaining native desktop-browser and VoiceOver-announcement checks are tracked in `validation.md`.
 
 For each task record: requirement IDs, test and command, dated failing evidence, implementation reference, dated passing evidence, and any manual-device exception.
 
@@ -84,6 +84,9 @@ For each task record: requirement IDs, test and command, dated failing evidence,
 - Failing test to add: the phone-landscape Casebook must retain at least 16 CSS px between its bottom edge and the viewport, before any larger device safe-area inset is applied.
 - Command: `npm run test:browser -- --grep "landscape Casebook clears the system gesture edge"`.
 - Expected failure before implementation: the Casebook bottom gap is 6px.
+- Failing result (2026-07-27, Europe/Berlin): expected a bottom clearance of at least 16 CSS px; the measured clearance was `5.96875px`.
+- Implementation: `#stage[data-layout="phone-landscape"] #portrait-actions` now uses `bottom:max(18px,calc(8px + env(safe-area-inset-bottom)))`, maintaining the larger device safe-area inset when present.
+- Passing evidence (2026-07-27, Europe/Berlin): `npm run test:browser -- --grep "landscape Casebook clears the top-bar controls|landscape Casebook clears the system gesture edge|landscape Casebook focus scrolls the panel"` — 3/3 passed; the bottom-clearance contract measured at least 16 CSS px.
 
 ## B2 follow-up — landscape Casebook top-bar clearance
 
@@ -102,6 +105,17 @@ For each task record: requirement IDs, test and command, dated failing evidence,
 - Browser-contract exception: the existing landscape focus contract already verifies that direct `scrollTop` moves the inner Casebook without scrolling the page, in both directions in browser engines. The failure is iOS VoiceOver's post-focus scheduling, which browser automation cannot reproduce. The physical-device report is therefore the justified failing baseline.
 - Implementation to validate: repeat the direct overflow correction on two animation frames and once after a short 80ms settle, so a late iOS focus adjustment cannot cancel an upward correction.
 - Passing evidence (2026-07-27, Europe/Berlin): `npm run test:browser -- --grep "focused Casebook observation is revealed|landscape Casebook focus scrolls the panel"` — 2/2 passed. On Dom's iPhone through Safari Web Inspector, VoiceOver can now move focus down to lower Casebook observations and back up through earlier ones while the right-side Casebook scrolls itself in both directions.
+
+## B2 review remediation — stale delayed Casebook focus callbacks
+
+- Review thread: PR #18 `PRRT_kwDOTW1Bac6UNfgY` (unresolved; 2026-07-27).
+- Requirements: RI-003, RI-004.
+- Failing test: a previously focused lower observation schedules a delayed reveal, focus moves to the first observation, and invoking the old timer must not scroll the Casebook away from the current control.
+- Command: `npm run test:browser -- --grep "stale Casebook focus callbacks"`.
+- Expected failure before implementation: the stale timer runs `revealCasebookControl()` for the previously focused lower observation and leaves `scrollTop` greater than zero.
+- Failing result (2026-07-27, Europe/Berlin): the current focused control held `scrollTop: 25`, but invoking the prior observation's timer changed it to `485`.
+- Implementation: `casebookFocusRevealGeneration` increments for every `focusin`; every delayed reveal checks that it still owns the current generation before changing the Casebook scroll position.
+- Passing evidence (2026-07-27, Europe/Berlin): `npm run test:browser -- --grep "stale Casebook focus callbacks|touch scroll surface|landscape Casebook focus scrolls the panel"` — 3/3 passed.
 
 ## B2 review remediation — complete-action disclosure target size
 

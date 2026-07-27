@@ -379,6 +379,108 @@ test('@a11y RI-004 and RI-005: Casebook actions support keyboard use and have no
   expect((await new AxeBuilder({ page }).include('#portrait-actions').analyze()).violations).toEqual([]);
 });
 
+test('RI-004: mobile Casebook exposes a touch scroll surface', async ({ page }) => {
+  await page.setViewportSize({ width: 667, height: 375 });
+  await page.goto('/maestros-secret.html');
+  await page.getByRole('button', { name: 'Begin the Adventure' }).click();
+  await page.getByRole('button', { name: 'Begin Exploring' }).click();
+
+  const surface = page.locator('#portrait-actions');
+  await surface.locator('.casebook-all > summary').click();
+  const mobileSurface = await surface.evaluate(element => {
+    const style = getComputedStyle(element);
+    return {
+      canScroll: element.scrollHeight > element.clientHeight,
+      pointerEvents: style.pointerEvents,
+      touchAction: style.touchAction
+    };
+  });
+
+  expect(mobileSurface.canScroll).toBe(true);
+  expect(mobileSurface.pointerEvents).toBe('auto');
+  expect(mobileSurface.touchAction).toBe('pan-y');
+
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await expect(page.locator('#stage')).toHaveAttribute('data-layout', 'desktop-landscape');
+  expect(await surface.evaluate(element => getComputedStyle(element).pointerEvents)).toBe('none');
+});
+
+test('RI-004: portrait travel controls retain Casebook separation', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/maestros-secret.html');
+  await page.getByRole('button', { name: 'Begin the Adventure' }).click();
+  await page.getByRole('button', { name: 'Begin Exploring' }).click();
+
+  const surface = page.locator('#portrait-actions');
+  const disclosure = surface.locator('.casebook-all > summary');
+  const travel = surface.locator('.casebook-navigation');
+  const disclosureBox = await disclosure.boundingBox();
+  const travelBox = await travel.boundingBox();
+
+  expect(disclosureBox).not.toBeNull();
+  expect(travelBox).not.toBeNull();
+  expect(travelBox.y - (disclosureBox.y + disclosureBox.height)).toBeGreaterThanOrEqual(8);
+});
+
+test('RI-003 and RI-004: a focused Casebook observation is revealed without native focus scrolling', async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 568 });
+  await page.goto('/maestros-secret.html');
+  await page.getByRole('button', { name: 'Begin the Adventure' }).click();
+  await page.getByRole('button', { name: 'Begin Exploring' }).click();
+
+  const surface = page.locator('#portrait-actions');
+  await surface.locator('.casebook-all > summary').click();
+  const finalObservation = surface.locator('.casebook-all-actions .portrait-action').last();
+  await finalObservation.evaluate(element => element.focus({ preventScroll: true }));
+
+  await expect.poll(() => surface.evaluate(element => element.scrollTop)).toBeGreaterThan(0);
+  const geometry = await Promise.all([surface.boundingBox(), finalObservation.boundingBox()]);
+  const [surfaceBox, observationBox] = geometry;
+  expect(surfaceBox).not.toBeNull();
+  expect(observationBox).not.toBeNull();
+  expect(observationBox.y).toBeGreaterThanOrEqual(surfaceBox.y);
+  expect(observationBox.y + observationBox.height).toBeLessThanOrEqual(surfaceBox.y + surfaceBox.height + 1);
+});
+
+test('RI-003 and RI-004: landscape Casebook focus scrolls the panel, not the page', async ({ page }) => {
+  await page.setViewportSize({ width: 667, height: 375 });
+  await page.goto('/maestros-secret.html');
+  await page.getByRole('button', { name: 'Begin the Adventure' }).click();
+  await page.getByRole('button', { name: 'Begin Exploring' }).click();
+
+  const surface = page.locator('#portrait-actions');
+  await surface.locator('.casebook-all > summary').click();
+  const finalObservation = surface.locator('.casebook-all-actions .portrait-action').last();
+  await finalObservation.evaluate(element => element.focus({ preventScroll: true }));
+
+  await expect.poll(() => surface.evaluate(element => element.scrollTop)).toBeGreaterThan(0);
+  expect(await page.evaluate(() => window.scrollY)).toBe(0);
+});
+
+test('RI-005: landscape Casebook clears the system gesture edge', async ({ page }) => {
+  await page.setViewportSize({ width: 667, height: 375 });
+  await page.goto('/maestros-secret.html');
+  await page.getByRole('button', { name: 'Begin the Adventure' }).click();
+  await page.getByRole('button', { name: 'Begin Exploring' }).click();
+
+  const panel = await page.locator('#portrait-actions').boundingBox();
+  expect(panel).not.toBeNull();
+  expect(375 - (panel.y + panel.height)).toBeGreaterThanOrEqual(16);
+});
+
+test('RI-005: landscape Casebook clears the top-bar controls', async ({ page }) => {
+  await page.setViewportSize({ width: 667, height: 375 });
+  await page.goto('/maestros-secret.html');
+  await page.getByRole('button', { name: 'Begin the Adventure' }).click();
+  await page.getByRole('button', { name: 'Begin Exploring' }).click();
+
+  const panel = await page.locator('#portrait-actions').boundingBox();
+  const topbar = await page.locator('#topbar').boundingBox();
+  expect(panel).not.toBeNull();
+  expect(topbar).not.toBeNull();
+  expect(panel.y - (topbar.y + topbar.height)).toBeGreaterThanOrEqual(8);
+});
+
 test('@a11y RI-002, RI-004 and RI-005: declared viewport accessibility matrix preserves the Casebook contract', async ({ page }) => {
   test.slow();
   const matrix = [

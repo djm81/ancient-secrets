@@ -1,6 +1,6 @@
 # TDD evidence: responsive-investigative-surface
 
-Status: **in progress** — Wave A has started.
+Status: **in progress** — automated contracts and iPhone Safari interaction evidence are recorded; the remaining native desktop-browser and VoiceOver-announcement checks are tracked in `validation.md`.
 
 For each task record: requirement IDs, test and command, dated failing evidence, implementation reference, dated passing evidence, and any manual-device exception.
 
@@ -39,6 +39,83 @@ For each task record: requirement IDs, test and command, dated failing evidence,
 - Implementation: each labelled Casebook section in `renderPortraitActions` now has the semantic `group` role, so its accessible name is permitted in both populated and empty states.
 - Passing evidence (2026-07-26, Europe/Berlin): `npm run test:browser -- --grep "viewport accessibility matrix"` — 1/1 passed across all eight declared viewports; it verifies the expected layout, keyboard mirror selection, ≥44×44 CSS-pixel control geometry, high contrast, reduced motion, and scoped Axe results.
 - Manual-device exception: browser emulation cannot establish iOS/Android safe-area behavior, physical touch behavior, or screen-reader announcements. Those rows remain pending in `validation.md`.
+
+## B2 remediation — mobile Casebook touch scrolling
+
+- Requirements: RI-004, RI-005.
+- Reported physical failure (2026-07-27, Europe/Berlin): on Dom's iPhone (iOS 26.5.2), **All observations** expanded and its buttons worked, but the 555px Casebook content could not be reliably dragged through its 338px landscape viewport because the drag had to begin on a control.
+- Failing test to add: a phone-landscape browser contract will require `#portrait-actions` to expose a hit-testable vertical pan surface while the disclosure is expanded, without changing desktop layout behavior.
+- Command: `npm run test:browser -- --grep "touch scroll surface"`.
+- Expected failure before implementation: computed `pointer-events` is `none` on the mobile Casebook (only its buttons and summary opt back in), leaving no touch-active gutter for a scroll gesture.
+- Failing result (2026-07-27, Europe/Berlin): `RI-004: mobile Casebook exposes a touch scroll surface` failed with expected `pointer-events: auto`, received `none`; the panel had 555px `scrollHeight` in a 338px `clientHeight` viewport.
+- Implementation: mobile portrait and landscape Casebooks opt into `pointer-events: auto`, `touch-action: pan-y`, and contained overscroll; the desktop overlay remains transparent to scene input.
+- Passing evidence (2026-07-27, Europe/Berlin): `npm run test:browser -- --grep "touch scroll surface"` — 1/1 passed; `npx playwright test --browser=webkit --grep "touch scroll surface"` — 1/1 passed. The regression waits for responsive layout to settle after the desktop resize before asserting the desktop hit-testing contract.
+- Physical confirmation (2026-07-27, Europe/Berlin): the same declarations were injected temporarily through Safari Web Inspector on Dom's iPhone. With **All observations** expanded, the player could drag-scroll the Casebook smoothly and then activate a Casebook button. The temporary style is cleared by reload; the checked-in CSS is the deployable implementation.
+
+## B2 follow-up — portrait Casebook travel separation
+
+- Requirements: RI-004, RI-005.
+- Reported physical failure (2026-07-27, Europe/Berlin): in phone portrait, the **Go left** and **Go right** travel controls visually touch the preceding **All observations** disclosure because the travel group has no top separation.
+- Failing test to add: the portrait Casebook contract will require an 8px-or-greater vertical gap between the final disclosure/control and the travel group.
+- Command: `npm run test:browser -- --grep "portrait travel controls retain Casebook separation"`.
+- Expected failure before implementation: the measured gap is 0px.
+- Failing result (2026-07-27, Europe/Berlin): the new portrait regression received a 0px gap where ≥8px is required.
+- Implementation: `.casebook-navigation` now has a 9px top margin, separating travel controls from the preceding disclosure or observation control without changing the controls' 44px target-size contract.
+- Passing evidence (2026-07-27, Europe/Berlin): `npm run test:browser -- --grep "portrait travel controls retain Casebook separation"` — 1/1 passed.
+
+## B2 follow-up — Casebook focused-action reveal
+
+- Requirements: RI-003, RI-004.
+- Reported physical accessibility gap (2026-07-27, Europe/Berlin): with VoiceOver enabled, advancing to an off-screen Casebook observation requires a separate scroll gesture instead of revealing the focused action.
+- Failing test to add: at a short phone-portrait viewport, programmatic focus with native scrolling suppressed will require the Casebook surface to scroll enough to reveal the final expanded observation.
+- Command: `npm run test:browser -- --grep "focused Casebook observation is revealed"`.
+- Expected failure before implementation: `scrollTop` remains 0 after focus because the global focus handler records the action but does not reveal it.
+- Failing result (2026-07-27, Europe/Berlin): the focused target remained hidden with `scrollTop: 0` after `focus({ preventScroll: true })`.
+- Implementation: when a Casebook button or disclosure receives focus, the existing capture-phase focus handler calculates its overflow relative to `#portrait-actions` and changes that element's `scrollTop` directly. This reveals the control without smooth animation and preserves the remembered Casebook focus ID.
+- Passing evidence (2026-07-27, Europe/Berlin): `npm run test:browser -- --grep "focused Casebook observation is revealed"` — 1/1 passed. The final expanded observation is revealed within the scroll surface, allowing 1 CSS pixel for border/sub-pixel rounding.
+- Physical-device timing refinement (2026-07-27, Europe/Berlin): the iPhone VoiceOver probe confirmed that landscape navigation emits DOM `focusin` events for Casebook controls, but the one-frame reveal did not move the visible panel reliably. This is an iOS accessibility-focus scheduling distinction that Playwright does not reproduce, so the follow-up uses a second animation-frame reveal and is validated through the same focused regression plus the connected device; no artificial red browser baseline is claimed.
+- Physical-device containment refinement (2026-07-27, Europe/Berlin): the iPhone revealed that `scrollIntoView()` can stop after scrolling the outer document instead of the right-side landscape Casebook. The follow-up will calculate the focused control's overflow relative to `#portrait-actions` and change that element's `scrollTop` directly. Browser emulation already scrolls the nearest container correctly, so the physical evidence is the justified failing baseline; the regression adds an explicit landscape inner-scroll/no-page-scroll contract.
+- Physical-device event-phase refinement (2026-07-27, Europe/Berlin): the VoiceOver probe observed landscape `focusin` events in capture phase while the bubble-phase reveal still failed to move the panel. The reveal listener now runs in capture phase; browser automation exercises the same focus contract but cannot reproduce iOS accessibility-event propagation.
+
+## B2 follow-up — landscape Casebook system-gesture clearance
+
+- Requirements: RI-004, RI-005.
+- Reported physical failure (2026-07-27, Europe/Berlin): in landscape VoiceOver navigation reached the lower Casebook edge, where a further upward gesture could be intercepted by iOS system navigation rather than continue within the right-side panel.
+- Failing test to add: the phone-landscape Casebook must retain at least 16 CSS px between its bottom edge and the viewport, before any larger device safe-area inset is applied.
+- Command: `npm run test:browser -- --grep "landscape Casebook clears the system gesture edge"`.
+- Expected failure before implementation: the Casebook bottom gap is 6px.
+- Failing result (2026-07-27, Europe/Berlin): expected a bottom clearance of at least 16 CSS px; the measured clearance was `5.96875px`.
+- Implementation: `#stage[data-layout="phone-landscape"] #portrait-actions` now uses `bottom:max(18px,calc(8px + env(safe-area-inset-bottom)))`, maintaining the larger device safe-area inset when present.
+- Passing evidence (2026-07-27, Europe/Berlin): `npm run test:browser -- --grep "landscape Casebook clears the top-bar controls|landscape Casebook clears the system gesture edge|landscape Casebook focus scrolls the panel"` — 3/3 passed; the bottom-clearance contract measured at least 16 CSS px.
+
+## B2 follow-up — landscape Casebook top-bar clearance
+
+- Requirements: RI-004, RI-005.
+- Reported physical failure (2026-07-27, Europe/Berlin): after the lower safe-edge remediation, the Casebook could scroll down on the iPhone in landscape but upward movement was obstructed at its top edge by the guidance, notes, and contrast controls.
+- Failing test: phone-landscape Casebook must begin at least 8 CSS px below the rendered top bar.
+- Command: `npm run test:browser -- --grep "landscape Casebook clears the top-bar controls"`.
+- Expected failure before implementation: the Casebook starts at 56px while the wrapped top bar ends at 72px, producing a 16px overlap.
+- Failing result (2026-07-27, Europe/Berlin): expected a top clearance of at least 8px; received `-16px`.
+- Implementation and passing evidence (2026-07-27, Europe/Berlin): the Casebook now begins at `max(80px, calc(64px + env(safe-area-inset-top)))`, while retaining the 18px bottom clearance. `npm run test:browser -- --grep "landscape Casebook clears the top-bar controls|landscape Casebook clears the system gesture edge|landscape Casebook focus scrolls the panel"` — 3/3 passed.
+
+## B2 follow-up — landscape Casebook upward focus reveal
+
+- Requirements: RI-003, RI-004.
+- Reported physical failure (2026-07-27, Europe/Berlin): after the Casebook has moved down in landscape VoiceOver, moving focus back toward earlier observations does not reliably scroll the Casebook upward. The top-bar clearance change did not resolve it.
+- Browser-contract exception: the existing landscape focus contract already verifies that direct `scrollTop` moves the inner Casebook without scrolling the page, in both directions in browser engines. The failure is iOS VoiceOver's post-focus scheduling, which browser automation cannot reproduce. The physical-device report is therefore the justified failing baseline.
+- Implementation to validate: repeat the direct overflow correction on two animation frames and once after a short 80ms settle, so a late iOS focus adjustment cannot cancel an upward correction.
+- Passing evidence (2026-07-27, Europe/Berlin): `npm run test:browser -- --grep "focused Casebook observation is revealed|landscape Casebook focus scrolls the panel"` — 2/2 passed. On Dom's iPhone through Safari Web Inspector, VoiceOver can now move focus down to lower Casebook observations and back up through earlier ones while the right-side Casebook scrolls itself in both directions.
+
+## B2 review remediation — stale delayed Casebook focus callbacks
+
+- Review thread: PR #18 `PRRT_kwDOTW1Bac6UNfgY` (unresolved; 2026-07-27).
+- Requirements: RI-003, RI-004.
+- Failing test: a previously focused lower observation schedules a delayed reveal, focus moves to the first observation, and invoking the old timer must not scroll the Casebook away from the current control.
+- Command: `npm run test:browser -- --grep "stale Casebook focus callbacks"`.
+- Expected failure before implementation: the stale timer runs `revealCasebookControl()` for the previously focused lower observation and leaves `scrollTop` greater than zero.
+- Failing result (2026-07-27, Europe/Berlin): the current focused control held `scrollTop: 25`, but invoking the prior observation's timer changed it to `485`.
+- Implementation: `casebookFocusRevealGeneration` increments for every `focusin`; every delayed reveal checks that it still owns the current generation before changing the Casebook scroll position.
+- Passing evidence (2026-07-27, Europe/Berlin): `npm run test:browser -- --grep "stale Casebook focus callbacks|touch scroll surface|landscape Casebook focus scrolls the panel"` — 3/3 passed.
 
 ## B2 review remediation — complete-action disclosure target size
 

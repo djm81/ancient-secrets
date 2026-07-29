@@ -8,7 +8,7 @@
 
 - [x] A1. Create failing tests for manifest identity, relative scope/start route, icons, standalone display, and local font references; implement manifest/head/icon/font assets; record evidence. `node --test tests/installable-offline-web-app.test.js` failed 0/1 before implementation because `manifest.webmanifest` was absent, then passed 1/1 on 2026-07-29.
 - [x] A2. Create failing service-worker tests for core precache list, GET-only handling, offline navigation, and explicit exclusion of POST/AI/model requests; implement; record evidence. `tests/offline-shell.test.js` passed on 2026-07-29.
-- [x] A3. Add offline browser tests: successful first online launch followed by offline launch, resume, and authored guidance; record evidence. `tests/browser/offline-app.spec.js` passed 2/2 on 2026-07-29.
+- [x] A3. Add offline browser tests: successful first online launch followed by offline launch, resume, and authored guidance; record evidence. The initial focused checkpoint passed 2/2 on 2026-07-29; the final focused suite passed 3/3 after Cache Storage and console assertions were added.
 
 ## Wave B — lifecycle and recovery
 
@@ -20,4 +20,4 @@
 
 - [x] C1. Add optional era-pack download/eviction state machine with storage estimate, disclosure, and failure-safe fallback; defer actual downloads until era assets exist. `js/era-packs.js` provides consent, estimate, insufficient-storage, completion, failure, retry, and eviction states; the UI truthfully reports that no authored era pack is yet available.
 - [ ] C2. Record manual installed/offline/update/resume scenarios on current iOS Safari, Android Chrome, Android Samsung Internet, desktop Chrome, Edge, Safari, and Firefox.
-- [x] C3. Update README, deployment notes, manual QA, and `openspec/IMPLEMENTATION_ORDER.md`; run gates and complete validation. On 2026-07-29: `npm run check` passed; `npm test` passed 34/34; `npm run test:browser` passed 44/44; `npm run test:a11y` passed 3/3; strict OpenSpec validation and `git diff --check` passed. C2 remains the explicit installed-device release-certification follow-up.
+- [x] C3. Update README, deployment notes, manual QA, and `openspec/IMPLEMENTATION_ORDER.md`; run gates and complete validation. The initial full-regression checkpoint on 2026-07-29 passed `npm run check`; `npm test` 34/34; `npm run test:browser` 44/44; `npm run test:a11y` 3/3; strict OpenSpec validation; and `git diff --check`. The final evidence record contains subsequent 35/35 and 36/36 unit-test checkpoints. C2 remains the explicit installed-device release-certification follow-up.

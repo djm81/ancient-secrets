@@ -19,10 +19,15 @@ test('PWA-001: installable identity is project-path safe and launches directly i
   assert.equal(manifest.display, 'standalone');
   assert.ok(manifest.icons.some((icon) => icon.src === './assets/icons/app-192.png' && icon.sizes === '192x192'));
   assert.ok(manifest.icons.some((icon) => icon.src === './assets/icons/app-512.png' && icon.sizes === '512x512' && icon.purpose === 'any maskable'));
+  for (const icon of manifest.icons) {
+    const asset = await readFile(new URL(`../${icon.src.replace(/^\.\//, '')}`, import.meta.url));
+    assert.ok(asset.byteLength > 0, `${icon.src} must be a readable non-empty icon asset`);
+  }
 
   for (const page of [rootPage, gamePage]) {
     assert.match(page, /<link rel="manifest" href="\.\/manifest\.webmanifest">/);
     assert.match(page, /<link rel="apple-touch-icon" href="\.\/assets\/icons\/app-192\.png">/);
+    assert.match(page, /<link rel="stylesheet" href="\.\/assets\/fonts\/fonts\.css">/);
     assert.match(page, /<meta name="theme-color" content="#[0-9A-Fa-f]{6}">/);
     assert.doesNotMatch(page, /https:\/\/fonts\.googleapis\.com/i);
   }

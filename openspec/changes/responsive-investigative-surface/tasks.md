@@ -17,5 +17,5 @@
 
 ## Wave C — device proof and docs
 
-- [ ] C1. Execute the full-loop matrix on current iOS Safari, Android Chrome, and desktop Chrome/Edge/Safari/Firefox; record device, browser version, viewport, and observed result. The iPhone Safari full loop and VoiceOver focus checks passed; Android Chrome physical validation and the full Firefox run are user-approved skips. Native desktop Edge and Safari full-loop evidence remains outstanding.
+- [ ] C1. Execute the full-loop matrix on current iOS Safari, Android Chrome, and desktop Chrome/Edge/Safari/Firefox; record device, browser version, viewport, and observed result. The iPhone Safari full loop and VoiceOver focus checks passed; Android Chrome physical validation and the full Firefox run are user-approved skips. A native desktop Safari smoke flow and a native Chrome onboarding flow passed on 2026-07-29, but they did not capture the required browser-version/viewport/full-loop record. Native desktop Edge and Safari full-loop evidence remains outstanding.
 - [ ] C2. Update README manual QA and `openspec/IMPLEMENTATION_ORDER.md`; run required gates and complete validation. The documentation and gates are current; final completion awaits the outstanding B2 and C1 evidence.

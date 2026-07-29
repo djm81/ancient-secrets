@@ -13,6 +13,7 @@
 ## Wave B — surfaces and accessibility
 
 - [x] B1. Build portrait tray, landscape rail, desktop rail, and portrait dock with safe-area spacing and 44px targets.
+- [x] B1a. Add the RI-006 player-controlled Casebook toggle; prove it starts closed, preserves the active chronicle, and remains reachable with keyboard and pointer input.
 - [ ] B2. Run keyboard, screen-reader announcement, reduced-motion, high-contrast, and touch parity checks at every viewport; record evidence. Automated keyboard, motion, contrast, and touch checks plus iPhone Safari touch and VoiceOver focus evidence are recorded; native VoiceOver announcement evidence remains outstanding. Android Chrome physical evidence is a user-approved skip.
 
 ## Wave C — device proof and docs

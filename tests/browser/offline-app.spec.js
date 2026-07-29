@@ -38,6 +38,7 @@ test('OGS-001: a cached chronicle resumes and authored guidance remains availabl
   await page.goto('/maestros-secret.html');
   await page.getByRole('button', { name: 'Begin the Adventure' }).click();
   await page.getByRole('button', { name: 'Begin Exploring' }).click();
+  await page.getByRole('button', { name: 'Show Casebook' }).click();
   await page.locator('#portrait-actions .casebook-context [data-interaction-id="mirror"]').click();
   await page.evaluate(() => navigator.serviceWorker.ready);
   await page.reload();

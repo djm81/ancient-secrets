@@ -6,10 +6,10 @@ The game has four explicit presentation modes rather than a single 16:9 stage sc
 
 | Mode | Scene | Controls |
 |---|---|---|
-| Phone portrait | Upper visual field | Bottom Casebook tray with contextual actions and inventory |
-| Phone landscape | Dominant scene | Compact right rail with objective, inventory, and actions |
-| Desktop landscape | Scene-forward | Persistent evidence rail |
-| Desktop/tablet portrait | Scene | Docked Casebook beneath scene |
+| Phone portrait | Upper visual field | On-demand bottom Casebook tray with contextual actions and inventory |
+| Phone landscape | Dominant scene | On-demand compact right rail with objective, inventory, and actions |
+| Desktop landscape | Scene-forward | On-demand evidence rail |
+| Desktop/tablet portrait | Scene | On-demand Casebook dock beneath scene |
 
 ## Dialogue art treatment
 
@@ -18,6 +18,8 @@ Desktop and tablet dialogue retains the existing 16:9 composite artwork, whose r
 ## Interaction model
 
 `deriveContextualActions(state, scene)` is a pure function returning up to three most relevant next actions. The complete list remains available through “All observations”; both surfaces dispatch the existing interaction identifiers, so they cannot diverge in gameplay behavior. Used or unavailable actions leave the contextual list automatically.
+
+The Casebook is a helper, not a permanent overlay. It is closed when a chronicle begins or resumes. A visible top-bar toggle with `aria-controls` and `aria-expanded` opens or closes it without changing game state. Closing returns focus to that toggle; opening restores the retained disclosure and scroll state. Scene hotspots and the standard navigation arrows remain usable while it is closed.
 
 ## Continuity and accessibility
 

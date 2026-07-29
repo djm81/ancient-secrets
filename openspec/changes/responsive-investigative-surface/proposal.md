@@ -7,7 +7,8 @@ The current portrait-phone fallback makes every hotspot a visible button. It is 
 ## What Changes
 
 - Add a contextual **Casebook**: at most three relevant actions beside the current objective, with an accessible “all observations” fallback.
-- Define four layouts: phone portrait (scene plus bottom investigation tray), phone landscape (scene plus compact casebook rail), desktop landscape (scene-forward plus persistent rail), and desktop/tablet portrait (scene plus docked casebook).
+- Define four layouts: phone portrait (scene plus optional investigation tray), phone landscape (scene plus optional compact casebook rail), desktop landscape (scene-forward with an on-demand evidence rail), and desktop/tablet portrait (scene plus an on-demand Casebook dock).
+- Make the Casebook an optional, player-controlled helper: it starts closed for every layout and has one accessible top-bar control to show or hide it without changing the active chronicle.
 - Preserve chronicle, focus, selected item, modal state, and scroll position across viewport changes and rotation.
 - Use safe-area-aware, visual-viewport-aware controls; every essential action remains touch, pointer, and keyboard operable.
 
@@ -26,7 +27,7 @@ The current portrait-phone fallback makes every hotspot a visible button. It is 
 - No action required for progression may depend on hover, drag, audio, orientation lock, or precision tapping.
 - Primary controls are at least 44 CSS px and clear device safe areas.
 - The Casebook hides completed or irrelevant actions but always provides an accessible complete action list.
-- The scene remains the visual focus; UI must not expose all hotspots as the default phone experience.
+- The scene remains the visual focus; the Casebook is never shown until the player requests it, while scene hotspots and navigation remain usable without it.
 
 ## Rollback
 

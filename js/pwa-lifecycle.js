@@ -4,6 +4,10 @@ export function installGuidance(userAgent = '', platform = '', maxTouchPoints = 
   return '';
 }
 
+export function isInstalledApp(navigatorRef = {}, windowRef = {}) {
+  return navigatorRef.standalone === true || windowRef.matchMedia?.('(display-mode: standalone)').matches === true;
+}
+
 export function startOfflineAppLifecycle({ windowRef = window, documentRef = document } = {}) {
   const navigatorRef = windowRef.navigator;
   const installButton = documentRef.getElementById('installbtn');
@@ -14,7 +18,9 @@ export function startOfflineAppLifecycle({ windowRef = window, documentRef = doc
   let waitingWorker = null;
   let reloadForUpdate = false;
 
-  const guidance = installGuidance(navigatorRef.userAgent || '', navigatorRef.platform || '', navigatorRef.maxTouchPoints || 0);
+  const guidance = isInstalledApp(navigatorRef, windowRef)
+    ? ''
+    : installGuidance(navigatorRef.userAgent || '', navigatorRef.platform || '', navigatorRef.maxTouchPoints || 0);
   if (guidance && installHelp) {
     installHelp.hidden = false;
     installHelp.textContent = guidance;

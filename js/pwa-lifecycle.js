@@ -1,5 +1,5 @@
-export function installGuidance(userAgent = '') {
-  if (/iPad|iPhone|iPod/.test(userAgent)) return 'To install on iPhone or iPad, use Share, then Add to Home Screen.';
+export function installGuidance(userAgent = '', platform = '', maxTouchPoints = 0) {
+  if (/iPad|iPhone|iPod/.test(userAgent) || (platform === 'MacIntel' && maxTouchPoints > 1)) return 'To install on iPhone or iPad, use Share, then Add to Home Screen.';
   if (/Macintosh/.test(userAgent) && /Safari/.test(userAgent) && !/Chrome|Chromium|Edg/.test(userAgent)) return 'To install in Safari, choose File, then Add to Dock.';
   return '';
 }
@@ -14,7 +14,7 @@ export function startOfflineAppLifecycle({ windowRef = window, documentRef = doc
   let waitingWorker = null;
   let reloadForUpdate = false;
 
-  const guidance = installGuidance(navigatorRef.userAgent || '');
+  const guidance = installGuidance(navigatorRef.userAgent || '', navigatorRef.platform || '', navigatorRef.maxTouchPoints || 0);
   if (guidance && installHelp) {
     installHelp.hidden = false;
     installHelp.textContent = guidance;

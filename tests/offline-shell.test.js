@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
+import vm from 'node:vm';
 
 const worker = await readFile(new URL('../service-worker.js', import.meta.url), 'utf8');
 const gamePage = await readFile(new URL('../maestros-secret.html', import.meta.url), 'utf8');
@@ -28,4 +29,48 @@ test('OGS-003 and PWA-002: the game registers a waiting worker and only exposes 
   assert.match(gamePage, /id="installbtn"/);
   assert.match(gamePage, /id="updatebanner"/);
   assert.match(gamePage, /id="restartupdate"/);
+});
+
+test('OGS-003: accepting an update retains other clients’ caches and only notifies the requesting client', async () => {
+  const handlers = new Map();
+  const notifications = [];
+  const cacheDeletes = [];
+  let skips = 0;
+  vm.runInNewContext(worker, {
+    URL,
+    caches: {
+      open: async () => ({ addAll: async () => {} }),
+      match: async () => null,
+      keys: async () => ['maestros-secret-shell-v1', 'maestros-secret-shell-v2'],
+      delete: async name => { cacheDeletes.push(name); }
+    },
+    fetch: async () => new Response(),
+    self: {
+      registration: { scope: 'https://example.test/ancient-secrets/' },
+      location: { origin: 'https://example.test' },
+      clients: {
+        get: async id => ({ postMessage: message => notifications.push({ id, message }) })
+      },
+      skipWaiting: async () => { skips += 1; },
+      addEventListener: (type, handler) => handlers.set(type, handler)
+    }
+  });
+
+  let messageWork;
+  handlers.get('message')({
+    data: { type: 'SKIP_WAITING' },
+    source: { id: 'restarting-chronicle' },
+    waitUntil: work => { messageWork = work; }
+  });
+  await messageWork;
+
+  let activationWork;
+  handlers.get('activate')({ waitUntil: work => { activationWork = work; } });
+  await activationWork;
+
+  assert.equal(skips, 1);
+  assert.deepEqual(cacheDeletes, []);
+  assert.equal(notifications.length, 1);
+  assert.equal(notifications[0].id, 'restarting-chronicle');
+  assert.equal(notifications[0].message.type, 'UPDATE_READY');
 });

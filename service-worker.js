@@ -13,19 +13,24 @@ const CORE_ASSETS = [
 
 const cacheName = () => CACHE_VERSION;
 const offlineGame = () => new URL('./maestros-secret.html', self.registration.scope).toString();
+let restartClientId = null;
 
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(cacheName()).then(cache => cache.addAll(CORE_ASSETS)));
 });
 
 self.addEventListener('activate', event => {
-  event.waitUntil(caches.keys().then(names => Promise.all(names
-    .filter(name => name.startsWith('maestros-secret-shell-') && name !== cacheName())
-    .map(name => caches.delete(name)))).then(() => self.clients.claim()));
+  event.waitUntil((async () => {
+    if (!restartClientId) return;
+    const client = await self.clients.get(restartClientId);
+    client?.postMessage({ type: 'UPDATE_READY' });
+  })());
 });
 
 self.addEventListener('message', event => {
-  if (event.data?.type === 'SKIP_WAITING') self.skipWaiting();
+  if (event.data?.type !== 'SKIP_WAITING') return;
+  restartClientId = event.source?.id ?? null;
+  event.waitUntil(self.skipWaiting());
 });
 
 self.addEventListener('fetch', event => {

@@ -62,5 +62,8 @@ export function startOfflineAppLifecycle({ windowRef = window, documentRef = doc
   navigatorRef.serviceWorker.addEventListener('controllerchange', () => {
     if (reloadForUpdate) windowRef.location.reload();
   });
+  navigatorRef.serviceWorker.addEventListener('message', event => {
+    if (reloadForUpdate && event.data?.type === 'UPDATE_READY') windowRef.location.reload();
+  });
   return { registration };
 }

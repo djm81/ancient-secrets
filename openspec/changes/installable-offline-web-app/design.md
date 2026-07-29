@@ -6,13 +6,13 @@
 
 ## Cache model
 
-A root-scoped service worker owns a versioned core cache: game and landing HTML, JS, CSS/inlined shell dependencies, local fonts, local dialogue art, icons, and offline fallback. The install step precaches the immutable core; navigation uses cache-first with network fallback; local same-origin static assets may be refreshed after use. It never intercepts a non-GET request for caching and never stores AI, Worker, model, or user-entered content.
+A root-scoped service worker owns a versioned core cache: game and landing HTML, JS, CSS/inlined shell dependencies, local fonts, local dialogue art, icons, and offline fallback. The install step precaches the immutable core; navigation uses cache-first with network fallback; local same-origin static assets may be refreshed after use. It never intercepts a non-GET request for caching and never stores AI, Worker, model, or user-entered content. Older core caches are retained across an update so currently controlled chronicles can continue to resolve their own shell consistently; ordinary browser storage eviction remains the eventual cache cleanup path.
 
 Future era packs are an explicit player action. The app shows approximate size and available storage before caching an era's local assets; failure leaves the core game and save intact. Cache eviction is an expected browser behavior, so a miss falls back to network rather than corrupting a chronicle.
 
 ## Updates and saves
 
-A newly installed worker waits. The UI shows a non-modal “A new edition is ready after this chronicle” state; activation occurs after explicit restart or a clean title-screen/new-chronicle boundary. Save writes remain local and occur after material transitions plus lifecycle suspension. Export/import is a user-initiated, schema-validated local file flow for recovery; it is not a cloud feature and does not claim storage continuity between browser and installed instances.
+A newly installed worker waits. The UI shows a non-modal “A new edition is ready after this chronicle” state; activation occurs after explicit restart or a clean title-screen/new-chronicle boundary. The worker records the client that requested restart, activates without claiming every controlled client, and sends `UPDATE_READY` only to that client; that client reloads into the new edition while other active chronicles remain with their existing worker and cache. Save writes remain local and occur after material transitions plus lifecycle suspension. Export/import is a user-initiated, schema-validated local file flow for recovery; it is not a cloud feature and does not claim storage continuity between browser and installed instances.
 
 ## Platform behavior
 

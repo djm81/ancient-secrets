@@ -14,7 +14,7 @@ Status: **in progress** — automated requirements and native desktop Chrome/Saf
 
 ## Native desktop manual smoke evidence — 2026-07-29
 
-- **Safari:** fresh local tab loaded the game, completed start → onboarding → desktop-landscape Casebook, and exposed the Field Notes recovery controls plus truthful **File → Add to Dock** guidance.
+- **Safari:** fresh local tab loaded the game, completed start → onboarding → desktop-landscape Casebook, and exposed the Field Notes recovery controls plus truthful **File → Add to Dock** guidance. Safari's native Add-to-Dock sheet then created and launched the standalone local app. Its fresh title screen is expected: browser and Dock-app storage are not represented as shared.
 - **Chrome:** fresh local tab loaded the manifest-backed game and exposed both Chrome’s browser install affordance and the in-game **INSTALL** action. Start → onboarding → desktop-landscape Casebook completed, and a reload presented **Continue Chronicle**.
 - **Chrome installed app:** Chrome's native install dialog created the standalone **The Maestro's Secret.app**. After taking the Hand Mirror, closing the app, and relaunching it, **Continue Chronicle** restored the saved objective and selected Hand Mirror. This is local installed-app/resume evidence; it does not substitute for the outstanding offline-network and cross-device matrix.
 - **Chrome developer tools:** Console had no errors. It displayed Chrome's expected informational diagnostic that the native banner was deferred by `beforeinstallprompt.preventDefault()` pending the player selecting **INSTALL**. An in-console Cache Storage inspection returned `controller: true`, active worker state `activated`, `maestros-secret-shell-v1`, and 26 entries.

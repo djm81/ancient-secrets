@@ -1,15 +1,23 @@
 # Validation matrix: installable-offline-web-app
 
-Status: **pending**.
+Status: **in progress** — automated requirements and native desktop Chrome/Safari smoke evidence are recorded. Physical installation/offline/update/resume coverage on iOS Safari, Android Chrome/Samsung Internet, desktop Edge, and Firefox remains required before release certification.
 
 | Requirement | Evidence type | Evidence | Status |
 |---|---|---|---|
-| PWA-001 installable identity and direct game launch | manifest test + manual install | — | pending |
-| PWA-002 progressive install guidance | browser test + platform manual | — | pending |
-| OGS-001 offline core launch and authored guidance | browser offline test + manual device | — | pending |
-| OGS-002 cache boundary excludes remote/AI content | service-worker unit + network inspection | — | pending |
-| OGS-003 update handoff protects active chronicle | unit + browser lifecycle test | — | pending |
-| OGS-004 validated local save recovery | unit + manual export/import | — | pending |
-| OGS-005 optional offline era packs are consented and failure-safe | unit + manual storage test | — | pending |
+| PWA-001 installable identity and direct game launch | manifest test + manual install | `node --test tests/installable-offline-web-app.test.js` passed 1/1 on 2026-07-29: stable project-relative manifest identity, game `start_url`, standalone display, local 192/512 maskable icons, Apple metadata, and no Google-hosted font CSS. | automated pass; manual install pending |
+| PWA-002 progressive install guidance | browser test + platform manual | `offline-app.spec.js` verifies no install action without a prompt; native Chrome exposed the in-game **INSTALL** control and browser install affordance; native Safari showed **File → Add to Dock** guidance in Field Notes. | automated pass; broader platform manual pending |
+| OGS-001 offline core launch and authored guidance | browser offline test + manual device | `offline-app.spec.js` passed: active controller/cache inventory, online launch and save, service-worker-ready reload, offline reload/resume, authored guidance, and no console/page errors. | automated pass; installed-device manual pending |
+| OGS-002 cache boundary excludes remote/AI content | service-worker unit + network inspection | `offline-shell.test.js` passed: explicit core list, GET-only path, same-origin restriction, Worker/model exclusion, cache-first navigation, and offline fallback. Native Chrome Console showed one active controller, `maestros-secret-shell-v1`, and 26 cache entries. | automated pass; network-inspection manual pending |
+| OGS-003 update handoff protects active chronicle | unit + browser lifecycle test | `offline-shell.test.js` passed: a new worker waits; only the explicit restart control posts `SKIP_WAITING`, and only that acceptance may reload on `controllerchange`. | automated pass; device update manual pending |
+| OGS-004 validated local save recovery | unit + manual export/import | `save-recovery.test.js` passed 2/2 for valid, corrupt, and future-version saves. Native Safari exposed user-initiated **Export chronicle** and **Import chronicle** controls. | automated pass; physical file-flow manual pending |
+| OGS-005 optional offline era packs are consented and failure-safe | unit + manual storage test | `era-packs.test.js` passed for consent, estimate, insufficient storage, and failure. No era assets exist, so the UI truthfully exposes no downloadable pack. | automated pass; download manual deferred until assets exist |
+
+## Native desktop manual smoke evidence — 2026-07-29
+
+- **Safari:** fresh local tab loaded the game, completed start → onboarding → desktop-landscape Casebook, and exposed the Field Notes recovery controls plus truthful **File → Add to Dock** guidance. Safari's native Add-to-Dock sheet then created and launched the standalone local app. Its fresh title screen is expected: browser and Dock-app storage are not represented as shared.
+- **Chrome:** fresh local tab loaded the manifest-backed game and exposed both Chrome’s browser install affordance and the in-game **INSTALL** action. Start → onboarding → desktop-landscape Casebook completed, and a reload presented **Continue Chronicle**.
+- **Chrome installed app:** Chrome's native install dialog created the standalone **The Maestro's Secret.app**. After taking the Hand Mirror, closing the app, and relaunching it, **Continue Chronicle** restored the saved objective and selected Hand Mirror. This is local installed-app/resume evidence; it does not substitute for the outstanding offline-network and cross-device matrix.
+- **Chrome developer tools:** Console had no errors. It displayed Chrome's expected informational diagnostic that the native banner was deferred by `beforeinstallprompt.preventDefault()` pending the player selecting **INSTALL**. An in-console Cache Storage inspection returned `controller: true`, active worker state `activated`, `maestros-secret-shell-v1`, and 26 entries.
+- These are local-server smoke checks, not installed-app or network-disabled physical-device certification. The Playwright offline contract supplies automated coverage for the latter flow.
 
 Required commands: `npm run check`, `npm test`, `npm run test:browser`, `npm run test:a11y`, `git diff --check`, and `openspec validate installable-offline-web-app --strict`.

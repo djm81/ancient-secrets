@@ -14,19 +14,21 @@ A compact Renaissance point-and-click adventure set in Florence in 1503. You pla
 - Five optional curiosities reward close observation without blocking completion.
 - Illustrated conversations with Brother Matteo, the baker, and Leonardo let players earn distinct, successful finale paths without turning the puzzle trail into a dead end.
 - A reusable Field Notes folio records useful observations from every marked clue object; visible arrows always name a reachable scene.
-- Versioned browser save/resume, keyboard-operable hotspots, high contrast, reduced-motion support, and announced interaction feedback.
+- Versioned browser save/resume, user-initiated chronicle export/import recovery, keyboard-operable hotspots, high contrast, reduced-motion support, and announced interaction feedback.
+- Installable offline-first shell: after one successful online launch, the core game, local artwork, icons, fonts, and authored guidance are available from a versioned cache. Installation is optional and browser-specific.
 - A bounded Maestro’s Guidance interface: fixed hint tiers with an authored fallback; optional AI wording never changes game state or blocks progression.
 
 ## Engineering choices
 
 - **Static-first:** GitHub Pages hosts the complete game. Browser storage holds only the current chronicle; no account or analytics is required.
+- **Deliberate offline boundary:** the service worker precaches only approved same-origin `GET` shell assets. It excludes POST, Worker, AI, model, and remote-origin traffic; updates wait for the player to select **Restart with new version**.
 - **Bounded guidance:** the player chooses Nudge, Stronger Hint, or Reveal Next Step. The game sends no free text, identity, or save history. The Worker independently validates the whitelisted game summary and may only word the already-calculated next action.
 - **Safe fallback:** if no Worker URL is configured—or the Worker, model provider, CORS policy, or rate limit fails—the game displays an authored hint and remains fully playable.
 - **Evidence-led changes:** OpenSpec changes under [`openspec/changes/`](openspec/changes/) map requirements to tests and manual QA evidence. All accepted requirements are additionally captured as a [SpecFact requirements bundle](.specfact/projects/ancient-secrets/) (`specfact requirements validate --bundle .specfact/projects/ancient-secrets`) so evidence coverage is machine-checkable.
 
 ## Planned extension: The Codex Rationum
 
-Implementation follows the proposal-stage [implementation order](openspec/IMPLEMENTATION_ORDER.md): responsive play surface, installable offline shell, Babylon vertical slice, then further story and optional AI work.
+Implementation follows the [implementation order](openspec/IMPLEMENTATION_ORDER.md): responsive play surface, installable offline shell, Babylon vertical slice, then further story and optional AI work. The offline shell has automated and native desktop smoke evidence; broader installed-device certification remains tracked in its OpenSpec validation matrix.
 
 A proposed second act, specified in [`openspec/changes/temporal-finops-expedition/`](openspec/changes/temporal-finops-expedition/) and not yet implemented. After finding the Maestro, the player discovers the **Codex Rationum** — a ledger-codex Leonardo assembled with Fra Luca Pacioli, the father of double-entry bookkeeping (their collaboration is historical). Seven folios are missing, each bound to how one civilization ran its finances. Leonardo's **Occhio del Tempo** projects the player into each era to earn the folio back.
 
@@ -87,9 +89,12 @@ npm test
 npm run test:browser
 npm run test:a11y
 openspec validate responsive-investigative-surface --strict
+openspec validate installable-offline-web-app --strict
 ```
 
 Manual QA: exercise the responsive matrix at 320 × 568, 390 × 844, 430 × 932, 667 × 375, 844 × 390, 1024 × 1365, 1280 × 800, and 1440 × 900. At each size, start a fresh chronicle; use the Casebook to take the mirror; verify each primary control remains at least 44 CSS px; complete the mirror-to-note sequence with only Tab, Enter, and Space; and enable high contrast plus reduced motion. Confirm phone portrait uses the compact character artwork above a standalone copy card, without a duplicate desktop parchment placeholder. Expand **All observations** to verify complete scene-action access. Rotate from 390 × 844 to 844 × 390 and confirm the selected inventory item, Casebook focus, and current scene persist; while the dialogue is open, confirm its compact art is a left-side panel beside the copy and the character is not cropped into a shallow banner. On physical current iOS Safari, additionally check safe-area clearance, touch activation, rotation, and VoiceOver announcements/focus behavior. Android Chrome physical validation and the full Firefox run are documented, user-approved skips for `responsive-investigative-surface`; do not treat them as passing coverage. Native desktop Edge and Safari full loops, plus VoiceOver announcement evidence, remain required before the OpenSpec change is complete. Confirm sound after an explicit start or music-button activation (including on physical iOS release QA); and request each guidance tier with and without the Worker enabled.
+
+For the installable shell, first open the published game while online, then reload it with the network disabled and resume a saved chronicle. Confirm authored Guidance works offline; inspect the browser console for errors and Cache Storage for the versioned `maestros-secret-shell-*` cache. Test the browser-specific install path (Chrome/Edge prompt, Safari **File → Add to Dock**, iOS Share → **Add to Home Screen**) without claiming the browser page and installed app share storage. To test an update, publish a new service-worker version while a chronicle is open: the worker must wait, the non-modal update notice must appear, and only **Restart with new version** may activate it. Export/import one valid chronicle and one malformed or newer-schema file; the latter must be rejected without replacing the active save. The complete matrix and remaining device evidence live in [`openspec/changes/installable-offline-web-app/validation.md`](openspec/changes/installable-offline-web-app/validation.md).
 
 ## Point-and-click design
 

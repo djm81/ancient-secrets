@@ -1,0 +1,25 @@
+{
+  "id": "./",
+  "name": "The Maestro's Secret",
+  "short_name": "Maestro's Secret",
+  "description": "A compact Renaissance point-and-click adventure.",
+  "start_url": "./maestros-secret.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#171008",
+  "theme_color": "#3d2a15",
+  "icons": [
+    {
+      "src": "./assets/icons/app-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./assets/icons/app-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

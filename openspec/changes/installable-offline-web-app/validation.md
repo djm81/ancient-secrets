@@ -4,7 +4,7 @@ Status: **pending**.
 
 | Requirement | Evidence type | Evidence | Status |
 |---|---|---|---|
-| PWA-001 installable identity and direct game launch | manifest test + manual install | — | pending |
+| PWA-001 installable identity and direct game launch | manifest test + manual install | `node --test tests/installable-offline-web-app.test.js` passed 1/1 on 2026-07-29: stable project-relative manifest identity, game `start_url`, standalone display, local 192/512 maskable icons, Apple metadata, and no Google-hosted font CSS. | automated pass; manual install pending |
 | PWA-002 progressive install guidance | browser test + platform manual | — | pending |
 | OGS-001 offline core launch and authored guidance | browser offline test + manual device | — | pending |
 | OGS-002 cache boundary excludes remote/AI content | service-worker unit + network inspection | — | pending |

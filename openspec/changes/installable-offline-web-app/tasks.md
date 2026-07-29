@@ -6,7 +6,7 @@
 
 ## Wave A — app identity and offline shell
 
-- [ ] A1. Create failing tests for manifest identity, relative scope/start route, icons, standalone display, and local font references; implement manifest/head/icon/font assets; record evidence.
+- [x] A1. Create failing tests for manifest identity, relative scope/start route, icons, standalone display, and local font references; implement manifest/head/icon/font assets; record evidence. `node --test tests/installable-offline-web-app.test.js` failed 0/1 before implementation because `manifest.webmanifest` was absent, then passed 1/1 on 2026-07-29.
 - [ ] A2. Create failing service-worker tests for core precache list, GET-only handling, offline navigation, and explicit exclusion of POST/AI/model requests; implement; record evidence.
 - [ ] A3. Add offline browser tests: successful first online launch followed by offline launch, resume, and authored guidance; record evidence.
 

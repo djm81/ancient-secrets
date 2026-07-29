@@ -4,6 +4,18 @@ Status: **in progress** — automated contracts and iPhone Safari interaction ev
 
 For each task record: requirement IDs, test and command, dated failing evidence, implementation reference, dated passing evidence, and any manual-device exception.
 
+## B1a — player-controlled Casebook
+
+- Requirement: RI-006.
+- Test to add: a desktop-landscape Playwright contract will start an active chronicle, require the Casebook surface to be hidden and a Show Casebook control to report `aria-expanded="false"`, then open and hide the helper while asserting focus return and unchanged scene/objective.
+- Command: `npm run test:browser -- --grep "player-controlled Casebook"`.
+- Expected failure before implementation (2026-07-29, Europe/Berlin): the current renderer unconditionally sets `#portrait-actions.hidden=false` for every active chronicle and has no Casebook toggle, so the new contract cannot find Show Casebook and the helper remains visible.
+- Failing result (2026-07-29, Europe/Berlin): the added contract failed as expected because no Show Casebook control existed. The first implementation exposed a responsive CSS specificity issue (`hidden` lost to the landscape `display:block` rule) and the added top-bar control reduced phone-landscape clearance; both were caught by the focused browser checks before completion.
+- CI follow-up baseline (2026-07-29, Europe/Berlin): GitHub Actions failed `RI-005: landscape Casebook clears the top-bar controls` with `-8px` clearance. The CI browser renders the wrapped top bar 16px taller than the local focused runner, so the 98px minimum overlaps it despite the local check passing.
+- Fix to validate: raise the phone-landscape rail's fixed top minimum from 98px to 116px while retaining safe-area expansion and the 18px system-gesture clearance.
+- Passing evidence (2026-07-29, Europe/Berlin): the focused Casebook, touch-scroll, and clearance regressions passed 3/3; the full browser suite passed 45/45; `npm run check`, `npm test` (36/36), `npm run test:a11y` (3/3), strict OpenSpec validation, and `git diff --check` passed.
+- Passing evidence (2026-07-29, Europe/Berlin): focused `player-controlled Casebook`, mobile touch-scroll, and landscape-clearance browser checks passed 3/3; full `npm run test:browser` passed 45/45; `npm run test:a11y` passed 3/3. Native local Chrome and Safari each confirmed the collapsed **SHOW CASEBOOK** control, the expanded **HIDE CASEBOOK** state, and visible Casebook actions. The in-app-browser desktop and 390×844 visual checks showed the unobstructed scene while closed, the requested helper while open, and no captured console warnings or errors.
+
 ## A1 — contextual Casebook contract
 
 - Requirement: RI-001.
@@ -96,7 +108,7 @@ For each task record: requirement IDs, test and command, dated failing evidence,
 - Command: `npm run test:browser -- --grep "landscape Casebook clears the top-bar controls"`.
 - Expected failure before implementation: the Casebook starts at 56px while the wrapped top bar ends at 72px, producing a 16px overlap.
 - Failing result (2026-07-27, Europe/Berlin): expected a top clearance of at least 8px; received `-16px`.
-- Implementation and passing evidence (2026-07-27, Europe/Berlin): the Casebook now begins at `max(80px, calc(64px + env(safe-area-inset-top)))`, while retaining the 18px bottom clearance. `npm run test:browser -- --grep "landscape Casebook clears the top-bar controls|landscape Casebook clears the system gesture edge|landscape Casebook focus scrolls the panel"` — 3/3 passed.
+- Implementation and passing evidence (2026-07-27, Europe/Berlin): the Casebook now begins below the wrapped top bar while retaining the 18px bottom clearance. The later RI-006 top-bar control initially increased the baseline to `max(98px, calc(82px + env(safe-area-inset-top)))`; CI exposed a taller wrapped top bar, so the final validated baseline is `max(116px, calc(100px + env(safe-area-inset-top)))`.
 
 ## B2 follow-up — landscape Casebook upward focus reveal
 

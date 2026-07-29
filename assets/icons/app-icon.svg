@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">The Maestro's Secret</title>
+  <desc id="desc">A gold hand mirror over a Renaissance workshop window.</desc>
+  <defs>
+    <linearGradient id="night" x1="0" y1="0" x2="0" y2="1">
+      <stop stop-color="#3d2a15"/>
+      <stop offset="1" stop-color="#100a05"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#f5d17b"/>
+      <stop offset="1" stop-color="#9a642d"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#night)"/>
+  <path d="M108 352h296V176l-58-72H166l-58 72z" fill="#21140a" stroke="#c08a3e" stroke-width="18"/>
+  <path d="M160 352V204l42-50h108l42 50v148" fill="#4b321a"/>
+  <path d="M177 195h158v142H177z" fill="#24304e"/>
+  <path d="M177 252h158M256 195v142" stroke="#c08a3e" stroke-width="12" opacity=".8"/>
+  <ellipse cx="278" cy="264" rx="104" ry="124" fill="#171008" stroke="url(#gold)" stroke-width="22" transform="rotate(-18 278 264)"/>
+  <ellipse cx="278" cy="264" rx="75" ry="95" fill="#8bb0bd" stroke="#f4e6c0" stroke-width="10" transform="rotate(-18 278 264)"/>
+  <path d="M234 340l-52 78" stroke="url(#gold)" stroke-width="28" stroke-linecap="round"/>
+  <path d="M178 410l-22 36h60l-12-38z" fill="#c08a3e"/>
+  <path d="M244 220l64 78m-98 12l112-70" stroke="#dceef0" stroke-width="11" opacity=".72"/>
+</svg>

@@ -9,7 +9,7 @@ The game is static-first but not yet an installable web app: it has no manifest,
 - Add a GitHub-Pages-safe web app manifest, local icons, standalone launch configuration, and browser-specific progressive install guidance.
 - Register a versioned service worker that precaches the core game shell, local art, icons, and local fonts; it never caches POST requests, AI responses, secrets, or optional model assets.
 - Self-host the game fonts so a cached game launch does not depend on Google Fonts.
-- Add an explicit update handoff: a new service-worker version waits until the player restarts or accepts “restart with new version,” never interrupting an active chronicle.
+- Add an explicit per-client update handoff: a new service-worker version waits until the player restarts or accepts “restart with new version,” never interrupts an active chronicle, and retains the prior cache for other open chronicles.
 - Add local save export/import recovery and truthful storage messaging; installation must not promise that browser and installed-app storage are shared.
 - Let players optionally download future era packs for offline play, with a size disclosure and storage-estimate check. The base game remains small and available offline after its first successful launch.
 
@@ -29,7 +29,7 @@ The game is static-first but not yet an installable web app: it has no manifest,
 - Manifest paths, `start_url`, scope, and service-worker scope work under the GitHub Pages project path, not just at a custom-domain root.
 - The installed start route opens the game, not a marketing/portfolio page.
 - Installation UI is progressive: a custom install button only appears when the browser exposes a usable prompt; iOS receives Add to Home Screen guidance instead.
-- Cache integrity is versioned and recoverable; an update never reloads or drops a live chronicle.
+- Cache integrity is versioned and recoverable; an update never reloads or drops a live chronicle, including when another tab accepts an update.
 - Offline caching excludes remote guidance, judge, model, and telemetry-like traffic. Authored guidance remains the offline path.
 
 ## Rollback

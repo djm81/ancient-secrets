@@ -32,6 +32,12 @@ A newly available service-worker version SHALL wait until explicit restart or a 
 - **WHEN** the update is detected
 - **THEN** play continues unchanged and the update becomes active only after the player chooses restart or reaches a clean boundary
 
+#### Scenario: Another open chronicle accepts an update
+
+- **GIVEN** two open chronicles are controlled by the current worker and a newer worker is waiting
+- **WHEN** the player in one chronicle chooses restart with the new edition
+- **THEN** only that chronicle reloads into the new edition, while the other remains controlled by its existing worker and can resolve its original cached assets
+
 ### Requirement: OGS-004 Save recovery is local, explicit, and schema-validated
 
 The player SHALL be able to export and import a chronicle through a user-initiated local file flow. Imports SHALL use the same schema validation as normal saves and SHALL reject malformed or incompatible data without replacing the current chronicle.

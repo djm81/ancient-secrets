@@ -1,11 +1,11 @@
 # Planned implementation order
 
-Status: active roadmap. `responsive-investigative-surface` remains the current change: its executable viewport matrix and iPhone Safari touch/VoiceOver focus evidence passed. Android Chrome physical validation and the full Firefox run are documented user-approved skips, while native desktop Edge/Safari full loops and VoiceOver announcement evidence remain required. This note orders accepted work; it does not relax a change's own validation gates.
+Status: active roadmap. `responsive-investigative-surface` has its executable viewport matrix and iPhone Safari touch/VoiceOver focus evidence; native desktop Edge/Safari full loops and VoiceOver announcement evidence remain required. `installable-offline-web-app` now has its implementation, automated evidence, and native Chrome/Safari desktop smoke evidence; installed-device offline, update, and recovery certification remains required. This note orders accepted work; it does not relax a change's own validation gates.
 
 ## 1. Playability foundations
 
-1. `responsive-investigative-surface` — current: establishes the phone, tablet, desktop, orientation, keyboard, and touch contract before adding content. The iPhone Safari touch, safe-area, and VoiceOver focus evidence is recorded; native desktop Edge/Safari full loops and VoiceOver announcement evidence remain outstanding.
-2. `installable-offline-web-app` — add the installable, offline app shell after the responsive surface is stable. It must never cache AI requests or model assets.
+1. `responsive-investigative-surface` — establishes the phone, tablet, desktop, orientation, keyboard, and touch contract before adding content. The iPhone Safari touch, safe-area, and VoiceOver focus evidence is recorded; native desktop Edge/Safari full loops and VoiceOver announcement evidence remain outstanding.
+2. `installable-offline-web-app` — implemented: the installable, offline app shell caches only approved same-origin core assets and never AI requests or model assets. Complete the recorded installed-device, update, and recovery matrix before release certification.
 
 ## 2. Story and game vertical slice
 

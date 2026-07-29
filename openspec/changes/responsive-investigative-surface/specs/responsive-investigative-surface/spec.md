@@ -51,3 +51,13 @@ Primary controls SHALL be at least 44 CSS px in both dimensions and remain clear
 - **GIVEN** a portrait phone viewport with bottom and top safe-area insets
 - **WHEN** the Casebook and top controls render
 - **THEN** no primary control is obscured by an inset and each meets the target-size minimum
+
+### Requirement: RI-006 Casebook guidance is player-controlled
+
+The Casebook SHALL start closed when a chronicle begins or resumes in every supported layout. A visible, accessible control SHALL let the player show and hide it without mutating the chronicle. The control SHALL expose its expanded state and keep scene hotspots and standard navigation available while the Casebook is closed.
+
+#### Scenario: Player opens and dismisses guidance
+
+- **GIVEN** an active chronicle in desktop landscape
+- **WHEN** the player selects Show Casebook
+- **THEN** the Casebook becomes visible with `aria-expanded="true"`; selecting Hide Casebook closes it, returns focus to the control, and leaves the scene and objective unchanged

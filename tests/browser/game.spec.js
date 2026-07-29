@@ -16,6 +16,12 @@ async function continueChronicle(page) {
   await page.getByRole('button', { name: 'Continue Chronicle' }).click();
 }
 
+async function showCasebook(page) {
+  const toggle = page.locator('#casebookbtn');
+  if (await toggle.getAttribute('aria-expanded') !== 'true') await toggle.click();
+  await expect(page.locator('#portrait-actions')).toBeVisible();
+}
+
 test('GC-001: refresh during a machine repair preserves the playable trapdoor state', async ({ page }) => {
   await setChronicle(page, { scene: 'workshop', inv: ['gear'], selected: 'gear', flags: { ...baseFlags, mirrorTaken: true, noteRead: true, keyTaken: true, breadTaken: true, gearTaken: true }, secrets });
   await continueChronicle(page);
@@ -233,6 +239,7 @@ test.describe('portrait-phone gameplay', () => {
     await page.goto('/maestros-secret.html');
     await page.getByRole('button', { name: 'Begin the Adventure' }).click();
     await page.getByRole('button', { name: 'Begin Exploring' }).click();
+    await showCasebook(page);
 
     const actions = page.locator('#portrait-actions');
     await expect(actions).toBeVisible();
@@ -250,6 +257,7 @@ test.describe('portrait-phone gameplay', () => {
     await page.goto('/maestros-secret.html');
     await page.getByRole('button', { name: 'Begin the Adventure' }).click();
     await page.getByRole('button', { name: 'Begin Exploring' }).click();
+    await showCasebook(page);
     const actions = page.locator('#portrait-actions');
     await actions.getByRole('button', { name: 'Go right to Piazza della Signoria' }).click();
     await actions.getByRole('button', { name: "Baker's Stall" }).click();
@@ -270,10 +278,38 @@ test.describe('portrait-phone gameplay', () => {
     };
     await setChronicle(page, repairState, 2);
     await continueChronicle(page);
+    await showCasebook(page);
     const actions = page.locator('#portrait-actions');
     await actions.getByRole('button', { name: 'Flying Machine' }).click();
     await expect(actions.getByRole('button', { name: 'Trapdoor' })).toBeVisible({ timeout: 4_000 });
   });
+});
+
+test('RI-006: player-controlled Casebook starts closed and preserves the active chronicle', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto('/maestros-secret.html');
+  await page.getByRole('button', { name: 'Begin the Adventure' }).click();
+  await page.getByRole('button', { name: 'Begin Exploring' }).click();
+
+  const toggle = page.locator('#casebookbtn');
+  const surface = page.locator('#portrait-actions');
+  const objective = page.locator('#objective');
+  const objectiveText = () => objective.evaluate(element => element.textContent.replace(/\s+/g, ' ').trim());
+  const initialObjective = await objectiveText();
+
+  await expect(toggle).toHaveAttribute('aria-expanded', 'false');
+  await expect(surface).toBeHidden();
+
+  await toggle.click();
+  await expect(toggle).toHaveAttribute('aria-expanded', 'true');
+  await expect(surface).toBeVisible();
+  await expect(surface.getByRole('button', { name: 'Hand Mirror' })).toBeVisible();
+
+  await page.getByRole('button', { name: 'Hide Casebook' }).click();
+  await expect(surface).toBeHidden();
+  await expect(page.getByRole('button', { name: 'Show Casebook' })).toBeFocused();
+  await expect(page.locator('#sc-workshop')).toHaveClass(/active/);
+  await expect.poll(objectiveText).toBe(initialObjective);
 });
 
 test('RI-002 and RI-003: Casebook modes and item focus survive viewport changes', async ({ page }) => {
@@ -281,6 +317,7 @@ test('RI-002 and RI-003: Casebook modes and item focus survive viewport changes'
   await page.goto('/maestros-secret.html');
   await page.getByRole('button', { name: 'Begin the Adventure' }).click();
   await page.getByRole('button', { name: 'Begin Exploring' }).click();
+  await showCasebook(page);
   await expect(page.locator('#stage')).toHaveAttribute('data-layout', 'phone-portrait');
 
   await page.locator('#portrait-actions .casebook-context [data-interaction-id="mirror"]').click();
@@ -310,6 +347,7 @@ test('RI-003: Casebook disclosure and scroll position survive rotation', async (
   await page.goto('/maestros-secret.html');
   await page.getByRole('button', { name: 'Begin the Adventure' }).click();
   await page.getByRole('button', { name: 'Begin Exploring' }).click();
+  await showCasebook(page);
 
   const surface = page.locator('#portrait-actions');
   await surface.locator('.casebook-all > summary').click();
@@ -341,6 +379,7 @@ test('RI-003: a viewport change preserves external focus instead of restoring st
   await page.goto('/maestros-secret.html');
   await page.getByRole('button', { name: 'Begin the Adventure' }).click();
   await page.getByRole('button', { name: 'Begin Exploring' }).click();
+  await showCasebook(page);
   const inventory = page.getByRole('button', { name: 'Select Hand Mirror' });
   await page.locator('#portrait-actions .casebook-context [data-interaction-id="mirror"]').click();
   await page.locator('#portrait-actions .casebook-context [data-interaction-id="note"]').focus();
@@ -355,6 +394,7 @@ test('RI-003 and RI-004: a Casebook action restores focus after closing its moda
   await page.goto('/maestros-secret.html');
   await page.getByRole('button', { name: 'Begin the Adventure' }).click();
   await page.getByRole('button', { name: 'Begin Exploring' }).click();
+  await showCasebook(page);
   await page.locator('#portrait-actions').getByRole('button', { name: 'Go right to Piazza della Signoria' }).click();
 
   const baker = page.locator('#portrait-actions .casebook-context [data-interaction-id="bread"]');
@@ -371,6 +411,7 @@ test('@a11y RI-004 and RI-005: Casebook actions support keyboard use and have no
   await page.goto('/maestros-secret.html');
   await page.getByRole('button', { name: 'Begin the Adventure' }).click();
   await page.getByRole('button', { name: 'Begin Exploring' }).click();
+  await showCasebook(page);
   const mirror = page.locator('#portrait-actions .casebook-context [data-interaction-id="mirror"]');
   await mirror.focus();
   expect((await mirror.boundingBox()).height).toBeGreaterThanOrEqual(44);
@@ -384,6 +425,7 @@ test('RI-004: mobile Casebook exposes a touch scroll surface', async ({ page }) 
   await page.goto('/maestros-secret.html');
   await page.getByRole('button', { name: 'Begin the Adventure' }).click();
   await page.getByRole('button', { name: 'Begin Exploring' }).click();
+  await showCasebook(page);
 
   const surface = page.locator('#portrait-actions');
   await surface.locator('.casebook-all > summary').click();
@@ -412,6 +454,7 @@ test('RI-004: portrait travel controls retain Casebook separation', async ({ pag
   await page.goto('/maestros-secret.html');
   await page.getByRole('button', { name: 'Begin the Adventure' }).click();
   await page.getByRole('button', { name: 'Begin Exploring' }).click();
+  await showCasebook(page);
 
   const surface = page.locator('#portrait-actions');
   const disclosure = surface.locator('.casebook-all > summary');
@@ -429,6 +472,7 @@ test('RI-003 and RI-004: a focused Casebook observation is revealed without nati
   await page.goto('/maestros-secret.html');
   await page.getByRole('button', { name: 'Begin the Adventure' }).click();
   await page.getByRole('button', { name: 'Begin Exploring' }).click();
+  await showCasebook(page);
 
   const surface = page.locator('#portrait-actions');
   await surface.locator('.casebook-all > summary').click();
@@ -449,6 +493,7 @@ test('RI-003 and RI-004: landscape Casebook focus scrolls the panel, not the pag
   await page.goto('/maestros-secret.html');
   await page.getByRole('button', { name: 'Begin the Adventure' }).click();
   await page.getByRole('button', { name: 'Begin Exploring' }).click();
+  await showCasebook(page);
 
   const surface = page.locator('#portrait-actions');
   await surface.locator('.casebook-all > summary').click();
@@ -464,6 +509,7 @@ test('RI-003 and RI-004: stale Casebook focus callbacks cannot displace the curr
   await page.goto('/maestros-secret.html');
   await page.getByRole('button', { name: 'Begin the Adventure' }).click();
   await page.getByRole('button', { name: 'Begin Exploring' }).click();
+  await showCasebook(page);
 
   const surface = page.locator('#portrait-actions');
   const disclosure = surface.locator('.casebook-all > summary');
@@ -505,6 +551,7 @@ test('RI-005: landscape Casebook clears the system gesture edge', async ({ page 
   await page.goto('/maestros-secret.html');
   await page.getByRole('button', { name: 'Begin the Adventure' }).click();
   await page.getByRole('button', { name: 'Begin Exploring' }).click();
+  await showCasebook(page);
 
   const panel = await page.locator('#portrait-actions').boundingBox();
   expect(panel).not.toBeNull();
@@ -516,6 +563,7 @@ test('RI-005: landscape Casebook clears the top-bar controls', async ({ page }) 
   await page.goto('/maestros-secret.html');
   await page.getByRole('button', { name: 'Begin the Adventure' }).click();
   await page.getByRole('button', { name: 'Begin Exploring' }).click();
+  await showCasebook(page);
 
   const panel = await page.locator('#portrait-actions').boundingBox();
   const topbar = await page.locator('#topbar').boundingBox();
@@ -545,6 +593,7 @@ test('@a11y RI-002, RI-004 and RI-005: declared viewport accessibility matrix pr
     await page.reload();
     await page.getByRole('button', { name: 'Begin the Adventure' }).click();
     await page.getByRole('button', { name: 'Begin Exploring' }).click();
+    await showCasebook(page);
 
     await expect(page.locator('#stage')).toHaveAttribute('data-layout', layout);
     const disclosure = page.locator('#portrait-actions .casebook-all > summary');
@@ -655,6 +704,7 @@ test.describe('compact dialogue composition', () => {
       await page.goto('/maestros-secret.html');
       await page.getByRole('button', { name: 'Begin the Adventure' }).click();
       await page.getByRole('button', { name: 'Begin Exploring' }).click();
+      await showCasebook(page);
       await page.locator('#portrait-actions').getByRole('button', { name: 'Go right to Piazza della Signoria' }).click();
       await page.locator('[data-hs="bread"]').press('Enter');
 

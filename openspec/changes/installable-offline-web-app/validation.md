@@ -16,6 +16,7 @@ Status: **in progress** — automated requirements and native desktop Chrome/Saf
 
 - **Safari:** fresh local tab loaded the game, completed start → onboarding → desktop-landscape Casebook, and exposed the Field Notes recovery controls plus truthful **File → Add to Dock** guidance.
 - **Chrome:** fresh local tab loaded the manifest-backed game and exposed both Chrome’s browser install affordance and the in-game **INSTALL** action. Start → onboarding → desktop-landscape Casebook completed, and a reload presented **Continue Chronicle**.
+- **Chrome installed app:** Chrome's native install dialog created the standalone **The Maestro's Secret.app**. After taking the Hand Mirror, closing the app, and relaunching it, **Continue Chronicle** restored the saved objective and selected Hand Mirror. This is local installed-app/resume evidence; it does not substitute for the outstanding offline-network and cross-device matrix.
 - **Chrome developer tools:** Console had no errors. It displayed Chrome's expected informational diagnostic that the native banner was deferred by `beforeinstallprompt.preventDefault()` pending the player selecting **INSTALL**. An in-console Cache Storage inspection returned `controller: true`, active worker state `activated`, `maestros-secret-shell-v1`, and 26 entries.
 - These are local-server smoke checks, not installed-app or network-disabled physical-device certification. The Playwright offline contract supplies automated coverage for the latter flow.
 

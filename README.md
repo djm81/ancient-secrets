@@ -26,6 +26,18 @@ A compact Renaissance point-and-click adventure set in Florence in 1503. You pla
 - **Safe fallback:** if no Worker URL is configured—or the Worker, model provider, CORS policy, or rate limit fails—the game displays an authored hint and remains fully playable.
 - **Evidence-led changes:** OpenSpec changes under [`openspec/changes/`](openspec/changes/) map requirements to tests and manual QA evidence. All accepted requirements are additionally captured as a [SpecFact requirements bundle](.specfact/projects/ancient-secrets/) (`specfact requirements validate --bundle .specfact/projects/ancient-secrets`) so evidence coverage is machine-checkable.
 
+### Pull-request review
+
+CodeRabbit’s repository-owned policy lives in [`.coderabbit.yaml`](.coderabbit.yaml). Once the CodeRabbit GitHub App is installed, it automatically and incrementally reviews non-draft pull requests targeting `dev` or `main`. Its guidance is tailored to this static game: player-state determinism, offline cache/update safety, accessibility, privacy, optional bounded guidance, and OpenSpec evidence. It supplements the required local checks; it does not replace them.
+
+Validate the locally owned YAML/branch-policy invariant without credentials or a network call:
+
+```bash
+ruby -e 'require "yaml"; c = YAML.load_file(".coderabbit.yaml"); abort "missing dev auto-review target" unless c.dig("reviews", "auto_review", "base_branches").include?("^dev$")'
+```
+
+Draft pull requests are intentionally excluded from automatic review. Mark a PR ready for review (or explicitly request CodeRabbit) after its evidence and description are ready.
+
 ## The Codex Rationum — Babylon vertical slice
 
 Implementation follows the [implementation order](openspec/IMPLEMENTATION_ORDER.md): responsive play surface, installable offline shell, Babylon vertical slice, then further story and optional AI work. The offline shell has automated and native desktop smoke evidence; broader installed-device certification remains tracked in its OpenSpec validation matrix.

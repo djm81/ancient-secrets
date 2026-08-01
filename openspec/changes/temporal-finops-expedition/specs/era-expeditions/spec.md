@@ -107,3 +107,11 @@ Each era SHALL follow investigate → hypothesize → test → consequence: two 
 - **GIVEN** the Babylon clues establish a suspicious ledger entry
 - **WHEN** the player chooses and tests a valid reconciliation plan
 - **THEN** the ledger/storehouse state visibly changes, the mentor reacts, and the debrief follows that consequence
+
+#### Scenario: Babylon reconciliation teaches before it tests
+
+- **GIVEN** the player has recorded Babylon's jar seals, damp tablet, and stele clues
+- **WHEN** they prepare the reconciliation
+- **THEN** the trial presents the sealed deliveries, the tablet's disputed claim, and the public silver rule beside the relevant choice
+- **AND** the player must flag the doubtful tablet, establish the evidence-backed grain total, and apply the lawful rate in that order
+- **AND** an incorrect intermediate choice explains the evidence or rule before the player can continue

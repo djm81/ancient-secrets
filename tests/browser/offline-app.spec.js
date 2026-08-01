@@ -28,7 +28,7 @@ test('OGS-001/002: the registered shell contains the core assets and emits no co
 
   expect(pwaState.controller).toBe(true);
   expect(pwaState.active).toBe('activated');
-  expect(pwaState.cacheNames).toContain('maestros-secret-shell-v1');
+  expect(pwaState.cacheNames).toContain('maestros-secret-shell-v14');
   expect(pwaState.entries.flat()).toContain('/maestros-secret.html');
   expect(consoleErrors).toEqual([]);
   expect(pageErrors).toEqual([]);

@@ -12,6 +12,11 @@ Status: **in progress** — automated requirements and native desktop Chrome/Saf
 | OGS-004 validated local save recovery | unit + manual export/import | `save-recovery.test.js` passed 2/2 for valid, corrupt, and future-version saves. Native Safari exposed user-initiated **Export chronicle** and **Import chronicle** controls. | automated pass; physical file-flow manual pending |
 | OGS-005 optional offline era packs are consented and failure-safe | unit + manual storage test | `era-packs.test.js` passed for consent, estimate, insufficient storage, and failure. No era assets exist, so the UI truthfully exposes no downloadable pack. | automated pass; download manual deferred until assets exist |
 
+## Cache-coherence regression — 2026-08-02
+
+- The shell now uses revisioned local module, era-art, and service-worker URLs. The v8 worker resolves approved cached assets without considering those release queries and uses a network-first navigation response with offline fallback, preventing refreshed clients from combining fresh HTML with stale code or art.
+- `node --test tests/offline-shell.test.js tests/pwa-lifecycle.test.js` passed 7/7. `npm run test:browser -- tests/browser/expedition.spec.js` passed 3/3, including the three Babylon clues; `npm run test:browser -- tests/browser/offline-app.spec.js` passed 3/3 with cache `maestros-secret-shell-v8`. A later focused replay regression advanced the cache to `maestros-secret-shell-v9` and passed.
+
 ## Native desktop manual smoke evidence — 2026-07-29
 
 - **Safari:** fresh local tab loaded the game, completed start → onboarding → desktop-landscape Casebook, and exposed the Field Notes recovery controls plus truthful **File → Add to Dock** guidance. Safari's native Add-to-Dock sheet then created and launched the standalone local app. Its fresh title screen is expected: browser and Dock-app storage are not represented as shared.

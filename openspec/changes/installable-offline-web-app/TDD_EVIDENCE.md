@@ -44,3 +44,19 @@ For each task record: requirement IDs, test and command, dated failing evidence,
 - **2026-07-29 expected failing result:** the current activation handler deletes every prior core cache and calls `clients.claim()`, which can switch other open chronicles to the new worker mid-session. The lifecycle also reloads only after `controllerchange`, so the new contract must fail until the restart request records its source client, activation retains prior caches without claiming clients, and the requesting client reloads after its own `UPDATE_READY` message.
 - **Implementation reference:** `service-worker.js` stores the `SKIP_WAITING` sender client ID, retains old versioned caches, does not claim other controlled clients, and posts `UPDATE_READY` only to that sender after activation. `js/pwa-lifecycle.js` reloads only after the accepting client receives that message; its existing `controllerchange` handler remains a compatibility fallback.
 - **2026-07-29 passing evidence:** `node --test tests/offline-shell.test.js tests/pwa-lifecycle.test.js` passed 6/6. The new worker-lifecycle simulation executes the service worker in an isolated runtime and proves no old cache deletion, no global client claim, one targeted notification, and one accepted update; the lifecycle test proves that no reload occurs before the target message. Full gates then passed: `npm run check`; `npm test` 38/38; `npm run test:browser` 45/45; `npm run test:a11y` 3/3; `git diff --check`; and `openspec validate installable-offline-web-app --strict`.
+
+## Regression follow-up — refreshed shells keep matching assets
+
+- **Requirement:** OGS-001, OGS-003.
+- **Test and command:** `node --test tests/offline-shell.test.js`.
+- **2026-08-02 expected failing result:** the current shell references unrevisioned module and era-art URLs, so a navigation URL with a new query can combine fresh HTML with stale cache-first JavaScript and imagery.
+- **Implementation reference:** revisioned local URLs in `maestros-secret.html` and `js/era-content.js`; query-insensitive matching for approved precached assets in `service-worker.js`; revisioned service-worker registration in `js/pwa-lifecycle.js`.
+- **2026-08-02 passing evidence:** `node --test tests/offline-shell.test.js tests/pwa-lifecycle.test.js` passed 7/7. The Babylon browser flow passed 3/3, including sequentially studying all three clues, and the offline browser suite passed 3/3 with `maestros-secret-shell-v8`. Full regression then passed: `npm run test:browser` 48/48 and `npm run test:a11y` 4/4. The completed-era replay follow-up advances the shell to v9; its focused shell check passed at 00:32 CEST.
+
+## Regression follow-up — revisioned shell assets must not match an earlier query
+
+- **Requirements:** OGS-001, OGS-003.
+- **Test and command:** `node --test tests/offline-shell.test.js`.
+- **2026-08-02 failing result:** `node --test tests/offline-shell.test.js` failed 3/4 as expected: it found unrevisioned core assets, the v10 registration URL, and query-insensitive static matching.
+- **Implementation reference:** `service-worker.js` precaches the exact v11 module and v8 era-art request URLs, then matches static requests exactly; internal module imports in `js/game-core.js`, `js/expedition-core.js`, `js/save-recovery.js`, and `js/guidance-client.js` use the same v11 release revision.
+- **2026-08-02 passing evidence:** `node --test tests/offline-shell.test.js tests/pwa-lifecycle.test.js` passed 7/7. The focused completed-era browser replay passed: **Revisit Babylon** opened **Three seals, one doubtful tablet** under the v11 shell.

@@ -6,29 +6,44 @@ import vm from 'node:vm';
 const worker = await readFile(new URL('../service-worker.js', import.meta.url), 'utf8');
 const gamePage = await readFile(new URL('../maestros-secret.html', import.meta.url), 'utf8');
 const lifecycle = await readFile(new URL('../js/pwa-lifecycle.js', import.meta.url), 'utf8');
+const eraContent = await readFile(new URL('../js/era-content.js', import.meta.url), 'utf8');
+const gameCore = await readFile(new URL('../js/game-core.js', import.meta.url), 'utf8');
+const expeditionCore = await readFile(new URL('../js/expedition-core.js', import.meta.url), 'utf8');
 
 test('OGS-001 and OGS-002: the service worker precaches the local shell and excludes unsafe traffic', () => {
   for (const asset of [
-    './maestros-secret.html', './index.html', './js/game-core.js', './js/guidance-client.js',
-    './js/browser-storage.js', './js/runtime-config.js', './assets/fonts/fonts.css',
+    './maestros-secret.html', './index.html', './js/game-core.js?rev=v14', './js/expedition-core.js?rev=v14',
+    './js/era-content.js?rev=v14', './js/guidance-client.js?rev=v14', './js/browser-storage.js?rev=v14',
+    './js/runtime-config.js?rev=v14', './assets/fonts/fonts.css',
     './assets/icons/app-192.png', './assets/icons/app-512.png'
   ]) assert.match(worker, new RegExp(asset.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
 
   assert.match(worker, /request\.method\s*!==\s*['"]GET['"]/);
   assert.match(worker, /url\.origin\s*!==\s*self\.location\.origin/);
   assert.match(worker, /workers/);
-  assert.match(worker, /caches\.match\(request\)/);
+  assert.match(worker, /caches\.match\(request,\{ignoreSearch:true\}\)/);
+  assert.match(worker, /event\.respondWith\(caches\.match\(request\)\.then/);
   assert.match(worker, /request\.mode\s*===\s*['"]navigate['"]/);
 });
 
 test('OGS-003 and PWA-002: the game registers a waiting worker and only exposes install UI when it is actionable', () => {
   assert.match(gamePage, /startOfflineAppLifecycle\(\)/);
-  assert.match(lifecycle, /register\(['"]\.\/service-worker\.js['"]/);
+  assert.match(lifecycle, /register\(['"]\.\/service-worker\.js\?rev=v14['"]/);
   assert.match(lifecycle, /beforeinstallprompt/);
   assert.match(lifecycle, /SKIP_WAITING/);
   assert.match(gamePage, /id="installbtn"/);
   assert.match(gamePage, /id="updatebanner"/);
   assert.match(gamePage, /id="restartupdate"/);
+});
+
+test('OGS-001 and OGS-003: a refreshed release uses matching revisioned local assets', () => {
+  assert.match(gamePage, /\.\/js\/game-core\.js\?rev=v14/);
+  assert.match(gamePage, /\.\/js\/era-content\.js\?rev=v14/);
+  assert.match(lifecycle, /\.\/service-worker\.js\?rev=v14/);
+  assert.match(gameCore, /\.\/expedition-core\.js\?rev=v14/);
+  assert.match(expeditionCore, /\.\/era-content\.js\?rev=v14/);
+  assert.match(eraContent, /grain-tablets\.jpg\?rev=v8/);
+  assert.match(worker, /caches\.match\(request\)\.then/);
 });
 
 test('OGS-003: accepting an update retains other clients’ caches and only notifies the requesting client', async () => {

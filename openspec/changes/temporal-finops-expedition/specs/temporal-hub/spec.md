@@ -18,6 +18,12 @@ The workshop hub SHALL become reachable when the base game's victory state is re
 - **WHEN** the save is resumed under the new schema
 - **THEN** the player can enter the workshop hub with a fresh, empty expedition
 
+#### Scenario: Player leaves the workshop hub
+
+- **GIVEN** a player opened the workshop hub from the completed base-game conclusion
+- **WHEN** they choose to return to the chronicle
+- **THEN** the completed-story conclusion is restored with its available next actions, and the player is never left at the terminal Maestro scene without a route forward
+
 ### Requirement: TH-002 Eras are chosen through fixed-choice dialogue with paced acts
 
 The hub SHALL present era selection exclusively through authored fixed-choice dialogue at the Occhio del Tempo. Act I exposes Babylon, Egypt, and Athens after base-game victory; completing any two opens Act II (Rome, Champagne Fairs, Florence); completing any two Act II eras opens The Age to Come. Each available option SHALL show its status (never attempted, withdrawn, complete), remaining earlier-act eras remain selectable, and no free-text input SHALL exist.

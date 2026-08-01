@@ -38,6 +38,12 @@ A newly available service-worker version SHALL wait until explicit restart or a 
 - **WHEN** the player in one chronicle chooses restart with the new edition
 - **THEN** only that chronicle reloads into the new edition, while the other remains controlled by its existing worker and can resolve its original cached assets
 
+#### Scenario: A refreshed client does not mix shell versions
+
+- **GIVEN** a browser is controlled by an older cached shell
+- **WHEN** it explicitly restarts or opens a release-revision URL while online
+- **THEN** its HTML, modules, and local era art resolve to the same current release rather than combining new markup with stale cached assets
+
 ### Requirement: OGS-004 Save recovery is local, explicit, and schema-validated
 
 The player SHALL be able to export and import a chronicle through a user-initiated local file flow. Imports SHALL use the same schema validation as normal saves and SHALL reject malformed or incompatible data without replacing the current chronicle.

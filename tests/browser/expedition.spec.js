@@ -8,6 +8,20 @@ const secrets = { cat: false, pigeon: false, well: false, spiral: false, redbook
 const notes = { window: false, easel: false, candle: false, candelabra: false, duomoview: false };
 const completedBabylon = { eras: { babylon: { status: 'complete', clues: [], attempt: null, bestCredit: 4, lastFailure: null } }, mastery: { understand: 4, value: 0, optimize: 0, practice: 1 }, inventions: ['anemometer'], codexComplete: false };
 
+async function openBabylonAudit(page) {
+  await page.goto('/maestros-secret.html');
+  await page.evaluate(({ key, value }) => localStorage.setItem(key, JSON.stringify(value)), {
+    key: saveKey,
+    value: { version: 2, savedAt: '2026-08-02T12:00:00+02:00', state: { scene: 'cellar', inv: [], selected: null, flags, secrets, dialogue: { choices: { matteo: null, baker: 'compassion' }, ending: 'light' }, notes }, run }
+  });
+  await page.reload();
+  await page.getByRole('button', { name: 'Continue Chronicle' }).click();
+  await page.getByRole('button', { name: 'Enter the Codex Rationum' }).click();
+  await page.getByRole('button', { name: 'Set the Occhio for Babylon' }).click();
+  for (let clue = 0; clue < 3; clue += 1) await page.getByRole('button', { name: 'Study this clue' }).first().click();
+  await page.getByRole('button', { name: 'Prepare the reconciliation' }).click();
+}
+
 test('Wave A: a completed Florence chronicle can enter, investigate, and pass the offline Babylon vertical slice', async ({ page }) => {
   await page.goto('/maestros-secret.html');
   await page.evaluate(({ key, value }) => localStorage.setItem(key, JSON.stringify(value)), {
@@ -53,6 +67,40 @@ test('the Codex return restores the completed-story conclusion', async ({ page }
   await page.getByRole('button', { name: 'Return to the story conclusion' }).click();
   await expect(page.locator('#endmodal')).toBeVisible();
   await expect(page.getByRole('button', { name: 'Enter the Codex Rationum' })).toBeVisible();
+});
+
+test('review follow-up: Escape from the Codex restores the completed-story conclusion', async ({ page }) => {
+  await page.goto('/maestros-secret.html');
+  await page.evaluate(({ key, value }) => localStorage.setItem(key, JSON.stringify(value)), {
+    key: saveKey,
+    value: { version: 2, savedAt: '2026-08-02T12:00:00+02:00', state: { scene: 'cellar', inv: [], selected: null, flags, secrets, dialogue: { choices: { matteo: null, baker: 'compassion' }, ending: 'light' }, notes }, run }
+  });
+  await page.reload();
+  await page.getByRole('button', { name: 'Continue Chronicle' }).click();
+  await page.getByRole('button', { name: 'Enter the Codex Rationum' }).click();
+  await page.keyboard.press('Escape');
+  await expect(page.locator('#endmodal')).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Enter the Codex Rationum' })).toBeVisible();
+});
+
+test('review follow-up: a rejected grain total reaches its specific withdrawal debrief', async ({ page }) => {
+  await openBabylonAudit(page);
+  await page.getByRole('button', { name: 'Mark the tablet line as doubtful' }).click();
+  await page.locator('#babylon-delivery').selectOption('80');
+  await page.getByRole('button', { name: 'Confirm the corrected total' }).click();
+  await page.getByRole('button', { name: 'Withdraw to Leonardo' }).click();
+  await expect(page.getByText('The seals and the tablet disagree. Before a steward can allocate grain, the record must describe what actually arrived.')).toBeVisible();
+});
+
+test('review follow-up: a rejected silver rate reaches its specific withdrawal debrief', async ({ page }) => {
+  await openBabylonAudit(page);
+  await page.getByRole('button', { name: 'Mark the tablet line as doubtful' }).click();
+  await page.locator('#babylon-delivery').selectOption('90');
+  await page.getByRole('button', { name: 'Confirm the corrected total' }).click();
+  await page.locator('#babylon-rate').selectOption('25');
+  await page.getByRole('button', { name: 'Apply the lawful rate' }).click();
+  await page.getByRole('button', { name: 'Withdraw to Leonardo' }).click();
+  await expect(page.getByText('The tablet asks more than the stele permits. A useful record is not enough when the rule that governs it is ignored.')).toBeVisible();
 });
 
 test('a completed Babylon expedition can be revisited without dead-ending the hub entry', async ({ page }) => {

@@ -3,8 +3,8 @@
 | Requirement | Evidence type | Evidence | Status |
 |---|---|---|---|
 | Repository-owned CodeRabbit review policy | local YAML parse and content inspection | 2026-08-02 — Ruby/Psych parsed `.coderabbit.yaml`; inspected instructions cover runtime, HTML, service worker, optional Worker, OpenSpec, tests, workflows, and README without Python/CLI assumptions. | passed |
-| Automatic review covers `dev` and excludes drafts | local YAML contract check | 2026-08-02 — extended Ruby contract asserted `^dev$`, `drafts: false`, `auto_incremental_review: true`, and OpenSpec path instructions. | passed |
-| Local configuration contract is documented | README inspection and command | 2026-08-02 — README documents the external-app boundary, `dev`/`main` policy, draft behavior, and a credential-free parse/branch command. | passed |
+| Automatic review covers `dev` and excludes drafts | local YAML contract check | 2026-08-02 20:05 CEST — extended Ruby contract asserted `^dev$`, `^main$`, `drafts: false`, `auto_incremental_review: true`, `auto_pause_after_reviewed_commits: 0`, and OpenSpec path instructions. | passed |
+| Local configuration contract is documented | README inspection and command | 2026-08-02 20:05 CEST — README documents the external-app boundary, `dev`/`main` policy, draft behavior, no-pause incremental behavior, and a credential-free parse/branch command. | passed |
 
 ## Manual/service follow-up
 

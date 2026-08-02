@@ -18,6 +18,7 @@ Ordering follows the repository discipline: spec → tests → failing evidence 
 - [x] A10 follow-up. Return from the workshop hub to the completed-story conclusion, rather than exposing the terminal Maestro scene with no onward navigation (TH-001); browser regression evidence recorded in `TDD_EVIDENCE.md`.
 - [x] A10 follow-up. Allow a completed Babylon expedition to be revisited without reducing its recorded mastery or invention reveal (FM-002); regression evidence recorded in `TDD_EVIDENCE.md`.
 - [x] A10 follow-up. Replace Babylon's opaque dropdown reconciliation with a staged evidence-led audit: flag the doubtful tablet, reconcile sealed deliveries, apply the public silver rule, and provide authored feedback for incorrect intermediate choices (EE-007); evidence recorded in `TDD_EVIDENCE.md`.
+- [x] A10 review follow-up. Ensure Escape restores a usable conclusion route; preserve withdrawn evidence on retry; retain the actual failed audit category for debrief; and render only authored failure text. Focused unit/browser evidence is recorded in `TDD_EVIDENCE.md` (TH-001, EE-003, EE-007, MD-001, MD-002).
 - [ ] A11. Run gates plus manual scenarios for TH-001..005, EE-003, EE-005..007, MD-001..002 across the declared viewport matrix, offline launch, and real iOS/Android devices; record in validation.md.
 
 ## Wave B — antiquity eras

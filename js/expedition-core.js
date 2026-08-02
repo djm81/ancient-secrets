@@ -65,7 +65,8 @@ export function orderBabylonDebriefOptions(question, seed = 0, questionIndex = 0
 export function beginEra(expedition, eraId, seed = 0) {
   if (!isValidExpedition(expedition) || eraId !== BABYLON_ID) throw new Error('That era cannot begin.');
   const next = structuredClone(expedition);
-  next.eras[eraId] = { ...next.eras[eraId], status: 'in-progress', clues: [], attempt: { seed: Math.abs(Math.trunc(seed)) % 48 }, lastFailure: null };
+  const previous = next.eras[eraId];
+  next.eras[eraId] = { ...previous, status: 'in-progress', clues: previous.status === 'withdrawn' ? previous.clues : [], attempt: { seed: Math.abs(Math.trunc(seed)) % 48 }, lastFailure: null };
   return next;
 }
 
@@ -116,5 +117,5 @@ export function deriveRank(mastery) {
 }
 
 export function babylonFailureExplanation(category) {
-  return BABYLON_CONTENT.failure[category] || BABYLON_CONTENT.failure['incomplete-plan'];
+  return Object.hasOwn(BABYLON_CONTENT.failure, category) ? BABYLON_CONTENT.failure[category] : BABYLON_CONTENT.failure['incomplete-plan'];
 }

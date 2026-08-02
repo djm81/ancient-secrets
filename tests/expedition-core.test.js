@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {
   BABYLON_ID,
   applyDebriefAnswers,
+  babylonFailureExplanation,
   beginEra,
   createInitialExpedition,
   createBabylonTrial,
@@ -42,6 +43,9 @@ test('withdraw keeps clues, grants reduced credit, and a later pass never demote
   assert.equal(withdrawn.eras[BABYLON_ID].status, 'withdrawn');
   assert.equal(withdrawn.eras[BABYLON_ID].clues.length, 3);
   assert.equal(withdrawn.eras[BABYLON_ID].bestCredit, 1);
+  const retry = beginEra(withdrawn, BABYLON_ID, 10);
+  assert.deepEqual(retry.eras[BABYLON_ID].clues, ['deliveries', 'ledger', 'law']);
+  assert.equal(retry.eras[BABYLON_ID].lastFailure, null);
 
   const passed = applyDebriefAnswers(withdrawn, BABYLON_ID, 'passed', [true, true, true]);
   assert.equal(passed.eras[BABYLON_ID].status, 'complete');
@@ -54,6 +58,13 @@ test('withdraw keeps clues, grants reduced credit, and a later pass never demote
   assert.deepEqual(revisited.mastery, passed.mastery);
   const retried = applyDebriefAnswers(passed, BABYLON_ID, 'withdrawn', [false, false, false]);
   assert.deepEqual(retried.mastery, passed.mastery);
+});
+
+test('Babylon withdrawal explanations always use authored categories', () => {
+  assert.equal(babylonFailureExplanation('unbalanced-ledger'), BABYLON_CONTENT.failure['unbalanced-ledger']);
+  for (const inheritedKey of ['constructor', 'toString', '__proto__']) {
+    assert.equal(babylonFailureExplanation(inheritedKey), BABYLON_CONTENT.failure['incomplete-plan']);
+  }
 });
 
 test('Babylon debrief options are deterministic per attempt but do not keep the correct answer in one position', () => {

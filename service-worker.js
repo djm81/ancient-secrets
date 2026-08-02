@@ -1,8 +1,8 @@
-const CACHE_VERSION = 'maestros-secret-shell-v14';
+const CACHE_VERSION = 'maestros-secret-shell-v15';
 const CORE_ASSETS = [
   './', './index.html', './maestros-secret.html', './manifest.webmanifest',
   './js/game-core.js?rev=v14', './js/expedition-core.js?rev=v14', './js/era-content.js?rev=v14', './js/guidance-client.js?rev=v14', './js/browser-storage.js?rev=v14', './js/runtime-config.js?rev=v14',
-  './js/save-recovery.js?rev=v14', './js/pwa-lifecycle.js?rev=v14',
+  './js/save-recovery.js?rev=v14', './js/pwa-lifecycle.js?rev=v15',
   './assets/fonts/fonts.css', './assets/fonts/cinzel-500.ttf', './assets/fonts/cinzel-600.ttf',
   './assets/fonts/cinzel-700.ttf', './assets/fonts/eb-garamond-400.ttf', './assets/fonts/eb-garamond-500.ttf',
   './assets/fonts/eb-garamond-italic-400.ttf', './assets/icons/app-192.png', './assets/icons/app-512.png',
@@ -40,8 +40,8 @@ self.addEventListener('fetch', event => {
   const url = new URL(request.url);
   if (url.origin !== self.location.origin || url.pathname.includes('/workers/') || /(?:model|ai)(?:[/-]|$)/i.test(url.pathname)) return;
   if (request.mode === 'navigate') {
-    event.respondWith(fetch(request).catch(() => caches.match(request,{ignoreSearch:true})
-      .then(cached => cached || caches.match(offlineGame()))));
+    event.respondWith(fetch(request).catch(() => caches.open(cacheName())
+      .then(cache => cache.match(request,{ignoreSearch:true}).then(cached => cached || cache.match(offlineGame())))));
     return;
   }
   event.respondWith(caches.match(request).then(cached => cached || fetch(request)));

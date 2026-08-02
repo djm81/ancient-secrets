@@ -37,6 +37,7 @@ reviews:
     enabled: true
     drafts: false
     auto_incremental_review: true
+    auto_pause_after_reviewed_commits: 0
     # Review the integration branch as well as the GitHub Pages source branch.
     base_branches:
       - "^dev$"

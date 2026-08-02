@@ -28,12 +28,12 @@ A compact Renaissance point-and-click adventure set in Florence in 1503. You pla
 
 ### Pull-request review
 
-CodeRabbit’s repository-owned policy lives in [`.coderabbit.yaml`](.coderabbit.yaml). Once the CodeRabbit GitHub App is installed, it automatically and incrementally reviews non-draft pull requests targeting `dev` or `main`. Its guidance is tailored to this static game: player-state determinism, offline cache/update safety, accessibility, privacy, optional bounded guidance, and OpenSpec evidence. It supplements the required local checks; it does not replace them.
+CodeRabbit’s repository-owned policy lives in [`.coderabbit.yaml`](.coderabbit.yaml). Once the CodeRabbit GitHub App is installed, it automatically and incrementally reviews non-draft pull requests targeting `dev` or `main`; the policy does not pause incremental reviews after a fixed number of commits. Its guidance is tailored to this static game: player-state determinism, offline cache/update safety, accessibility, privacy, optional bounded guidance, and OpenSpec evidence. It supplements the required local checks; it does not replace them.
 
 Validate the locally owned YAML/branch-policy invariant without credentials or a network call:
 
 ```bash
-ruby -e 'require "yaml"; c = YAML.load_file(".coderabbit.yaml"); abort "missing dev auto-review target" unless c.dig("reviews", "auto_review", "base_branches").include?("^dev$")'
+ruby -e 'require "yaml"; a = YAML.load_file(".coderabbit.yaml").fetch("reviews").fetch("auto_review"); abort "missing review target" unless ["^dev$", "^main$"].all? { |branch| a.fetch("base_branches").include?(branch) }; abort "draft reviews enabled" unless a.fetch("drafts") == false; abort "incremental review pause enabled" unless a.fetch("auto_pause_after_reviewed_commits") == 0'
 ```
 
 Draft pull requests are intentionally excluded from automatic review. Mark a PR ready for review (or explicitly request CodeRabbit) after its evidence and description are ready.

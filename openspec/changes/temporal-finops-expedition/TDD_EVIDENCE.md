@@ -18,6 +18,14 @@ Status: **Wave A in progress** — Babylon is the first vertical slice. Assumpti
 
 ## Entries
 
+### Review follow-up — recoverable Codex exit and truthful Babylon withdrawal
+- Spec refs: TH-001, EE-003, EE-007, MD-001, MD-002.
+- Tests: `tests/browser/expedition.spec.js` and `tests/expedition-core.test.js`.
+- Commands: `npm run test:browser -- tests/browser/expedition.spec.js --grep "review follow-up"` and `node --test tests/expedition-core.test.js`.
+- Failing evidence: 2026-08-02 20:03 CEST — `node --test tests/expedition-core.test.js tests/offline-shell.test.js` failed because a withdrawn retry had `[]` clues and `constructor` returned an inherited function; focused Playwright failed 3/3 because Escape exposed no Codex entry and grain/rate withdrawals showed no category-specific debrief.
+- Passing evidence: 2026-08-02 20:05 CEST — the focused browser regressions passed 3/3. The unit/offline suite passed 10/10: Escape restores the completed-story modal, the two rejected choices reach their authored debriefs, withdrawn clues survive retry, and inherited keys fall back to authored copy. Final regression at 20:08 CEST: `npm run test:browser` passed 52/52 and `npm run test:a11y` passed 4/4.
+- Notes / exceptions: The route repair must preserve the existing completed-story modal rather than expose the terminal Maestro scene or discard the current expedition state.
+
 ### A2–A5 — migration registry and pure expedition state
 - Spec refs: EC-001, EC-002, EC-003, EE-002, EE-003, FM-001, FM-002, MD-004
 - Test: `tests/expedition-core.test.js`, `tests/game-core.test.js`
@@ -81,6 +89,12 @@ Status: **Wave A in progress** — Babylon is the first vertical slice. Assumpti
 - Failing evidence: 2026-08-02 00:35 CEST — failed as expected: the test could not locate the named Babylon clue-progress status after the first selection.
 - Passing evidence: 2026-08-02 00:38 CEST — focused Playwright regression passed: each selection announced `1 of 3`, `2 of 3`, then `3 of 3` clues recorded; all three cards became **Recorded in ledger** before the reconciliation became available.
 - Notes / exceptions: The trial remains locked until all three clues are recorded; this repair makes that existing state legible rather than changing the solution. The versioned shell advances from v9 to v10 so existing clients load the new feedback after the standard update flow.
+
+### Historical cache checkpoint reconciliation — v7→v8 and v10→v11
+- Scope: release-cache propagation only; the related gameplay fixes are covered by their own entries and tests.
+- Historical record: v7→v8 delivered the era-selection repair preceding the v8→v9 completed-era replay entry. v10→v11 delivered exact revisioned module matching before the v11→v12 audit-flow entry.
+- Evidence exception: neither transition retained a standalone pre-commit failing/passing command in this iterative local session. To avoid inventing evidence, these are explicitly historical release checkpoints rather than completed TDD entries.
+- Current authoritative evidence: `openspec/changes/installable-offline-web-app/TDD_EVIDENCE.md` records the exact-match v11 checkpoint and the 2026-08-02 20:05 CEST v15 active-cache regression (10/10 combined unit/offline tests). New cache work must be evidenced there before implementation.
 
 ### EE-007 follow-up — teach the reconciliation as an audit
 - Spec refs: EE-007

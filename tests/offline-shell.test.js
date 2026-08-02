@@ -21,14 +21,15 @@ test('OGS-001 and OGS-002: the service worker precaches the local shell and excl
   assert.match(worker, /request\.method\s*!==\s*['"]GET['"]/);
   assert.match(worker, /url\.origin\s*!==\s*self\.location\.origin/);
   assert.match(worker, /workers/);
-  assert.match(worker, /caches\.match\(request,\{ignoreSearch:true\}\)/);
+  assert.match(worker, /caches\.open\(cacheName\(\)\)/);
+  assert.match(worker, /cache\.match\(request,\{ignoreSearch:true\}\)/);
   assert.match(worker, /event\.respondWith\(caches\.match\(request\)\.then/);
   assert.match(worker, /request\.mode\s*===\s*['"]navigate['"]/);
 });
 
 test('OGS-003 and PWA-002: the game registers a waiting worker and only exposes install UI when it is actionable', () => {
   assert.match(gamePage, /startOfflineAppLifecycle\(\)/);
-  assert.match(lifecycle, /register\(['"]\.\/service-worker\.js\?rev=v14['"]/);
+  assert.match(lifecycle, /register\(['"]\.\/service-worker\.js\?rev=v15['"]/);
   assert.match(lifecycle, /beforeinstallprompt/);
   assert.match(lifecycle, /SKIP_WAITING/);
   assert.match(gamePage, /id="installbtn"/);
@@ -39,11 +40,45 @@ test('OGS-003 and PWA-002: the game registers a waiting worker and only exposes 
 test('OGS-001 and OGS-003: a refreshed release uses matching revisioned local assets', () => {
   assert.match(gamePage, /\.\/js\/game-core\.js\?rev=v14/);
   assert.match(gamePage, /\.\/js\/era-content\.js\?rev=v14/);
-  assert.match(lifecycle, /\.\/service-worker\.js\?rev=v14/);
+  assert.match(lifecycle, /\.\/service-worker\.js\?rev=v15/);
   assert.match(gameCore, /\.\/expedition-core\.js\?rev=v14/);
   assert.match(expeditionCore, /\.\/era-content\.js\?rev=v14/);
   assert.match(eraContent, /grain-tablets\.jpg\?rev=v8/);
   assert.match(worker, /caches\.match\(request\)\.then/);
+});
+
+test('OGS-001: offline navigation fallback uses only the active release cache', async () => {
+  const handlers = new Map();
+  const matches = [];
+  let responseWork;
+  vm.runInNewContext(worker, {
+    URL,
+    caches: {
+      open: async name => {
+        assert.equal(name, 'maestros-secret-shell-v15');
+        return { match: async (request, options) => {
+          matches.push({ request: String(request), options });
+          return new Response('active shell');
+        } };
+      },
+      match: async () => { throw new Error('global cache lookup can select an older release'); }
+    },
+    fetch: async () => { throw new Error('offline'); },
+    self: {
+      registration: { scope: 'https://example.test/ancient-secrets/' },
+      location: { origin: 'https://example.test' },
+      addEventListener: (type, handler) => handlers.set(type, handler)
+    }
+  });
+
+  handlers.get('fetch')({
+    request: { method: 'GET', mode: 'navigate', url: 'https://example.test/ancient-secrets/maestros-secret.html?release=v15' },
+    respondWith: work => { responseWork = work; }
+  });
+  const response = await responseWork;
+  assert.equal(await response.text(), 'active shell');
+  assert.equal(matches.length, 1);
+  assert.equal(matches[0].options.ignoreSearch, true);
 });
 
 test('OGS-003: accepting an update retains other clients’ caches and only notifies the requesting client', async () => {

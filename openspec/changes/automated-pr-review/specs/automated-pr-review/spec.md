@@ -12,7 +12,7 @@ The repository SHALL contain a root `.coderabbit.yaml` valid YAML configuration 
 
 ### Requirement: Automatic review covers integration pull requests
 
-CodeRabbit SHALL automatically and incrementally review non-draft pull requests whose base branch is `dev` or `main`.
+CodeRabbit SHALL automatically and incrementally review non-draft pull requests whose base branch is `dev` or `main`. The policy SHALL disable CodeRabbit’s automatic incremental-review pause so every subsequent pushed commit remains eligible.
 
 #### Scenario: Pull request targets dev
 

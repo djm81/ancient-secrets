@@ -1,8 +1,8 @@
-const CACHE_VERSION = 'maestros-secret-shell-v1';
+const CACHE_VERSION = 'maestros-secret-shell-v17';
 const CORE_ASSETS = [
   './', './index.html', './maestros-secret.html', './manifest.webmanifest',
-  './js/game-core.js', './js/guidance-client.js', './js/browser-storage.js', './js/runtime-config.js',
-  './js/save-recovery.js', './js/era-packs.js', './js/pwa-lifecycle.js',
+  './js/game-core.js?rev=v15', './js/expedition-core.js?rev=v15', './js/era-content.js?rev=v14', './js/guidance-client.js?rev=v15', './js/browser-storage.js?rev=v14', './js/runtime-config.js?rev=v14',
+  './js/save-recovery.js?rev=v15', './js/pwa-lifecycle.js?rev=v17',
   './assets/fonts/fonts.css', './assets/fonts/cinzel-500.ttf', './assets/fonts/cinzel-600.ttf',
   './assets/fonts/cinzel-700.ttf', './assets/fonts/eb-garamond-400.ttf', './assets/fonts/eb-garamond-500.ttf',
   './assets/fonts/eb-garamond-italic-400.ttf', './assets/icons/app-192.png', './assets/icons/app-512.png',
@@ -13,6 +13,7 @@ const CORE_ASSETS = [
 
 const cacheName = () => CACHE_VERSION;
 const offlineGame = () => new URL('./maestros-secret.html', self.registration.scope).toString();
+const eraAssetsPath = () => new URL('./assets/eras/', self.registration.scope).pathname;
 let restartClientId = null;
 
 self.addEventListener('install', event => {
@@ -39,9 +40,18 @@ self.addEventListener('fetch', event => {
   const url = new URL(request.url);
   if (url.origin !== self.location.origin || url.pathname.includes('/workers/') || /(?:model|ai)(?:[/-]|$)/i.test(url.pathname)) return;
   if (request.mode === 'navigate') {
-    event.respondWith(caches.match(request).then(cached => cached || fetch(request)
-      .then(response => response)
-      .catch(() => caches.match(offlineGame()))));
+    event.respondWith(fetch(request).catch(() => caches.open(cacheName())
+      .then(cache => cache.match(request,{ignoreSearch:true}).then(cached => cached || cache.match(offlineGame())))));
+    return;
+  }
+  if (url.pathname.startsWith(eraAssetsPath())) {
+    event.respondWith(caches.open(cacheName()).then(async cache => {
+      const cached = await cache.match(request);
+      if (cached) return cached;
+      const response = await fetch(request);
+      if (response.ok) await cache.put(request,response.clone());
+      return response;
+    }));
     return;
   }
   event.respondWith(caches.match(request).then(cached => cached || fetch(request)));

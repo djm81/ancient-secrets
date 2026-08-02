@@ -7,7 +7,7 @@ The game is static-first but not yet an installable web app: it has no manifest,
 ## What Changes
 
 - Add a GitHub-Pages-safe web app manifest, local icons, standalone launch configuration, and browser-specific progressive install guidance.
-- Register a versioned service worker that precaches the core game shell, local art, icons, and local fonts; it never caches POST requests, AI responses, secrets, or optional model assets.
+- Register a versioned service worker that precaches the core game shell, icons, and local fonts; era art is cached in the active release only after its era is first entered online. It never caches POST requests, AI responses, secrets, or optional model assets.
 - Self-host the game fonts so a cached game launch does not depend on Google Fonts.
 - Add an explicit per-client update handoff: a new service-worker version waits until the player restarts or accepts “restart with new version,” never interrupts an active chronicle, and retains the prior cache for other open chronicles.
 - Add local save export/import recovery and truthful storage messaging; installation must not promise that browser and installed-app storage are shared.

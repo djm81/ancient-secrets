@@ -14,6 +14,26 @@ test('a chronicle round-trips and rejects corrupt saves', () => {
   assert.equal(parseSave(JSON.stringify({ ...save, version: 99 })), null);
 });
 
+test('EC-002 and EC-003: older chronicle saves gain a fresh expedition and malformed expedition data preserves Florence', () => {
+  const state = createInitialState();
+  const run = createRun(() => 0.25);
+  const v1 = { version: 1, savedAt: '2026-07-20T12:00:00+02:00', state: { ...state, dialogue: undefined, notes: undefined }, run };
+  const v2 = { version: 2, savedAt: '2026-07-20T12:00:00+02:00', state, run };
+  const migratedV1 = parseSave(v1);
+  const migratedV2 = parseSave(v2);
+  assert.equal(migratedV1.expedition.eras.babylon.status, 'available');
+  assert.equal(migratedV2.expedition.eras.babylon.status, 'available');
+  const malformed = parseSave({ ...createSave(state, run), expedition: { eras: null } });
+  assert.deepEqual(malformed.state, state);
+  assert.equal(malformed.expedition.eras.babylon.status, 'available');
+  const truncatedAttempt = parseSave({ ...createSave(state, run), expedition: {
+    eras: { babylon: { status: 'in-progress', clues: [], bestCredit: 0, lastFailure: null } },
+    mastery: { understand: 0, value: 0, optimize: 0, practice: 0 }, inventions: [], codexComplete: false
+  } });
+  assert.deepEqual(truncatedAttempt.state, state);
+  assert.equal(truncatedAttempt.expedition.eras.babylon.status, 'available');
+});
+
 test('the next action and objective advance without soft-locking', () => {
   const state = createInitialState();
   assert.equal(getProgress(state).action, 'take-mirror');

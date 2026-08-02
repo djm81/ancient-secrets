@@ -1,5 +1,7 @@
+import { createInitialExpedition, isValidExpedition } from './expedition-core.js?rev=v15';
+
 export const SAVE_KEY = 'maestros-secret:chronicle';
-export const SAVE_VERSION = 2;
+export const SAVE_VERSION = 4;
 
 export const DIALOGUE_VALUES = Object.freeze({ insight: 'insight', compassion: 'compassion', ambition: 'ambition' });
 export const ENDINGS = Object.freeze({ keeper: 'keeper', light: 'light', flight: 'flight' });
@@ -223,19 +225,35 @@ export function installGearAndRevealTrapdoor(state) {
   return next;
 }
 
-export function createSave(state, run) {
+export function createSave(state, run, expedition = createInitialExpedition()) {
   if (!isValidState(state) || !isValidRun(run)) throw new Error('Cannot save an invalid chronicle.');
-  return { version: SAVE_VERSION, savedAt: new Date().toISOString(), state: structuredClone(state), run: structuredClone(run) };
+  if (!isValidExpedition(expedition)) throw new Error('Cannot save an invalid expedition.');
+  return { version: SAVE_VERSION, savedAt: new Date().toISOString(), state: structuredClone(state), run: structuredClone(run), expedition: structuredClone(expedition) };
+}
+
+function migrateExpeditionV3(expedition) {
+  const era = expedition?.eras?.babylon;
+  if (!era || typeof era !== 'object' || era.attempt === null || !Number.isInteger(era.attempt?.seed) || era.attempt.seed < 0) return expedition;
+  return {
+    ...expedition,
+    eras: {
+      ...expedition.eras,
+      babylon: { ...era, attempt: { seed: era.attempt.seed, stage: 'investigate', outcome: null, failureCategory: null } }
+    }
+  };
 }
 
 export function parseSave(raw) {
   try {
     let value = typeof raw === 'string' ? JSON.parse(raw) : raw;
     if (value?.version === 1) {
-      value = { ...value, version: SAVE_VERSION, state: { ...value.state, dialogue: initialDialogue(), notes: initialNotes() } };
+      value = { ...value, version: 2, state: { ...value.state, dialogue: initialDialogue(), notes: initialNotes() } };
     }
+    if (value?.version === 2) value = { ...value, version: SAVE_VERSION, expedition: createInitialExpedition() };
+    if (value?.version === 3) value = { ...value, version: SAVE_VERSION, expedition: migrateExpeditionV3(value.expedition) };
     if (!value || value.version !== SAVE_VERSION || !isValidState(value.state) || !isValidRun(value.run)) return null;
-    return { version: SAVE_VERSION, savedAt: value.savedAt, state: structuredClone(value.state), run: structuredClone(value.run) };
+    const expedition = isValidExpedition(value.expedition) ? value.expedition : createInitialExpedition();
+    return { version: SAVE_VERSION, savedAt: value.savedAt, state: structuredClone(value.state), run: structuredClone(value.run), expedition: structuredClone(expedition) };
   } catch {
     return null;
   }

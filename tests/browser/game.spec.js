@@ -166,12 +166,12 @@ test('ID-002: a migrated bread reward still permits the baker dialogue without d
   await expect.poll(() => page.evaluate(key => JSON.parse(localStorage.getItem(key)).state.dialogue.choices.baker, saveKey)).toBe('compassion');
 });
 
-test('ID-001: Leonardo’s terminal dialogue retains focus and cannot be escaped', async ({ page }) => {
+test('ID-001: Leonardo’s terminal dialogue requires a finale choice', async ({ page }) => {
   const finalState = {
     scene: 'workshop', inv: ['ornatekey'], selected: 'ornatekey',
     flags: { ...baseFlags, mirrorTaken: true, noteRead: true, keyTaken: true, breadTaken: true, gearTaken: true, gearInstalled: true, trapdoorShown: true, chestOpen: true, lensTaken: true, cipherSeen: true, boxOpen: true, ornateTaken: true },
     secrets,
-    dialogue: { choices: { matteo: null, baker: 'compassion' }, ending: null },
+    dialogue: { choices: { matteo: 'insight', baker: 'compassion' }, ending: null },
     notes: { window: false, easel: false, candle: false, candelabra: false, duomoview: false }
   };
   await setChronicle(page, finalState, 2);
@@ -179,16 +179,20 @@ test('ID-001: Leonardo’s terminal dialogue retains focus and cannot be escaped
   await page.locator('[data-hs="trapdoor"]').click();
   const dialogue = page.getByRole('dialog', { name: 'Leonardo’s Lesson' });
   const light = page.getByRole('button', { name: 'Put the designs to Florence’s service' });
+  const choices = dialogue.locator('button:not([disabled]):not([hidden])');
   await expect(dialogue).toBeVisible({ timeout: 5_000 });
+  await expect(choices).toHaveCount(2);
+  await expect(choices.first()).toBeFocused();
+  await expect(page.getByRole('button', { name: 'Return to the Study' })).toHaveCount(0);
+  await light.focus();
   await expect(light).toBeFocused();
-  await page.keyboard.press('Shift+Tab');
-  await expect(page.getByRole('button', { name: 'Return to the Study' })).toBeFocused();
   await page.keyboard.press('Tab');
+  await expect(choices.first()).toBeFocused();
+  await page.keyboard.press('Shift+Tab');
   await expect(light).toBeFocused();
   await page.keyboard.press('Escape');
   await expect(dialogue).toBeVisible();
-  await light.click();
-  await expect(page.getByRole('dialog', { name: 'Florence’s Light' })).toBeVisible();
+  await expect.poll(() => page.evaluate(key => JSON.parse(localStorage.getItem(key)).state.dialogue.ending, saveKey)).toBeNull();
 });
 
 test('ID-001: Brother Matteo keeps the monk cipher route after a dialogue choice', async ({ page }) => {

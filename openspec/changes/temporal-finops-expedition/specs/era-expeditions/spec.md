@@ -22,6 +22,13 @@ Each era SHALL contain exactly one trial whose mechanics use that era's document
 - **WHEN** the trial is generated twice and the same answers are evaluated
 - **THEN** both runs produce identical parameters, identical verdicts, and identical mastery deltas
 
+#### Scenario: Audit transitions cannot be bypassed
+
+- **GIVEN** a Babylon attempt is persisted
+- **WHEN** an invalid stage, outcome, failure category, or direct debrief-completion request is supplied
+- **THEN** the state transition is rejected
+- **AND THEN** only the authored investigate → audit → grain → rate → seal → evaluated route can award Babylon credit or its invention
+
 #### Scenario: Every generated trial is solvable
 
 - **GIVEN** any seed across the tested seed range for each of the seven trials
@@ -84,7 +91,7 @@ Each era SHALL ship three authored realistic images unique to its civilization �
 
 - **GIVEN** the site is served statically with no network beyond the page itself
 - **WHEN** the player enters any era
-- **THEN** the backdrop, mentor portrait, and trial tableau render from local assets and each exposes its authored alt text
+- **THEN** the backdrop, mentor portrait, and trial tableau render from local assets and each exposes its authored alt text through a semantic image or equivalent accessible description
 
 #### Scenario: Dialogue stays readable over imagery
 
@@ -107,3 +114,11 @@ Each era SHALL follow investigate → hypothesize → test → consequence: two 
 - **GIVEN** the Babylon clues establish a suspicious ledger entry
 - **WHEN** the player chooses and tests a valid reconciliation plan
 - **THEN** the ledger/storehouse state visibly changes, the mentor reacts, and the debrief follows that consequence
+
+#### Scenario: Babylon reconciliation teaches before it tests
+
+- **GIVEN** the player has recorded Babylon's jar seals, damp tablet, and stele clues
+- **WHEN** they prepare the reconciliation
+- **THEN** the trial presents the sealed deliveries, the tablet's disputed claim, and the public silver rule beside the relevant choice
+- **AND** the player must flag the doubtful tablet, establish the evidence-backed grain total, and apply the lawful rate in that order
+- **AND** an incorrect intermediate choice explains the evidence or rule before the player can continue

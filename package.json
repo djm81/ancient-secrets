@@ -6,7 +6,7 @@
     "test": "node --test tests/*.test.js",
     "test:browser": "playwright test",
     "test:a11y": "playwright test --grep @a11y",
-    "check": "node --check js/game-core.js && node --check js/guidance-client.js && node --check js/browser-storage.js && node --check js/runtime-config.js && node --check js/save-recovery.js && node --check js/era-packs.js && node --check js/pwa-lifecycle.js && node --check service-worker.js && node --check workers/maestro-guide.js"
+    "check": "node --check js/game-core.js && node --check js/expedition-core.js && node --check js/era-content.js && node --check js/guidance-client.js && node --check js/browser-storage.js && node --check js/runtime-config.js && node --check js/save-recovery.js && node --check js/era-packs.js && node --check js/pwa-lifecycle.js && node --check service-worker.js && node --check workers/maestro-guide.js"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.11.0",

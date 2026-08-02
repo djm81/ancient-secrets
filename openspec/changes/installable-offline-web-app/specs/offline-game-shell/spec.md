@@ -4,13 +4,19 @@
 
 ### Requirement: OGS-001 A successful online launch enables offline core play
 
-After one successful online launch, the cached core game SHALL launch and resume a valid chronicle with network disabled, including authored guidance, local art, and local fonts.
+After one successful online launch, the cached core game SHALL launch and resume a valid chronicle with network disabled, including authored guidance and local fonts. Era art SHALL be cached in the active release after the player first enters that era online, then remain available for that era offline.
 
 #### Scenario: Offline resume
 
 - **GIVEN** a player previously launched the current game version online and saved a valid chronicle
 - **WHEN** they disable network access and launch the installed app
 - **THEN** the chronicle resumes and authored guidance remains usable without a network error
+
+#### Scenario: Visited era artwork remains offline
+
+- **GIVEN** a player entered Babylon online under the current release
+- **WHEN** they later disable network access and revisit Babylon
+- **THEN** its local backdrop, mentor portrait, and trial tableau resolve from the active release cache
 
 ### Requirement: OGS-002 The cache excludes remote and AI-sensitive traffic
 
@@ -37,6 +43,12 @@ A newly available service-worker version SHALL wait until explicit restart or a 
 - **GIVEN** two open chronicles are controlled by the current worker and a newer worker is waiting
 - **WHEN** the player in one chronicle chooses restart with the new edition
 - **THEN** only that chronicle reloads into the new edition, while the other remains controlled by its existing worker and can resolve its original cached assets
+
+#### Scenario: A refreshed client does not mix shell versions
+
+- **GIVEN** a browser is controlled by an older cached shell
+- **WHEN** it explicitly restarts or opens a release-revision URL while online
+- **THEN** its HTML, modules, and local era art resolve to the same current release rather than combining new markup with stale cached assets
 
 ### Requirement: OGS-004 Save recovery is local, explicit, and schema-validated
 

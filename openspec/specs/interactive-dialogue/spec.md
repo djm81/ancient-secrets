@@ -25,6 +25,12 @@ Brother Matteo and the baker SHALL each offer exactly one authored value choice:
 - **WHEN** the player presses Escape or cycles keyboard focus
 - **THEN** the ending choices remain available and keyboard focus stays within the dialogue until an ending is selected
 
+#### Scenario: A terminal dialogue offers no dead-end exit
+
+- **GIVEN** Leonardo's final dialogue is open
+- **WHEN** the player reviews its controls
+- **THEN** only earned ending choices are available; **Return to the Study** is not offered because the Secret Study has no onward navigation before an ending is selected
+
 ### Requirement: ID-002 Chronicles retain compatible dialogue data
 
 The game SHALL migrate valid version-1 saves with empty dialogue and Field Notes data. Invalid dialogue or ending data SHALL invalidate the chronicle safely.

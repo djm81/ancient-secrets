@@ -1,4 +1,4 @@
-import { fallbackGuidance, summarizeForGuidance, validateGuidance } from './game-core.js';
+import { fallbackGuidance, summarizeForGuidance, validateGuidance } from './game-core.js?rev=v14';
 
 export async function requestGuidance(state, tier, endpoint = '') {
   const fallback = fallbackGuidance(state, tier);

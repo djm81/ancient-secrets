@@ -1,14 +1,15 @@
-const CACHE_VERSION = 'maestros-secret-shell-v1';
+const CACHE_VERSION = 'maestros-secret-shell-v15';
 const CORE_ASSETS = [
   './', './index.html', './maestros-secret.html', './manifest.webmanifest',
-  './js/game-core.js', './js/guidance-client.js', './js/browser-storage.js', './js/runtime-config.js',
-  './js/save-recovery.js', './js/era-packs.js', './js/pwa-lifecycle.js',
+  './js/game-core.js?rev=v14', './js/expedition-core.js?rev=v14', './js/era-content.js?rev=v14', './js/guidance-client.js?rev=v14', './js/browser-storage.js?rev=v14', './js/runtime-config.js?rev=v14',
+  './js/save-recovery.js?rev=v14', './js/pwa-lifecycle.js?rev=v15',
   './assets/fonts/fonts.css', './assets/fonts/cinzel-500.ttf', './assets/fonts/cinzel-600.ttf',
   './assets/fonts/cinzel-700.ttf', './assets/fonts/eb-garamond-400.ttf', './assets/fonts/eb-garamond-500.ttf',
   './assets/fonts/eb-garamond-italic-400.ttf', './assets/icons/app-192.png', './assets/icons/app-512.png',
   './assets/dialogue/baker-piazza.webp', './assets/dialogue/baker-piazza-compact.webp',
   './assets/dialogue/brother-matteo-scriptorium.webp', './assets/dialogue/brother-matteo-scriptorium-compact.webp',
-  './assets/dialogue/maestro-secret-study.webp', './assets/dialogue/maestro-secret-study-compact.webp'
+  './assets/dialogue/maestro-secret-study.webp', './assets/dialogue/maestro-secret-study-compact.webp',
+  './assets/eras/babylon/temple-ledger.jpg?rev=v8', './assets/eras/babylon/temple-scribe.jpg?rev=v8', './assets/eras/babylon/grain-tablets.jpg?rev=v8'
 ];
 
 const cacheName = () => CACHE_VERSION;
@@ -39,9 +40,8 @@ self.addEventListener('fetch', event => {
   const url = new URL(request.url);
   if (url.origin !== self.location.origin || url.pathname.includes('/workers/') || /(?:model|ai)(?:[/-]|$)/i.test(url.pathname)) return;
   if (request.mode === 'navigate') {
-    event.respondWith(caches.match(request).then(cached => cached || fetch(request)
-      .then(response => response)
-      .catch(() => caches.match(offlineGame()))));
+    event.respondWith(fetch(request).catch(() => caches.open(cacheName())
+      .then(cache => cache.match(request,{ignoreSearch:true}).then(cached => cached || cache.match(offlineGame())))));
     return;
   }
   event.respondWith(caches.match(request).then(cached => cached || fetch(request)));

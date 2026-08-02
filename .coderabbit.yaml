@@ -1,0 +1,97 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+#
+# CodeRabbit supplements (and never replaces) AGENTS.md, OpenSpec evidence, and
+# local quality gates. `base_branches` explicitly includes `dev`, the active
+# integration branch. See https://docs.coderabbit.ai/reference/configuration.
+
+language: "en-US"
+early_access: false
+tone_instructions: >-
+  Focus on material correctness, security, privacy, accessibility, deterministic
+  game state, offline/cache lifecycle, and OpenSpec traceability. Skip trivial
+  style and formatting nits covered by repository gates.
+
+reviews:
+  profile: chill
+  request_changes_workflow: false
+  high_level_summary: true
+  high_level_summary_in_walkthrough: true
+  review_details: true
+  sequence_diagrams: true
+  estimate_code_review_effort: true
+  assess_linked_issues: true
+  related_issues: true
+  related_prs: true
+  poem: false
+  collapse_walkthrough: true
+  changed_files_summary: true
+  review_status: true
+  commit_status: true
+  high_level_summary_instructions: |
+    Structure the summary for The Maestro's Secret maintainers:
+    - Player-visible behavior and affected game path.
+    - Static-first, offline/cache, privacy, accessibility, or deployment impact.
+    - OpenSpec change ID and requirement/evidence alignment.
+    - Tests and manual validation run, including known limits or follow-up device checks.
+  auto_review:
+    enabled: true
+    drafts: false
+    auto_incremental_review: true
+    auto_pause_after_reviewed_commits: 0
+    # Review the integration branch as well as the GitHub Pages source branch.
+    base_branches:
+      - "^dev$"
+      - "^main$"
+  path_instructions:
+    - path: "js/**/*.js"
+      instructions: |
+        Preserve deterministic, static-first progression and the explicit browser-storage migration
+        contract. Flag player-state regressions, unsafe DOM handling, broken keyboard/focus feedback,
+        and any path that makes optional AI guidance necessary to progress.
+    - path: "maestros-secret.html"
+      instructions: |
+        Review semantic controls, keyboard operation, focus handling, high-contrast/reduced-motion
+        behavior, responsive interaction surfaces, and player-visible dialogue/game-state wiring.
+    - path: "service-worker.js"
+      instructions: |
+        Treat cache changes as release compatibility work. Check explicit same-origin GET precache
+        boundaries, version/update flow, stale-module risk, and offline fallback behavior; never
+        widen caching to secrets, POST requests, remote origins, or optional AI traffic.
+    - path: "workers/**/*.js"
+      instructions: |
+        Treat the Worker as an untrusted optional guidance boundary. Verify strict request validation,
+        origin/rate-limit protections, no secrets in browser payloads, and authored fallback parity.
+    - path: "openspec/**/*.md"
+      instructions: |
+        Treat OpenSpec as the source of truth. Flag drift among proposal, design, specs, tasks,
+        TDD evidence, validation matrix, implementation, and README claims.
+    - path: "tests/**/*.js"
+      instructions: |
+        Prefer deterministic, behavior-focused coverage. Flag flaky browser assertions, stale cache
+        assumptions, missing accessibility coverage, and tests that do not prove changed requirements.
+    - path: ".github/workflows/**"
+      instructions: |
+        Check workflow safety, least-privilege permissions, action pinning, and alignment with the
+        documented Node, unit, browser, and accessibility quality gates.
+    - path: "README.md"
+      instructions: |
+        Check that player-facing and engineering claims distinguish implemented behavior from plans,
+        preserve the static-first/privacy boundary, and match current validation commands.
+  tools:
+    semgrep:
+      enabled: true
+    yamllint:
+      enabled: true
+    actionlint:
+      enabled: true
+    shellcheck:
+      enabled: true
+  pre_merge_checks:
+    title:
+      mode: warning
+      requirements: "Prefer Conventional Commits-style prefixes (feat:, fix:, docs:, test:, refactor:, chore:)."
+    issue_assessment:
+      mode: warning
+
+chat:
+  auto_reply: true

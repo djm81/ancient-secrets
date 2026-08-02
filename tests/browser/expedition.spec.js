@@ -66,6 +66,7 @@ test('the Codex return restores the completed-story conclusion', async ({ page }
   await page.getByRole('button', { name: 'Enter the Codex Rationum' }).click();
   await page.getByRole('button', { name: 'Return to the story conclusion' }).click();
   await expect(page.locator('#endmodal')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Florence’s Light' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Enter the Codex Rationum' })).toBeVisible();
 });
 
@@ -80,6 +81,7 @@ test('review follow-up: Escape from the Codex restores the completed-story concl
   await page.getByRole('button', { name: 'Enter the Codex Rationum' }).click();
   await page.keyboard.press('Escape');
   await expect(page.locator('#endmodal')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Florence’s Light' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Enter the Codex Rationum' })).toBeVisible();
 });
 

@@ -58,7 +58,9 @@ test('OGS-001: offline navigation fallback uses only the active release cache', 
         assert.equal(name, 'maestros-secret-shell-v15');
         return { match: async (request, options) => {
           matches.push({ request: String(request), options });
-          return new Response('active shell');
+          return request === 'https://example.test/ancient-secrets/maestros-secret.html'
+            ? new Response('active shell')
+            : undefined;
         } };
       },
       match: async () => { throw new Error('global cache lookup can select an older release'); }
@@ -77,8 +79,10 @@ test('OGS-001: offline navigation fallback uses only the active release cache', 
   });
   const response = await responseWork;
   assert.equal(await response.text(), 'active shell');
-  assert.equal(matches.length, 1);
+  assert.equal(matches.length, 2);
   assert.equal(matches[0].options.ignoreSearch, true);
+  assert.equal(matches[1].request, 'https://example.test/ancient-secrets/maestros-secret.html');
+  assert.equal(matches[1].options, undefined);
 });
 
 test('OGS-003: accepting an update retains other clients’ caches and only notifies the requesting client', async () => {

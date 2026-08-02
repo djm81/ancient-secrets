@@ -18,6 +18,14 @@ Status: **Wave A in progress** — Babylon is the first vertical slice. Assumpti
 
 ## Entries
 
+### Review follow-up — prove the completed conclusion survives every Codex exit
+- Spec refs: TH-001, TH-004.
+- Tests: `tests/browser/expedition.spec.js` — explicit return and Escape from the Codex.
+- Command: `npm run test:browser -- tests/browser/expedition.spec.js --grep "completed-story conclusion"`.
+- Expected failing result / justified exception: 2026-08-02 20:32 CEST — this is a coverage-only review follow-up: the production route already restores the ending modal, so no production behavior is expected to fail. The prior tests were insufficient because they asserted only modal/button visibility, not the selected ending’s content.
+- Implementation reference: strengthen both flows to assert the stable `Florence’s Light` ending title after returning from the Codex.
+- Passing evidence: 2026-08-02 20:33 CEST — the focused Playwright regression passed 2/2; explicit return and Escape both restored the visible `Florence’s Light` conclusion before exposing the Codex entry.
+
 ### Review follow-up — recoverable Codex exit and truthful Babylon withdrawal
 - Spec refs: TH-001, EE-003, EE-007, MD-001, MD-002.
 - Tests: `tests/browser/expedition.spec.js` and `tests/expedition-core.test.js`.

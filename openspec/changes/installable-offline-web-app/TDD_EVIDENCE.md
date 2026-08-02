@@ -68,3 +68,11 @@ For each task record: requirement IDs, test and command, dated failing evidence,
 - **Failing evidence:** 2026-08-02 20:03 CEST — the new worker-runtime regression threw `global cache lookup can select an older release`; source checks also found the v14 registration/cache contract, confirming that a retained older cache could satisfy the navigation fallback.
 - **Passing evidence:** 2026-08-02 20:05 CEST — `node --test tests/expedition-core.test.js tests/offline-shell.test.js` passed 10/10. The worker opens `maestros-secret-shell-v15` and uses only that cache for the navigation request and offline-game fallback; the registration and precached lifecycle module advance to v15 together. Final regression at 20:08 CEST: `npm run test:browser` passed 52/52 and `npm run test:a11y` passed 4/4.
 - **Documentation scope:** exact revision matching applies to static modules/art; `ignoreSearch` is confined to the active-cache navigation fallback. The v8/v9/v11 records above are historical checkpoints, not current-release evidence.
+
+## Review follow-up — execute the active-cache offline-game fallback
+
+- **Requirements:** OGS-001, OGS-003.
+- **Test and command:** `node --test tests/offline-shell.test.js`.
+- **Expected failing result / justified exception:** 2026-08-02 20:32 CEST — this is a test-only coverage repair. The worker already calls `cache.match(offlineGame())`; the existing mock returned the shell on its first lookup, so the fallback branch was not exercised. No production behavior is expected to fail.
+- **Implementation reference:** make the first active-cache lookup miss, return the shell only for the exact `offlineGame()` URL, and assert both calls and their distinct options.
+- **Passing evidence:** 2026-08-02 20:33 CEST — `node --test tests/offline-shell.test.js` passed 5/5. The simulation recorded a query-insensitive request miss, then an exact offline-game lookup without `ignoreSearch`, returning the active shell.

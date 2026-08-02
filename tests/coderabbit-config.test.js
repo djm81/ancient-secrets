@@ -12,9 +12,9 @@ const config = await readFile(new URL('../.coderabbit.yaml', import.meta.url), '
 
 async function checkConfig(source) {
   const directory = await mkdtemp(join(tmpdir(), 'maestros-coderabbit-'));
-  const configPath = join(directory, '.coderabbit.yaml');
-  await writeFile(configPath, source);
   try {
+    const configPath = join(directory, '.coderabbit.yaml');
+    await writeFile(configPath, source);
     return await execFileAsync('ruby', ['scripts/check-coderabbit-config.rb'], {
       cwd: root,
       env: { ...process.env, CODERABBIT_CONFIG: configPath }

@@ -9,6 +9,13 @@ Discipline: spec → tests → **failing evidence** → implementation → **pas
 - Expected failing result / justified exception: 2026-08-02 — the checked-in configuration already enables automatic review and contains every policy path, so this is a coverage repair. The existing checker can nevertheless pass if `enabled` is false or runtime, HTML, Worker, test, or workflow guidance is removed. New negative fixtures must fail for those cases before the contract implementation is extended.
 - Passing evidence: 2026-08-02 22:28 CEST — `node --test tests/coderabbit-config.test.js tests/offline-shell.test.js` passed 9/9 and `ruby scripts/check-coderabbit-config.rb` printed `CodeRabbit review-policy contract valid`. Negative fixtures reject `enabled: false` and altered service-worker policy text; the checker now validates every required path and its policy fragments. Final gates at 22:31 CEST: `npm run check`, `npm test` (52/52), `npm run test:browser` (54/54), and `npm run test:a11y` (4/4) passed.
 
+## Review follow-up — fixture cleanup covers setup failure
+
+- Spec refs: automated-pr-review local contract reliability.
+- Test and command: `node --test tests/coderabbit-config.test.js`.
+- Expected failing result / justified exception: 2026-08-02 — this is a test-fixture reliability repair. Static inspection shows `writeFile` occurs before the `try`/`finally`, so an I/O failure can leave the temporary directory behind. The failure path is impractical to induce portably without adding test-only filesystem injection; the existing contract test verifies the helper’s normal setup and cleanup path.
+- Passing evidence: 2026-08-02 — `node --test tests/coderabbit-config.test.js` passed 2/2 after fixture setup moved inside the cleanup guard. Required final local gates also passed: `npm run check`, `npm test` (52/52), strict OpenSpec validation, and `git diff --check`.
+
 ## AD-001 — repository-owned review policy
 
 - Spec refs: automated-pr-review requirements 1–3.

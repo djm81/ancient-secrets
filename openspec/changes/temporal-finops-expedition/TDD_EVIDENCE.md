@@ -18,6 +18,14 @@ Status: **Wave A in progress** — Babylon is the first vertical slice. Assumpti
 
 ## Entries
 
+### Security review follow-up — never render Babylon select values as markup
+- Spec refs: EE-002, EE-005, EE-007.
+- Test: `tests/browser/expedition.spec.js` — hostile Babylon selection stays text.
+- Command: `npm run test:browser -- tests/browser/expedition.spec.js --grep "hostile Babylon selection"`.
+- Expected failing result: 2026-08-02 21:11 CEST — the new regression will add a forged `<button>` option to the grain select. The current handler reads its DOM `.value` and interpolates it into `trialFeedback`, so a same-ID control is created when the trial rerenders.
+- Implementation reference: derive selections from the authored option index and only render the corresponding static values.
+- Passing evidence: 2026-08-02 21:12 CEST — the focused Playwright regression passed 1/1. The forged option produced no `#injected-control`; the reconciliation uses only the authored option at the selected index. Final regression at 21:15 CEST: `npm run test:browser` passed 53/53 and `npm run test:a11y` passed 4/4.
+
 ### Review follow-up — prove the completed conclusion survives every Codex exit
 - Spec refs: TH-001, TH-004.
 - Tests: `tests/browser/expedition.spec.js` — explicit return and Escape from the Codex.

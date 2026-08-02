@@ -94,6 +94,20 @@ test('review follow-up: a rejected grain total reaches its specific withdrawal d
   await expect(page.getByText('The seals and the tablet disagree. Before a steward can allocate grain, the record must describe what actually arrived.')).toBeVisible();
 });
 
+test('security review: a hostile Babylon selection is never reinterpreted as HTML', async ({ page }) => {
+  await openBabylonAudit(page);
+  await page.getByRole('button', { name: 'Mark the tablet line as doubtful' }).click();
+  await page.locator('#babylon-delivery').evaluate(select => {
+    const forged = document.createElement('option');
+    forged.value = '<button id="injected-control">Injected control</button>';
+    forged.textContent = 'Forged entry';
+    select.append(forged);
+    select.selectedIndex = select.options.length - 1;
+  });
+  await page.getByRole('button', { name: 'Confirm the corrected total' }).click();
+  await expect(page.locator('#injected-control')).toHaveCount(0);
+});
+
 test('review follow-up: a rejected silver rate reaches its specific withdrawal debrief', async ({ page }) => {
   await openBabylonAudit(page);
   await page.getByRole('button', { name: 'Mark the tablet line as doubtful' }).click();

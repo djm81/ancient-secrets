@@ -1,8 +1,8 @@
-const CACHE_VERSION = 'maestros-secret-shell-v15';
+const CACHE_VERSION = 'maestros-secret-shell-v16';
 const CORE_ASSETS = [
   './', './index.html', './maestros-secret.html', './manifest.webmanifest',
   './js/game-core.js?rev=v14', './js/expedition-core.js?rev=v14', './js/era-content.js?rev=v14', './js/guidance-client.js?rev=v14', './js/browser-storage.js?rev=v14', './js/runtime-config.js?rev=v14',
-  './js/save-recovery.js?rev=v14', './js/pwa-lifecycle.js?rev=v15',
+  './js/save-recovery.js?rev=v14', './js/pwa-lifecycle.js?rev=v16',
   './assets/fonts/fonts.css', './assets/fonts/cinzel-500.ttf', './assets/fonts/cinzel-600.ttf',
   './assets/fonts/cinzel-700.ttf', './assets/fonts/eb-garamond-400.ttf', './assets/fonts/eb-garamond-500.ttf',
   './assets/fonts/eb-garamond-italic-400.ttf', './assets/icons/app-192.png', './assets/icons/app-512.png',

@@ -76,3 +76,11 @@ For each task record: requirement IDs, test and command, dated failing evidence,
 - **Expected failing result / justified exception:** 2026-08-02 20:32 CEST — this is a test-only coverage repair. The worker already calls `cache.match(offlineGame())`; the existing mock returned the shell on its first lookup, so the fallback branch was not exercised. No production behavior is expected to fail.
 - **Implementation reference:** make the first active-cache lookup miss, return the shell only for the exact `offlineGame()` URL, and assert both calls and their distinct options.
 - **Passing evidence:** 2026-08-02 20:33 CEST — `node --test tests/offline-shell.test.js` passed 5/5. The simulation recorded a query-insensitive request miss, then an exact offline-game lookup without `ignoreSearch`, returning the active shell.
+
+## Security review follow-up — propagate the Babylon DOM-XSS repair offline
+
+- **Requirements:** OGS-001, OGS-003.
+- **Test and command:** `node --test tests/offline-shell.test.js`.
+- **Expected failing result:** 2026-08-02 21:12 CEST — the strengthened release contract will require cache and lifecycle revision v16. The current v15 shell would retain the prior `maestros-secret.html` while offline.
+- **Implementation reference:** advance the service-worker cache and registration revision together so a standard update precaches the repaired HTML.
+- **Passing evidence:** 2026-08-02 21:13 CEST — `node --test tests/offline-shell.test.js` passed 5/5. The worker opens `maestros-secret-shell-v16`, and the HTML imports and lifecycle registration both use v16. Final regression at 21:15 CEST: `npm run check` passed, `npm test` passed 47/47, and `npm run test:browser` passed 53/53.

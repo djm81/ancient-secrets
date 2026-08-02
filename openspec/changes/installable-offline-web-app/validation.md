@@ -14,8 +14,9 @@ Status: **in progress** — automated requirements and native desktop Chrome/Saf
 
 ## Cache-coherence regression — 2026-08-02
 
-- Historical v8/v9 checkpoints established revisioned assets and replay behavior. The current v15 shell matches static modules/art by their exact revisioned URLs, while a failed navigation opens only `maestros-secret-shell-v15` and uses `ignoreSearch` only within that active cache. This prevents both mixed-release static assets and an older retained cache winning the offline shell fallback.
+- Historical v8/v9 checkpoints established revisioned assets and replay behavior. The v15 review checkpoint matched static modules/art by their exact revisioned URLs, while a failed navigation opened only `maestros-secret-shell-v15` and used `ignoreSearch` only within that active cache. This prevents both mixed-release static assets and an older retained cache winning the offline shell fallback.
 - The new deterministic worker-runtime check passed in the 2026-08-02 20:05 CEST regression suite (10/10 combined unit/offline tests); focused Babylon browser review regressions passed 3/3. Final browser regression passed 52/52 and accessibility regression 4/4 at 20:08 CEST. Browser/device installation certification remains pending.
+- Security follow-up at 21:13 CEST: the Babylon DOM-XSS repair advances the worker and lifecycle registration to `maestros-secret-shell-v16`. `node --test tests/offline-shell.test.js` passed 5/5, proving the active v16 cache and matching lifecycle registration; installed-device update confirmation remains pending.
 
 ## Native desktop manual smoke evidence — 2026-07-29
 

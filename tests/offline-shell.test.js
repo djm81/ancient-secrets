@@ -29,7 +29,7 @@ test('OGS-001 and OGS-002: the service worker precaches the local shell and excl
 
 test('OGS-003 and PWA-002: the game registers a waiting worker and only exposes install UI when it is actionable', () => {
   assert.match(gamePage, /startOfflineAppLifecycle\(\)/);
-  assert.match(lifecycle, /register\(['"]\.\/service-worker\.js\?rev=v15['"]/);
+  assert.match(lifecycle, /register\(['"]\.\/service-worker\.js\?rev=v16['"]/);
   assert.match(lifecycle, /beforeinstallprompt/);
   assert.match(lifecycle, /SKIP_WAITING/);
   assert.match(gamePage, /id="installbtn"/);
@@ -40,7 +40,7 @@ test('OGS-003 and PWA-002: the game registers a waiting worker and only exposes 
 test('OGS-001 and OGS-003: a refreshed release uses matching revisioned local assets', () => {
   assert.match(gamePage, /\.\/js\/game-core\.js\?rev=v14/);
   assert.match(gamePage, /\.\/js\/era-content\.js\?rev=v14/);
-  assert.match(lifecycle, /\.\/service-worker\.js\?rev=v15/);
+  assert.match(lifecycle, /\.\/service-worker\.js\?rev=v16/);
   assert.match(gameCore, /\.\/expedition-core\.js\?rev=v14/);
   assert.match(expeditionCore, /\.\/era-content\.js\?rev=v14/);
   assert.match(eraContent, /grain-tablets\.jpg\?rev=v8/);
@@ -55,7 +55,7 @@ test('OGS-001: offline navigation fallback uses only the active release cache', 
     URL,
     caches: {
       open: async name => {
-        assert.equal(name, 'maestros-secret-shell-v15');
+        assert.equal(name, 'maestros-secret-shell-v16');
         return { match: async (request, options) => {
           matches.push({ request: String(request), options });
           return request === 'https://example.test/ancient-secrets/maestros-secret.html'
@@ -74,7 +74,7 @@ test('OGS-001: offline navigation fallback uses only the active release cache', 
   });
 
   handlers.get('fetch')({
-    request: { method: 'GET', mode: 'navigate', url: 'https://example.test/ancient-secrets/maestros-secret.html?release=v15' },
+    request: { method: 'GET', mode: 'navigate', url: 'https://example.test/ancient-secrets/maestros-secret.html?release=v16' },
     respondWith: work => { responseWork = work; }
   });
   const response = await responseWork;

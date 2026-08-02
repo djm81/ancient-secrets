@@ -4,6 +4,13 @@ Status: **in progress** — automated A1–B3 evidence is recorded; optional era
 
 For each task record: requirement IDs, test and command, dated failing evidence, implementation reference, dated passing evidence, and any justified manual-device exception.
 
+## Review follow-up — scope lazy era-art runtime caching exactly
+
+- Requirements: OGS-002, OGS-003.
+- Test and command: `node --test tests/offline-shell.test.js`.
+- Expected failing result: 2026-08-02 — the worker currently uses `url.pathname.includes('/assets/eras/')`, so a same-origin near-match route can enter the active-cache era-art branch. The new runtime regression must prove that only the scope-relative `assets/eras/` prefix opens and writes the active cache.
+- Passing evidence: 2026-08-02 22:28 CEST — `node --test tests/coderabbit-config.test.js tests/offline-shell.test.js` passed 9/9. The worker derives the scope-relative `assets/eras/` pathname and uses `startsWith`; the near-match request reaches the ordinary static path without opening or writing the era-art cache. Final gates at 22:31 CEST: `npm run check`, `npm test` (52/52), `npm run test:browser` (54/54), and `npm run test:a11y` (4/4) passed.
+
 ## A1 — installable identity, direct launch, icons, and local font references
 
 - **Requirements:** PWA-001.

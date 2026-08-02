@@ -1,31 +1,31 @@
 # Validation matrix: temporal-finops-expedition
 
-Status: **pending** — populated per wave as evidence lands (see tasks.md). No implementation task may be marked complete while its row is pending.
+Status: **Wave A automated evidence recorded** — Babylon and its shared foundations have focused unit/browser evidence below. The remaining six eras, real-device offline confirmation, and the broader viewport matrix remain pending (see tasks.md).
 
 | Requirement | Evidence type | Evidence | Status |
 |---|---|---|---|
-| TH-001 hub gated on victory | unit (state gate) + manual | — | pending |
-| TH-002 fixed-choice era selection & statuses | unit (status machine) + manual | — | pending |
+| TH-001 hub gated on victory | unit (state gate) + browser/manual | `TDD_EVIDENCE.md` — “prove the completed conclusion survives every Codex exit” and “recoverable Codex exit”; Wave A browser notes below. | automated pass; broader device matrix pending |
+| TH-002 fixed-choice era selection & statuses | unit (status machine) + browser/manual | `TDD_EVIDENCE.md` — A2–A5 state machine and FM-002 revisit coverage; Wave A Babylon browser route. | automated pass; remaining eras pending |
 | TH-003 persistent invention reveals; gallery completion | unit (reveal set) + manual | — | pending |
 | TH-004 hub experience quality | manual (keyboard, reduced motion, announcements) | — | pending |
 | TH-005 three-act mystery and value-aware resolution | unit (act gate) + manual ending | — | pending |
 | EE-001 seven authored offline eras | unit (content completeness) + manual offline run | — | pending |
-| EE-002 deterministic, authentic, solvable trials | unit (seeded generation, solvability sweep) | — | pending |
+| EE-002 deterministic, authentic, solvable trials | unit (seeded generation, solvability sweep) | `TDD_EVIDENCE.md` — A2–A5 and “validate Babylon attempt transitions and malformed saves”; Babylon is swept across 48 deterministic seeds. | automated pass; remaining eras pending |
 | EE-003 withdraw semantics & failure categories | unit + manual | — | pending |
 | EE-004 era hints via bounded guidance | unit (fallback, enum validation) + manual | — | pending |
-| EE-005 era experience quality | manual | — | pending |
-| EE-006 era visual identity, dialogue-over-imagery, payload budget | unit (budget check, alt-text completeness) + manual (contrast, reduced motion) | — | pending |
-| EE-007 investigate → hypothesize → test → consequence loop | unit (plan/consequence state) + browser/manual | — | pending |
-| MD-001 debrief after every outcome | unit (routing) + manual | — | pending |
-| MD-002 fixed MCQ with per-option feedback | unit (bank stability) + manual | — | pending |
+| EE-005 era experience quality | browser + manual | `TDD_EVIDENCE.md` — readable feedback and semantic Babylon imagery; Wave A viewport notes below. | automated pass; real-device visual confirmation pending |
+| EE-006 era visual identity, dialogue-over-imagery, payload budget | unit (budget check, alt-text completeness) + browser/manual (contrast, reduced motion) | `TDD_EVIDENCE.md` — A6–A10 art/payload evidence and semantic imagery regression; Wave A 393 KiB budget and viewport notes below. | automated pass; all-era and real-device pass pending |
+| EE-007 investigate → hypothesize → test → consequence loop | unit (plan/consequence state) + browser/manual | `TDD_EVIDENCE.md` — “teach the reconciliation as an audit” and semantic imagery/single-source option coverage; Wave A audit route below. | automated pass; remaining eras pending |
+| MD-001 debrief after every outcome | unit (routing) + browser/manual | `TDD_EVIDENCE.md` — A6–A10 Babylon loop and validated attempt transitions. | automated pass; remaining eras pending |
+| MD-002 fixed MCQ with per-option feedback | unit (bank stability) + browser/manual | `TDD_EVIDENCE.md` — non-patterned Babylon debrief choices and recoverable withdrawal coverage. | automated pass; remaining eras pending |
 | MD-003 closing Codex dialogue & attribution | manual | — | pending |
-| MD-004 deterministic mastery scoring | unit | — | pending |
-| FM-001 per-domain mastery attribution | unit | — | pending |
-| FM-002 rank derivation; retry never demotes | unit | — | pending |
+| MD-004 deterministic mastery scoring | unit | `TDD_EVIDENCE.md` — A2–A5 pure expedition state and deterministic debrief-order coverage. | automated pass; broader era attribution pending |
+| FM-001 per-domain mastery attribution | unit | `TDD_EVIDENCE.md` — A2–A5 pure expedition state coverage. | automated pass; remaining eras pending |
+| FM-002 rank derivation; retry never demotes | unit + browser | `TDD_EVIDENCE.md` — A2–A5 and “revisit a completed era” coverage. | automated pass; remaining eras pending |
 | FM-003 honest local Ledger; no score egress | manual (UI + network inspection) | — | pending |
-| EC-001 ordered schema migration; mid-expedition/mid-trial resume | unit + manual refresh scenarios | — | pending |
-| EC-002 lossless v1/v2 migration | unit | — | pending |
-| EC-003 expedition-block degradation | unit | — | pending |
+| EC-001 ordered schema migration; mid-expedition/mid-trial resume | unit + manual refresh scenarios | `TDD_EVIDENCE.md` — A2–A5 migration registry and valid v3-to-v4 attempt migration. | automated pass; real-device refresh pending |
+| EC-002 lossless v1/v2 migration | unit | `TDD_EVIDENCE.md` — A2–A5 ordered migration registry. | automated pass |
+| EC-003 expedition-block degradation | unit | `TDD_EVIDENCE.md` — A2–A5 and truncated current-attempt regression. | automated pass |
 
 ## Manual scenario notes
 
@@ -51,4 +51,5 @@ Recorded here with date, browser, viewport (desktop + narrow), and observed beha
 - Review follow-up: 2026-08-02 — Escape from the Codex now restores the completed-story conclusion rather than leaving the player in the inert cellar. A withdrawn Babylon retry retains all recorded clues, and wrong grain/rate selections persist their specific failure category so Leonardo’s withdrawal debrief explains the actual audit mistake. The authored failure lookup rejects inherited object keys. Focused Playwright coverage passed 3/3; the service-worker release advances to v15 in the associated offline-shell change.
 - Security review follow-up: 2026-08-02 — a forged Babylon `<option>` value previously became an HTML control in reconciliation feedback. The focused Playwright regression first reproduced the injected control, then passed after the handler derived its value from the authored select index. The repaired page ships through the v16 offline release cache.
 - Review follow-up: 2026-08-02 — Babylon now persists and validates its audit stage and evaluated outcome; direct debrief completion, forged failure categories, and out-of-order transitions are rejected. Valid v3 attempts migrate to save version 4, while a truncated current attempt safely restores Florence with a fresh expedition. Every CSS-backed Babylon hero adds the corresponding authored scene description to the accessibility tree, and grain option ordering is single-sourced. Focused unit/browser coverage passed.
+- Review follow-up: 2026-08-02 22:30 CEST — the terminal-dialogue regression now proves Tab and Shift+Tab cycle only among enabled finale choices and never escape the dialog before a finale is selected. The Wave A matrix records the existing Babylon evidence rather than leaving implemented requirements marked pending.
 - Still required before Wave A can be declared fully validated: real-device and installed-app offline confirmation, plus the broader responsive-device evidence that remains outstanding in its own change.

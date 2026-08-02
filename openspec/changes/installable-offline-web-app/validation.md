@@ -18,6 +18,7 @@ Status: **in progress** — automated requirements and native desktop Chrome/Saf
 - The new deterministic worker-runtime check passed in the 2026-08-02 20:05 CEST regression suite (10/10 combined unit/offline tests); focused Babylon browser review regressions passed 3/3. Final browser regression passed 52/52 and accessibility regression 4/4 at 20:08 CEST. Browser/device installation certification remains pending.
 - Security follow-up at 21:13 CEST: the Babylon DOM-XSS repair advances the worker and lifecycle registration to `maestros-secret-shell-v16`. `node --test tests/offline-shell.test.js` passed 5/5, proving the active v16 cache and matching lifecycle registration; installed-device update confirmation remains pending.
 - Review follow-up at 21:50 CEST: Babylon era art is no longer part of install-time core precache. Its first online request is written only to `maestros-secret-shell-v17`, so a visited era remains offline-ready without downloading 393 KiB of era art for players who never enter the Codex. The worker-runtime regression passed; installed-device update confirmation remains pending.
+- Review follow-up at 22:28 CEST: lazy era-art caching now matches only the scope-relative `assets/eras/` prefix. A same-origin near-match remains on the ordinary static path and cannot open or write the active era-art cache; the focused worker/config suite passed 9/9.
 
 ## Native desktop manual smoke evidence — 2026-07-29
 

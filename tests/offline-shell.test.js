@@ -20,7 +20,7 @@ test('OGS-001 and OGS-002: the service worker precaches the local shell and excl
 
   const coreAssets = worker.match(/const CORE_ASSETS = \[([\s\S]*?)\];/)[1];
   assert.doesNotMatch(coreAssets, /assets\/eras\/babylon\//);
-  assert.match(worker, /url\.pathname\.includes\(['"]\/assets\/eras\/['"]\)/);
+  assert.match(worker, /url\.pathname\.startsWith\(eraAssetsPath\(\)\)/);
   assert.match(worker, /cache\.put\(request,response\.clone\(\)\)/);
 
   assert.match(worker, /request\.method\s*!==\s*['"]GET['"]/);
@@ -121,6 +121,33 @@ test('OGS-001: Babylon artwork enters only the active release cache after its fi
   const response = await responseWork;
   assert.equal(await response.text(), 'Babylon artwork');
   assert.deepEqual(cached, [{ request: '[object Object]', text: 'Babylon artwork' }]);
+});
+
+test('OGS-002: a same-origin near-match never enters the era-art runtime cache', async () => {
+  const handlers = new Map();
+  let cacheOpens = 0;
+  let responseWork;
+  vm.runInNewContext(worker, {
+    URL,
+    caches: {
+      open: async () => { cacheOpens += 1; return { match: async () => undefined, put: async () => {} }; },
+      match: async () => new Response('ordinary static response')
+    },
+    fetch: async () => { throw new Error('near-match must not fetch through the era-art cache'); },
+    self: {
+      registration: { scope: 'https://example.test/ancient-secrets/' },
+      location: { origin: 'https://example.test' },
+      addEventListener: (type, handler) => handlers.set(type, handler)
+    }
+  });
+
+  handlers.get('fetch')({
+    request: { method: 'GET', mode: 'cors', url: 'https://example.test/ancient-secrets/archive/assets/eras/babylon/grain-tablets.jpg' },
+    respondWith: work => { responseWork = work; }
+  });
+  const response = await responseWork;
+  assert.equal(await response.text(), 'ordinary static response');
+  assert.equal(cacheOpens, 0);
 });
 
 test('OGS-003: accepting an update retains other clients’ caches and only notifies the requesting client', async () => {

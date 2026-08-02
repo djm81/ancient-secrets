@@ -18,6 +18,12 @@ Status: **Wave A in progress** — Babylon is the first vertical slice. Assumpti
 
 ## Entries
 
+### Review follow-up — record evidence status and terminal-dialogue focus cycling
+- Spec refs: TH-001, EE-002, EE-005, EE-006, EE-007, MD-001, MD-002, MD-004, FM-001, FM-002, EC-001, EC-002, EC-003.
+- Tests and commands: `npm run test:browser -- tests/browser/game.spec.js --grep "terminal dialogue requires"`; validation-matrix review.
+- Expected failing result / justified exception: 2026-08-02 — this is an evidence and coverage repair. The terminal dialogue already traps focus, but the focused regression does not prove Tab and Shift+Tab wrapping; the Babylon requirements have passing evidence but their matrix rows still read `pending`.
+- Passing evidence: 2026-08-02 22:30 CEST — the focused Playwright terminal-dialogue test passed 1/1, proving Tab and Shift+Tab remain within the two enabled finale choices. The validation matrix now marks the evidenced Babylon/shared requirements as automated passes while retaining future-era and device work as pending. Final gates at 22:31 CEST: `npm run check`, `npm test` (52/52), `npm run test:browser` (54/54), and `npm run test:a11y` (4/4) passed.
+
 ### Review follow-up — validate Babylon attempt transitions and malformed saves
 - Spec refs: EC-003, EE-002, EE-003, MD-001, MD-004.
 - Tests and commands: `node --test tests/expedition-core.test.js tests/game-core.test.js`.

@@ -3,7 +3,7 @@
 | Requirement | Evidence type | Evidence | Status |
 |---|---|---|---|
 | Repository-owned CodeRabbit review policy | local YAML parse and content inspection | 2026-08-02 — Ruby/Psych parsed `.coderabbit.yaml`; inspected instructions cover runtime, HTML, service worker, optional Worker, OpenSpec, tests, workflows, and README without Python/CLI assumptions. | passed |
-| Automatic review covers `dev` and excludes drafts | checked-in Ruby/YAML contract | 2026-08-02 21:50 CEST — `ruby scripts/check-coderabbit-config.rb` asserted `^dev$`, `^main$`, `drafts: false`, `auto_incremental_review: true`, `auto_pause_after_reviewed_commits: 0`, and the OpenSpec/README documentation path instructions. | passed |
+| Automatic review covers `dev` and excludes drafts | checked-in Ruby/YAML contract + negative fixtures | 2026-08-02 22:28 CEST — `ruby scripts/check-coderabbit-config.rb` and `tests/coderabbit-config.test.js` assert `enabled: true`, `^dev$`, `^main$`, `drafts: false`, incremental review, no pause, and required non-empty guidance for every configured policy path. | passed |
 | Local configuration contract is documented | README inspection and checked-in command | 2026-08-02 21:50 CEST — README invokes the same credential-free `ruby scripts/check-coderabbit-config.rb` contract. | passed |
 
 ## Manual/service follow-up

@@ -13,6 +13,7 @@ const CORE_ASSETS = [
 
 const cacheName = () => CACHE_VERSION;
 const offlineGame = () => new URL('./maestros-secret.html', self.registration.scope).toString();
+const eraAssetsPath = () => new URL('./assets/eras/', self.registration.scope).pathname;
 let restartClientId = null;
 
 self.addEventListener('install', event => {
@@ -43,7 +44,7 @@ self.addEventListener('fetch', event => {
       .then(cache => cache.match(request,{ignoreSearch:true}).then(cached => cached || cache.match(offlineGame())))));
     return;
   }
-  if (url.pathname.includes('/assets/eras/')) {
+  if (url.pathname.startsWith(eraAssetsPath())) {
     event.respondWith(caches.open(cacheName()).then(async cache => {
       const cached = await cache.match(request);
       if (cached) return cached;

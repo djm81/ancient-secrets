@@ -14,3 +14,4 @@
 - [x] 3.2 Run `npm run check`, `npm test`, `git diff --check`, and the documented local contract check.
 - [x] 3.3 Inspect the changed configuration and README diff; record the result in `validation.md`.
 - [x] 3.4 Ensure the local contract and documentation cover both base branches, draft exclusion, and no incremental-review pause; review-follow-up evidence is recorded in `TDD_EVIDENCE.md`.
+- [x] 3.5 Verify automatic review is enabled and every configured policy path retains its required guidance; negative-fixture coverage is recorded in `TDD_EVIDENCE.md`.

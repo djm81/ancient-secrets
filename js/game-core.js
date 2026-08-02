@@ -1,7 +1,7 @@
-import { createInitialExpedition, isValidExpedition } from './expedition-core.js?rev=v14';
+import { createInitialExpedition, isValidExpedition } from './expedition-core.js?rev=v15';
 
 export const SAVE_KEY = 'maestros-secret:chronicle';
-export const SAVE_VERSION = 3;
+export const SAVE_VERSION = 4;
 
 export const DIALOGUE_VALUES = Object.freeze({ insight: 'insight', compassion: 'compassion', ambition: 'ambition' });
 export const ENDINGS = Object.freeze({ keeper: 'keeper', light: 'light', flight: 'flight' });
@@ -231,6 +231,18 @@ export function createSave(state, run, expedition = createInitialExpedition()) {
   return { version: SAVE_VERSION, savedAt: new Date().toISOString(), state: structuredClone(state), run: structuredClone(run), expedition: structuredClone(expedition) };
 }
 
+function migrateExpeditionV3(expedition) {
+  const era = expedition?.eras?.babylon;
+  if (!era || typeof era !== 'object' || era.attempt === null || !Number.isInteger(era.attempt?.seed) || era.attempt.seed < 0) return expedition;
+  return {
+    ...expedition,
+    eras: {
+      ...expedition.eras,
+      babylon: { ...era, attempt: { seed: era.attempt.seed, stage: 'investigate', outcome: null, failureCategory: null } }
+    }
+  };
+}
+
 export function parseSave(raw) {
   try {
     let value = typeof raw === 'string' ? JSON.parse(raw) : raw;
@@ -238,6 +250,7 @@ export function parseSave(raw) {
       value = { ...value, version: 2, state: { ...value.state, dialogue: initialDialogue(), notes: initialNotes() } };
     }
     if (value?.version === 2) value = { ...value, version: SAVE_VERSION, expedition: createInitialExpedition() };
+    if (value?.version === 3) value = { ...value, version: SAVE_VERSION, expedition: migrateExpeditionV3(value.expedition) };
     if (!value || value.version !== SAVE_VERSION || !isValidState(value.state) || !isValidRun(value.run)) return null;
     const expedition = isValidExpedition(value.expedition) ? value.expedition : createInitialExpedition();
     return { version: SAVE_VERSION, savedAt: value.savedAt, state: structuredClone(value.state), run: structuredClone(value.run), expedition: structuredClone(expedition) };

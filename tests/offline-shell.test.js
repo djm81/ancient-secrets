@@ -12,11 +12,16 @@ const expeditionCore = await readFile(new URL('../js/expedition-core.js', import
 
 test('OGS-001 and OGS-002: the service worker precaches the local shell and excludes unsafe traffic', () => {
   for (const asset of [
-    './maestros-secret.html', './index.html', './js/game-core.js?rev=v14', './js/expedition-core.js?rev=v14',
-    './js/era-content.js?rev=v14', './js/guidance-client.js?rev=v14', './js/browser-storage.js?rev=v14',
+    './maestros-secret.html', './index.html', './js/game-core.js?rev=v15', './js/expedition-core.js?rev=v15',
+    './js/era-content.js?rev=v14', './js/guidance-client.js?rev=v15', './js/browser-storage.js?rev=v14',
     './js/runtime-config.js?rev=v14', './assets/fonts/fonts.css',
     './assets/icons/app-192.png', './assets/icons/app-512.png'
   ]) assert.match(worker, new RegExp(asset.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
+
+  const coreAssets = worker.match(/const CORE_ASSETS = \[([\s\S]*?)\];/)[1];
+  assert.doesNotMatch(coreAssets, /assets\/eras\/babylon\//);
+  assert.match(worker, /url\.pathname\.includes\(['"]\/assets\/eras\/['"]\)/);
+  assert.match(worker, /cache\.put\(request,response\.clone\(\)\)/);
 
   assert.match(worker, /request\.method\s*!==\s*['"]GET['"]/);
   assert.match(worker, /url\.origin\s*!==\s*self\.location\.origin/);
@@ -29,7 +34,7 @@ test('OGS-001 and OGS-002: the service worker precaches the local shell and excl
 
 test('OGS-003 and PWA-002: the game registers a waiting worker and only exposes install UI when it is actionable', () => {
   assert.match(gamePage, /startOfflineAppLifecycle\(\)/);
-  assert.match(lifecycle, /register\(['"]\.\/service-worker\.js\?rev=v16['"]/);
+  assert.match(lifecycle, /register\(['"]\.\/service-worker\.js\?rev=v17['"]/);
   assert.match(lifecycle, /beforeinstallprompt/);
   assert.match(lifecycle, /SKIP_WAITING/);
   assert.match(gamePage, /id="installbtn"/);
@@ -38,10 +43,10 @@ test('OGS-003 and PWA-002: the game registers a waiting worker and only exposes 
 });
 
 test('OGS-001 and OGS-003: a refreshed release uses matching revisioned local assets', () => {
-  assert.match(gamePage, /\.\/js\/game-core\.js\?rev=v14/);
+  assert.match(gamePage, /\.\/js\/game-core\.js\?rev=v15/);
   assert.match(gamePage, /\.\/js\/era-content\.js\?rev=v14/);
-  assert.match(lifecycle, /\.\/service-worker\.js\?rev=v16/);
-  assert.match(gameCore, /\.\/expedition-core\.js\?rev=v14/);
+  assert.match(lifecycle, /\.\/service-worker\.js\?rev=v17/);
+  assert.match(gameCore, /\.\/expedition-core\.js\?rev=v15/);
   assert.match(expeditionCore, /\.\/era-content\.js\?rev=v14/);
   assert.match(eraContent, /grain-tablets\.jpg\?rev=v8/);
   assert.match(worker, /caches\.match\(request\)\.then/);
@@ -55,7 +60,7 @@ test('OGS-001: offline navigation fallback uses only the active release cache', 
     URL,
     caches: {
       open: async name => {
-        assert.equal(name, 'maestros-secret-shell-v16');
+        assert.equal(name, 'maestros-secret-shell-v17');
         return { match: async (request, options) => {
           matches.push({ request: String(request), options });
           return request === 'https://example.test/ancient-secrets/maestros-secret.html'
@@ -74,7 +79,7 @@ test('OGS-001: offline navigation fallback uses only the active release cache', 
   });
 
   handlers.get('fetch')({
-    request: { method: 'GET', mode: 'navigate', url: 'https://example.test/ancient-secrets/maestros-secret.html?release=v16' },
+    request: { method: 'GET', mode: 'navigate', url: 'https://example.test/ancient-secrets/maestros-secret.html?release=v17' },
     respondWith: work => { responseWork = work; }
   });
   const response = await responseWork;
@@ -83,6 +88,39 @@ test('OGS-001: offline navigation fallback uses only the active release cache', 
   assert.equal(matches[0].options.ignoreSearch, true);
   assert.equal(matches[1].request, 'https://example.test/ancient-secrets/maestros-secret.html');
   assert.equal(matches[1].options, undefined);
+});
+
+test('OGS-001: Babylon artwork enters only the active release cache after its first online request', async () => {
+  const handlers = new Map();
+  const cached = [];
+  let responseWork;
+  vm.runInNewContext(worker, {
+    URL,
+    caches: {
+      open: async name => {
+        assert.equal(name, 'maestros-secret-shell-v17');
+        return {
+          match: async () => undefined,
+          put: async (request, response) => { cached.push({ request: String(request), text: await response.text() }); }
+        };
+      },
+      match: async () => { throw new Error('era art must not use a retained cache'); }
+    },
+    fetch: async () => new Response('Babylon artwork'),
+    self: {
+      registration: { scope: 'https://example.test/ancient-secrets/' },
+      location: { origin: 'https://example.test' },
+      addEventListener: (type, handler) => handlers.set(type, handler)
+    }
+  });
+
+  handlers.get('fetch')({
+    request: { method: 'GET', mode: 'cors', url: 'https://example.test/ancient-secrets/assets/eras/babylon/grain-tablets.jpg?rev=v8' },
+    respondWith: work => { responseWork = work; }
+  });
+  const response = await responseWork;
+  assert.equal(await response.text(), 'Babylon artwork');
+  assert.deepEqual(cached, [{ request: '[object Object]', text: 'Babylon artwork' }]);
 });
 
 test('OGS-003: accepting an update retains other clients’ caches and only notifies the requesting client', async () => {

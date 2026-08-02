@@ -84,3 +84,11 @@ For each task record: requirement IDs, test and command, dated failing evidence,
 - **Expected failing result:** 2026-08-02 21:12 CEST — the strengthened release contract will require cache and lifecycle revision v16. The current v15 shell would retain the prior `maestros-secret.html` while offline.
 - **Implementation reference:** advance the service-worker cache and registration revision together so a standard update precaches the repaired HTML.
 - **Passing evidence:** 2026-08-02 21:13 CEST — `node --test tests/offline-shell.test.js` passed 5/5. The worker opens `maestros-secret-shell-v16`, and the HTML imports and lifecycle registration both use v16. Final regression at 21:15 CEST: `npm run check` passed, `npm test` passed 47/47, and `npm run test:browser` passed 53/53.
+
+## Review follow-up — lazy Babylon artwork cache
+
+- **Requirements:** OGS-001, OGS-002, OGS-003.
+- **Test and command:** `node --test tests/offline-shell.test.js`.
+- **Expected failing result:** 2026-08-02 — the new worker contract will show Babylon image URLs in `CORE_ASSETS`, proving that every first launch downloads era art before a player enters the Codex.
+- **Implementation reference:** `service-worker.js` excludes Babylon art from `CORE_ASSETS`, opens only `maestros-secret-shell-v17` for a first era-art request, and stores a successful response there; the lifecycle and HTML registration advance to v17 together.
+- **Passing evidence:** 2026-08-02 21:50 CEST — `node --test tests/expedition-core.test.js tests/game-core.test.js tests/offline-shell.test.js` passed 19/19. The worker-runtime regression proves that first-request Babylon art is written only to the active v17 cache. Final gates at 21:52 CEST: `npm run check`, `npm test` (49/49), and `npm run test:browser` (54/54) passed.

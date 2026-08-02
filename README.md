@@ -33,7 +33,7 @@ CodeRabbit’s repository-owned policy lives in [`.coderabbit.yaml`](.coderabbit
 Validate the locally owned YAML/branch-policy invariant without credentials or a network call:
 
 ```bash
-ruby -e 'require "yaml"; a = YAML.load_file(".coderabbit.yaml").fetch("reviews").fetch("auto_review"); abort "missing review target" unless ["^dev$", "^main$"].all? { |branch| a.fetch("base_branches").include?(branch) }; abort "draft reviews enabled" unless a.fetch("drafts") == false; abort "incremental review pause enabled" unless a.fetch("auto_pause_after_reviewed_commits") == 0'
+ruby scripts/check-coderabbit-config.rb
 ```
 
 Draft pull requests are intentionally excluded from automatic review. Mark a PR ready for review (or explicitly request CodeRabbit) after its evidence and description are ready.

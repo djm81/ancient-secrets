@@ -43,3 +43,9 @@ If the expedition block of an otherwise valid save is malformed, the game SHALL 
 - **GIVEN** a current-schema save with valid state and run but a truncated expedition block
 - **WHEN** the save is parsed
 - **THEN** the base game resumes normally and the expedition restarts empty, with no exception thrown
+
+#### Scenario: Truncated current attempt
+
+- **GIVEN** a current-schema save with valid Florence state and run but a Babylon attempt missing a required field
+- **WHEN** the save is parsed
+- **THEN** the base game resumes normally and a fresh expedition is attached, with no exception thrown

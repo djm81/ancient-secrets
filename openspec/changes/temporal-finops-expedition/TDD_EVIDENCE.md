@@ -18,6 +18,20 @@ Status: **Wave A in progress** — Babylon is the first vertical slice. Assumpti
 
 ## Entries
 
+### Review follow-up — validate Babylon attempt transitions and malformed saves
+- Spec refs: EC-003, EE-002, EE-003, MD-001, MD-004.
+- Tests and commands: `node --test tests/expedition-core.test.js tests/game-core.test.js`.
+- Expected failing result: 2026-08-02 — new regressions will prove that a missing current-schema `attempt` must not make `isValidExpedition` throw, and that an available or withdrawn Babylon era must not receive a passing debrief without a recorded evaluated outcome.
+- Implementation reference: `js/expedition-core.js` now stores `investigate`/`audit`/`grain`/`rate`/`seal`/`evaluated` stages and an evaluated outcome; `js/game-core.js` migrates valid v3 attempts to v4 and falls back safely for malformed current attempts.
+- Passing evidence: 2026-08-02 21:50 CEST — `node --test tests/expedition-core.test.js tests/game-core.test.js tests/offline-shell.test.js` passed 19/19. The direct debrief, out-of-order transition, forged failure category, and truncated-current-attempt regressions all pass. Final gates at 21:52 CEST: `npm run check`, `npm test` (49/49), `npm run test:browser` (54/54), and `npm run test:a11y` (4/4) passed.
+
+### Review follow-up — semantic Babylon imagery and single-sourced grain options
+- Spec refs: EE-005, EE-006, EE-007.
+- Tests and commands: `npm run test:browser -- tests/browser/expedition.spec.js`.
+- Expected failing result: 2026-08-02 — the CSS backdrop/tableau descriptions are absent from the accessibility tree, and the grain render/handler each own a positional option order.
+- Implementation reference: `maestros-secret.html` inserts an equivalent visually-hidden authored description for every Babylon hero image and uses `deliveryOptionOrder(trial)` for both grain-option rendering and selected-index reconstruction.
+- Passing evidence: 2026-08-02 21:49 CEST — `npm run test:browser -- tests/browser/expedition.spec.js` passed 9/9, including the tableau-description regression. Final browser/a11y gates at 21:52 CEST passed 54/54 and 4/4.
+
 ### Security review follow-up — never render Babylon select values as markup
 - Spec refs: EE-002, EE-005, EE-007.
 - Test: `tests/browser/expedition.spec.js` — hostile Babylon selection stays text.

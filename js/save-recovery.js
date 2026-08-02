@@ -1,4 +1,4 @@
-import { parseSave } from './game-core.js?rev=v14';
+import { parseSave } from './game-core.js?rev=v15';
 
 export function exportChronicle(value) {
   const chronicle = parseSave(value);

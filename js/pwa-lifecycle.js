@@ -49,7 +49,7 @@ export function startOfflineAppLifecycle({ windowRef = window, documentRef = doc
   });
 
   if (!navigatorRef.serviceWorker) return { registration: Promise.resolve(null) };
-  const registration = navigatorRef.serviceWorker.register('./service-worker.js?rev=v16').then(value => {
+  const registration = navigatorRef.serviceWorker.register('./service-worker.js?rev=v17').then(value => {
     if (value.waiting) showWaitingUpdate(value.waiting);
     value.addEventListener('updatefound', () => {
       const worker = value.installing;

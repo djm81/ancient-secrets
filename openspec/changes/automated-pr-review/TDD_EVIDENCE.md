@@ -16,3 +16,11 @@ Discipline: spec → tests → **failing evidence** → implementation → **pas
 - Contract command: `ruby -e 'require "yaml"; a = YAML.load_file(".coderabbit.yaml").fetch("reviews").fetch("auto_review"); abort "missing review target" unless ["^dev$", "^main$"].all? { |branch| a.fetch("base_branches").include?(branch) }; abort "draft reviews enabled" unless a.fetch("drafts") == false; abort "incremental review pause enabled" unless a.fetch("auto_pause_after_reviewed_commits") == 0'`.
 - Failing evidence: 2026-08-02 20:03 CEST — the extended local contract raised `KeyError` for the missing `auto_pause_after_reviewed_commits` key.
 - Passing evidence: 2026-08-02 20:05 CEST — the contract printed `CodeRabbit full auto-review contract valid`, asserting `^dev$`, `^main$`, `drafts: false`, and `auto_pause_after_reviewed_commits: 0`.
+
+## Review follow-up — one reproducible documented review-policy contract
+
+- Spec refs: automated-pr-review requirements 1–3.
+- Contract command: `ruby scripts/check-coderabbit-config.rb`.
+- Expected failing result: 2026-08-02 — the previous recorded snippets did not themselves assert every claimed invariant, including `auto_incremental_review: true` and the OpenSpec documentation path instruction.
+- Implementation reference: `scripts/check-coderabbit-config.rb` is the single checked-in Ruby/Psych contract; README and this evidence both invoke it.
+- Passing evidence: 2026-08-02 21:50 CEST — `ruby scripts/check-coderabbit-config.rb` printed `CodeRabbit review-policy contract valid`, asserting both base branches, draft exclusion, incremental review enabled, no pause, and OpenSpec/README documentation path instructions.

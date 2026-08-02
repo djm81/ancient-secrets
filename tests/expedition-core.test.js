@@ -3,7 +3,9 @@ import assert from 'node:assert/strict';
 import {
   BABYLON_ID,
   applyDebriefAnswers,
+  advanceBabylonAudit,
   babylonFailureExplanation,
+  beginBabylonAudit,
   beginEra,
   createInitialExpedition,
   createBabylonTrial,
@@ -11,6 +13,7 @@ import {
   deriveRank,
   evaluateBabylonPlan,
   orderBabylonDebriefOptions,
+  recordBabylonOutcome,
   withdrawFromTrial
 } from '../js/expedition-core.js';
 import { BABYLON_CONTENT } from '../js/era-content.js';
@@ -43,11 +46,19 @@ test('withdraw keeps clues, grants reduced credit, and a later pass never demote
   assert.equal(withdrawn.eras[BABYLON_ID].status, 'withdrawn');
   assert.equal(withdrawn.eras[BABYLON_ID].clues.length, 3);
   assert.equal(withdrawn.eras[BABYLON_ID].bestCredit, 1);
-  const retry = beginEra(withdrawn, BABYLON_ID, 10);
+  const debriefedWithdrawal = applyDebriefAnswers(withdrawn, BABYLON_ID, 'withdrawn', [false, false, false]);
+  const retry = beginEra(debriefedWithdrawal, BABYLON_ID, 10);
   assert.deepEqual(retry.eras[BABYLON_ID].clues, ['deliveries', 'ledger', 'law']);
   assert.equal(retry.eras[BABYLON_ID].lastFailure, null);
 
-  const passed = applyDebriefAnswers(withdrawn, BABYLON_ID, 'passed', [true, true, true]);
+  assert.throws(() => applyDebriefAnswers(withdrawn, BABYLON_ID, 'passed', [true, true, true]));
+  let passingAttempt = beginEra(debriefedWithdrawal, BABYLON_ID, 11);
+  passingAttempt = beginBabylonAudit(passingAttempt, BABYLON_ID);
+  passingAttempt = advanceBabylonAudit(passingAttempt, BABYLON_ID, 'grain');
+  passingAttempt = advanceBabylonAudit(passingAttempt, BABYLON_ID, 'rate');
+  passingAttempt = advanceBabylonAudit(passingAttempt, BABYLON_ID, 'seal');
+  passingAttempt = recordBabylonOutcome(passingAttempt, BABYLON_ID, evaluateBabylonPlan(createBabylonTrial(11), createBabylonTrial(11).solution));
+  const passed = applyDebriefAnswers(passingAttempt, BABYLON_ID, 'passed', [true, true, true]);
   assert.equal(passed.eras[BABYLON_ID].status, 'complete');
   assert.equal(passed.inventions.includes('anemometer'), true);
   assert.equal(deriveRank(passed.mastery).key, 'garzone');
@@ -56,8 +67,23 @@ test('withdraw keeps clues, grants reduced credit, and a later pass never demote
   assert.equal(revisited.eras[BABYLON_ID].attempt.seed, 12);
   assert.equal(revisited.eras[BABYLON_ID].bestCredit, passed.eras[BABYLON_ID].bestCredit);
   assert.deepEqual(revisited.mastery, passed.mastery);
-  const retried = applyDebriefAnswers(passed, BABYLON_ID, 'withdrawn', [false, false, false]);
-  assert.deepEqual(retried.mastery, passed.mastery);
+  assert.throws(() => applyDebriefAnswers(passed, BABYLON_ID, 'withdrawn', [false, false, false]));
+});
+
+test('Babylon audit state only permits ordered transitions and a recorded outcome before debrief', () => {
+  let expedition = beginEra(createInitialExpedition(), BABYLON_ID, 4);
+  assert.throws(() => beginBabylonAudit(expedition, BABYLON_ID));
+  for (const clue of ['deliveries', 'ledger', 'law']) expedition = collectBabylonClue(expedition, clue);
+  assert.throws(() => applyDebriefAnswers(expedition, BABYLON_ID, 'passed', [true, true, true]));
+  expedition = beginBabylonAudit(expedition, BABYLON_ID);
+  assert.throws(() => advanceBabylonAudit(expedition, BABYLON_ID, 'rate'));
+  expedition = advanceBabylonAudit(expedition, BABYLON_ID, 'grain');
+  expedition = advanceBabylonAudit(expedition, BABYLON_ID, 'rate');
+  expedition = advanceBabylonAudit(expedition, BABYLON_ID, 'seal');
+  assert.throws(() => withdrawFromTrial(expedition, BABYLON_ID, 'forged-category'));
+  expedition = recordBabylonOutcome(expedition, BABYLON_ID, evaluateBabylonPlan(createBabylonTrial(4), createBabylonTrial(4).solution));
+  assert.equal(expedition.eras[BABYLON_ID].attempt.stage, 'evaluated');
+  assert.equal(expedition.eras[BABYLON_ID].attempt.outcome, 'passed');
 });
 
 test('Babylon withdrawal explanations always use authored categories', () => {

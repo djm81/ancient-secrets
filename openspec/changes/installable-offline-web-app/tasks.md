@@ -15,6 +15,7 @@
 - [x] B1. Create failing tests for waiting updates and no reload during an active chronicle; implement restart handoff; record evidence. The lifecycle contract verifies a waiting worker, explicit `SKIP_WAITING`, and conditional reload only after restart acceptance.
 - [x] B1a. Remediate review finding: preserve old worker caches for active clients and target the accepted-update reload to only the requesting client; extend lifecycle coverage and record evidence. The worker-lifecycle simulation and client lifecycle contract passed on 2026-07-29.
 - [x] B1b. Remediate review finding: scope offline navigation fallback to the active release cache, advance the worker registration/cache version together, and record deterministic worker-runtime evidence in `TDD_EVIDENCE.md`.
+- [x] B1c. Remediate review finding: exclude Babylon era art from install-time core precache and cache it only after a first online era request in the active release; advance the worker/lifecycle revision and record runtime evidence.
 - [x] B2. Implement schema-validated user-initiated save export/import; tests cover corrupt, future, and valid save files; record evidence. `tests/save-recovery.test.js` passed 2/2 on 2026-07-29.
 - [x] B3. Add progressive install control and iOS/desktop instructions; test that unsupported browsers remain fully playable. The Chrome-native prompt control and Safari Add to Dock guidance were manually observed; the unsupported-browser browser contract passed.
 

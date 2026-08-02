@@ -108,6 +108,13 @@ test('security review: a hostile Babylon selection is never reinterpreted as HTM
   await expect(page.locator('#injected-control')).toHaveCount(0);
 });
 
+test('review follow-up: Babylon artwork descriptions reach assistive technology', async ({ page }) => {
+  await openBabylonAudit(page);
+  await expect(page.getByText('Scene illustration: Clay tablets, barley measures, balance stones, and a reed stylus arranged for a temple ledger audit.')).toHaveCount(1);
+  await page.getByRole('button', { name: 'Mark the tablet line as doubtful' }).click();
+  await expect(page.getByText('Scene illustration: Clay tablets, barley measures, balance stones, and a reed stylus arranged for a temple ledger audit.')).toHaveCount(1);
+});
+
 test('review follow-up: a rejected silver rate reaches its specific withdrawal debrief', async ({ page }) => {
   await openBabylonAudit(page);
   await page.getByRole('button', { name: 'Mark the tablet line as doubtful' }).click();
